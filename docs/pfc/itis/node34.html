@@ -1,0 +1,120 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Terminador loopback</TITLE>
+<META NAME="description" CONTENT="Terminador loopback">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node33.html">
+<LINK REL="up" HREF="node32.html">
+<LINK REL="next" HREF="node35.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html637"
+  HREF="node35.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html633"
+  HREF="node32.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html629"
+  HREF="node33.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html635"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html638"
+  HREF="node35.html">Instalación y configuración del</A>
+<B> Subir:</B> <A NAME="tex2html634"
+  HREF="node32.html">Arquitectura</A>
+<B> Anterior:</B> <A NAME="tex2html630"
+  HREF="node33.html">Terminador puerta de enlace</A>
+ &nbsp; <B>  <A NAME="tex2html636"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00512000000000000000">
+Terminador loopback</A>
+</H2>
+
+<P>
+Como contrapartida, podemos dise&#241;ar una arquitectura en la que el PC terminador
+de t&#250;neles IPSec no sea m&#225;s que otra m&#225;quina dentro de la red de servicios local.
+En este caso, el PC podr&#237;a contar con tan s&#243;lo una interfaz de red conectada a la
+red local, por la que establecer&#237;a los t&#250;neles IPSec y redireccionar&#237;a el tr&#225;fico
+al interior de la red, como si se tratase de una interfaz <I>loopback</I>.
+
+<P>
+De esta forma se a&#237;sla el servicio del resto, evitando afectar a todos los usuarios,
+y se facilita el montaje de la m&#225;quina, al no tener que realizar funciones extras
+a las m&#237;nimas requeridas. Es por ello que &#233;sta es la arquitectura adoptada
+finalmente para el desarrollo del servicio, pese a que implica realizar un filtrado
+de los usuarios de la VPN por separado (en caso de que se desee dicho filtrado,
+por supuesto).
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:arch2"></A><A NAME="1128"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 3.2:</STRONG>
+<FONT SIZE="-1">El terminador
+de t&#250;neles forma parte de la propia red. Los t&#250;neles se establecen contra su
+IP p&#250;blica, y &#233;ste redirecciona el tr&#225;fico por su &#250;nico interfaz a la red
+local, como si se tratase de un interfaz <I>loopback</I>.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER"><IMG
+  WIDTH="240" HEIGHT="168" ALIGN="BOTTOM" BORDER="0"
+ SRC="arch2.png"
+ ALT="Image arch2">
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html637"
+  HREF="node35.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html633"
+  HREF="node32.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html629"
+  HREF="node33.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html635"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html638"
+  HREF="node35.html">Instalación y configuración del</A>
+<B> Subir:</B> <A NAME="tex2html634"
+  HREF="node32.html">Arquitectura</A>
+<B> Anterior:</B> <A NAME="tex2html630"
+  HREF="node33.html">Terminador puerta de enlace</A>
+ &nbsp; <B>  <A NAME="tex2html636"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

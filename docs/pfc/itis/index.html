@@ -1,0 +1,340 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node1.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html99"
+  HREF="node1.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png"> 
+<A NAME="tex2html97"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html100"
+  HREF="node1.html">&#205;ndice General</A>
+ &nbsp; <B>  <A NAME="tex2html98"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<P>
+<BR>
+<BR>
+
+<DIV ALIGN="CENTER">
+<DIV ALIGN="CENTER"><IMG
+  WIDTH="283" HEIGHT="114" ALIGN="BOTTOM" BORDER="0"
+ SRC="urjc.png"
+ ALT="Image urjc">
+</DIV>
+</DIV>
+
+<P>
+<DIV ALIGN="CENTER">
+</DIV>
+<P>
+<DIV ALIGN="CENTER"><FONT SIZE="+1"><B>INGENIER&#205;A T&#201;CNICA EN INFORM&#193;TICA DE SISTEMAS</B></FONT>
+<BR>
+<BR>
+</DIV>
+<P>
+<DIV ALIGN="CENTER"><FONT SIZE="+1"><B>Curso acad&#233;mico 2004-2005</B></FONT>
+</DIV>
+<P>
+<DIV ALIGN="CENTER">
+<BR>
+<BR>
+</DIV>
+<P>
+<DIV ALIGN="CENTER"><FONT SIZE="+1"><B>Proyecto Fin de Carrera</B></FONT>
+</DIV>
+<P>
+<DIV ALIGN="CENTER">
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+</DIV>
+<P>
+<DIV ALIGN="CENTER"><FONT SIZE="+2"><B>SERVICIO DE ACCESO REMOTO SEGURO PARA TERMINALES GSM Y GPRS</B></FONT>
+</DIV>
+<P>
+<DIV ALIGN="CENTER">
+</DIV>
+
+<P>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+<BR>
+
+<P>
+
+<TABLE CELLPADDING=3>
+<TR><TD ALIGN="LEFT"><B>Autor</B>:</TD>
+<TD ALIGN="LEFT">Jaime P&#233;rez Crespo</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="LEFT"><B>Tutores</B>:</TD>
+<TD ALIGN="LEFT">Jos&#233; Centeno Gonz&#225;lez,</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">&nbsp;</TD>
+</TR>
+<TR><TD ALIGN="LEFT">&nbsp;</TD>
+<TD ALIGN="LEFT">Miguel &#193;ngel del R&#237;o Vega</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<P>
+
+<P>
+<BR>
+<BR>
+<BR>
+<BR>
+
+<P>
+<B><FONT SIZE="+4">Agradecimientos</FONT></B>
+
+<P>
+<BR>
+<BR>
+Agradecer a Jos&#233; Centeno su esfuerzo y su constante predisposici&#243;n, sin los que
+este proyecto no ser&#237;a posible. A Antonio Tendero y Miguel &#193;ngel del R&#237;o por
+la confianza y la ayuda depositada para este trabajo. A mis compa&#241;eros y amigos
+por sus cr&#237;ticas, sugerencias y &#225;nimos, y por supuesto a mi familia.
+
+<P>
+
+<P>
+<BR>
+<BR>
+<BR>
+<BR>
+
+<P>
+<B><FONT SIZE="+4">Resumen</FONT></B>
+
+<P>
+<BR>
+<BR>
+
+<P>
+A lo largo de esta memoria se presenta una descripci&#243;n del proceso de dise&#241;o
+e implementaci&#243;n de un servicio seguro de acceso remoto para aquellos usuarios
+de la Universidad Rey Juan Carlos que disponen de terminales con acceso a Internet
+mediante tecnolog&#237;as <I>GSM</I> o <I>GPRS</I>. La idea fundamental de este
+proyecto, basado en una oferta realizada por Telef&#243;nica, consiste en proporcionar
+acceso a dichos usuarios a la red de la universidad, de forma que puedan utilizar
+sus servicios independientemente de su ubicaci&#243;n geogr&#225;fica, y de forma totalmente
+fiable y segura tanto para ellos como para la propia universidad.
+
+<P>
+Para llevar a buen puerto este objetivo, se ha confiado en tecnolog&#237;as
+para la creaci&#243;n y uso de Redes Privadas Virtuales, generalmente conocidas por
+las siglas <I>VPN</I>, basadas en criptograf&#237;a y protocolos de autenticaci&#243;n
+del m&#225;s alto nivel.
+
+<P>
+Inicialmente se ha realizado un estudio de las mencionadas tecnolog&#237;as para
+evaluar la viabilidad y conveniencia de su uso en el caso que nos ocupa.
+Adicionalmente, y dado que el servicio ha sido implementado de forma conjunta
+con Telef&#243;nica, ha sido necesario cumplir con una serie de requisitos solicitados
+por dicha compa&#241;&#237;a, fundamentalmente relativos a la utilizaci&#243;n de software
+homologado.
+
+<P>
+Una vez analizados los requisitos y funcionalidades impuestos para este proyecto,
+se ha procedido a la implementaci&#243;n del extremo del servicio correspondiente
+a la Universidad Rey Juan Carlos: un equipo terminador de t&#250;neles <I>IPSec</I>
+bajo el sistema operativo <I>GNU/Linux</I>, que adem&#225;s, y como se ver&#225; m&#225;s
+adelante, realiza funciones adicionales derivadas de los cambios de requisitos
+por parte tanto de Telef&#243;nica como de la universidad.
+
+<P>
+Finalmente, se ha iniciado una fase de pruebas entre la propia universidad y
+Telef&#243;nica, a fin de corroborar el cumplimiento de las funcionalidades descritas
+y la estabilidad del servicio en general, para posteriormente situarlo en estado
+de producci&#243;n.
+
+<P>
+Todo este trabajo ha derivado en un nuevo servicio que viene a completar los
+existentes y a facilitar el d&#237;a a d&#237;a de los usuarios con mayor movilidad de la
+universidad.
+
+<P>
+
+
+<P>
+
+<P>
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"></A>
+
+<UL>
+<LI><A NAME="tex2html101"
+  HREF="node1.html">&#205;ndice General</A>
+<LI><A NAME="tex2html102"
+  HREF="node2.html">&#205;ndice de Figuras</A>
+<LI><A NAME="tex2html103"
+  HREF="node3.html">Introducción</A>
+<UL>
+<LI><A NAME="tex2html104"
+  HREF="node4.html">Conceptos y definiciones</A>
+<UL>
+<LI><A NAME="tex2html105"
+  HREF="node5.html">Redes privadas virtuales</A>
+<LI><A NAME="tex2html106"
+  HREF="node6.html">Confidencialidad e integridad</A>
+<UL>
+<LI><A NAME="tex2html107"
+  HREF="node7.html">IPSec</A>
+<LI><A NAME="tex2html108"
+  HREF="node8.html">El protocolo AH</A>
+</UL>
+<LI><A NAME="tex2html109"
+  HREF="node10.html">Autenticación y Autorización</A>
+<UL>
+<LI><A NAME="tex2html110"
+  HREF="node11.html">El protocolo IKE</A>
+<LI><A NAME="tex2html111"
+  HREF="node12.html">Radius</A>
+</UL>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html112"
+  HREF="node13.html">Objetivos</A>
+<UL>
+<LI><A NAME="tex2html113"
+  HREF="node14.html">Descripción del servicio</A>
+<UL>
+<LI><A NAME="tex2html114"
+  HREF="node15.html">Escenario de uso</A>
+<LI><A NAME="tex2html115"
+  HREF="node16.html">Requisitos del servicio</A>
+</UL>
+<LI><A NAME="tex2html116"
+  HREF="node25.html">Estudio de alternativas</A>
+<UL>
+<LI><A NAME="tex2html117"
+  HREF="node26.html">Software para S/WAN</A>
+<LI><A NAME="tex2html118"
+  HREF="node27.html">Software para encaminamiento</A>
+<LI><A NAME="tex2html119"
+  HREF="node28.html">Software para Radius</A>
+<LI><A NAME="tex2html120"
+  HREF="node29.html">Algoritmos</A>
+</UL>
+<LI><A NAME="tex2html121"
+  HREF="node30.html">Metodología</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html122"
+  HREF="node31.html">Descripción Informática</A>
+<UL>
+<LI><A NAME="tex2html123"
+  HREF="node32.html">Arquitectura</A>
+<UL>
+<LI><A NAME="tex2html124"
+  HREF="node33.html">Terminador puerta de enlace</A>
+<LI><A NAME="tex2html125"
+  HREF="node34.html">Terminador loopback</A>
+</UL>
+<LI><A NAME="tex2html126"
+  HREF="node35.html">Instalación y configuración del servidor</A>
+<UL>
+<LI><A NAME="tex2html127"
+  HREF="node36.html">El núcleo y el sistema base</A>
+<LI><A NAME="tex2html128"
+  HREF="node38.html">Servicios requeridos</A>
+</UL>
+<LI><A NAME="tex2html129"
+  HREF="node42.html">Análisis del sistema</A>
+<UL>
+<LI><A NAME="tex2html130"
+  HREF="node43.html">Monitorización de servicios</A>
+<LI><A NAME="tex2html131"
+  HREF="node44.html">Funcionamiento general</A>
+<LI><A NAME="tex2html132"
+  HREF="node47.html">Cuestiones de seguridad</A>
+</UL>
+</UL>
+<BR>
+<LI><A NAME="tex2html133"
+  HREF="node52.html">Conclusiones y trabajos futuros</A>
+<UL>
+<LI><A NAME="tex2html134"
+  HREF="node53.html">Evaluación del trabajo</A>
+<LI><A NAME="tex2html135"
+  HREF="node54.html">Futuros trabajos</A>
+</UL>
+<BR>
+<LI><A NAME="tex2html136"
+  HREF="node55.html">Bibliograf&#237;a</A>
+<LI><A NAME="tex2html137"
+  HREF="node56.html">Sobre este documento...</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html99"
+  HREF="node1.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev_g.png"> 
+<A NAME="tex2html97"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html100"
+  HREF="node1.html">&#205;ndice General</A>
+ &nbsp; <B>  <A NAME="tex2html98"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

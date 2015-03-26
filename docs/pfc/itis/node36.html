@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>El núcleo y el sistema base</TITLE>
+<META NAME="description" CONTENT="El núcleo y el sistema base">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node38.html">
+<LINK REL="previous" HREF="node35.html">
+<LINK REL="up" HREF="node35.html">
+<LINK REL="next" HREF="node37.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html667"
+  HREF="node37.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html663"
+  HREF="node35.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html657"
+  HREF="node35.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html665"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html668"
+  HREF="node37.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html664"
+  HREF="node35.html">Instalación y configuración del</A>
+<B> Anterior:</B> <A NAME="tex2html658"
+  HREF="node35.html">Instalación y configuración del</A>
+ &nbsp; <B>  <A NAME="tex2html666"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00521000000000000000">
+El n&#250;cleo y el sistema base</A>
+</H2>
+
+<P>
+Una vez instalada la base de paquetes m&#237;nimos que requiere un sistema linux
+para funcionar de forma adecuada, nos ocupamos de conseguir un n&#250;cleo con el
+soporte de IPSec para el correcto funcionamiento de openswan. Instalamos las
+fuentes del kernel 2.4.26 con los parches de seguridad de gentoo y los parches
+para IPSec ya incluidos de serie, y verificamos las siguientes opciones en su
+configuraci&#243;n, dentro del submen&#250; <TT>Networking options</TT>:
+
+<P>
+<PRE>
+&lt;M&gt; IP Security Protocol (FreeS/WAN IPSEC)
+--- IPSec options (FreeS/WAN)
+[*]    IPSEC: IP-in-IP encapsulation (tunnel mode)
+[*]    IPSEC: Authentication Header
+[ ]       HMAC-MD5 authentication algorithm
+[*]       HMAC-SHA1 authentication algorithm
+[*]    IPSEC: Encapsulating Security Payload
+[*]       3DES encryption algorithm
+[ ]    IPSEC: IP Compression
+[ ]    IPSEC Debugging Option
+[ ] IPSEC NAT-Traversal
+</PRE>
+
+<P>
+N&#243;tese que damos soporte al modo t&#250;nel que vamos a utilizar, y al protocolo ESP.
+Si no marcamos la opci&#243;n 3DES, se utilizar&#237;a el protocolo por defecto, que es el
+ya comentado DES. As&#237; mismo, es necesario marcar el soporte para AH ya que dentro
+de &#233;ste est&#225;n incluidas las opciones del c&#225;lculo de HMAC. En particular, como ya
+hemos visto previamente, nos interesa utilizar el algoritmo SHA para c&#225;lculo de
+res&#250;menes. No nos interesan opciones como la compresi&#243;n IP o el soporte para
+<I>NAT-Traversal</I>, ya que como hemos visto no realizaremos NAT en ninguno
+de los extremos del t&#250;nel.
+
+<P>
+Compilamos el n&#250;cleo y lo instalamos de la forma habitual, de modo que al
+arrancarlo tengamos el soporte para IPSec necesario. No entraremos en detalle
+sobre el resto de configuraci&#243;n del n&#250;cleo. Baste decir que procuraremos
+dar soporte al hardware directamente en el n&#250;cleo, y a&#241;adiremos las opciones
+correspondientes a iptables<A NAME="tex2html68"
+  HREF="footnode.html#foot1130"><SUP>3.3</SUP></A> para su posterior uso.
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsecciones</STRONG></A>
+
+<UL>
+<LI><UL>
+<LI><A NAME="tex2html669"
+  HREF="node37.html">memoria</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html667"
+  HREF="node37.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html663"
+  HREF="node35.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html657"
+  HREF="node35.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html665"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html668"
+  HREF="node37.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html664"
+  HREF="node35.html">Instalación y configuración del</A>
+<B> Anterior:</B> <A NAME="tex2html658"
+  HREF="node35.html">Instalación y configuración del</A>
+ &nbsp; <B>  <A NAME="tex2html666"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

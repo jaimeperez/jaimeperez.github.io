@@ -1,0 +1,363 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>NFS HOWTO</TITLE>
+ 
+ <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <META name="Generator" content="Vi Improved">
+ <META name="Author" content="Jaime Perez">
+
+ <LINK rel="stylesheet" type="text/css" href="http://blackspiral.org/~jperez/css/doc.css">
+</HEAD>
+
+<BODY>
+ <!-- titulo y datos del autor -->
+ <CENTER>
+ <H1>NFS HOWTO</H1>
+ <BR>
+ Jaime P&eacute;rez Crespo (<A href="mailto:japecre at pantuflo.urjc.es">
+ japecre <I>at</I> pantuflo.escet.urjc.es</A>)
+ <BR>
+ <BR>
+ &Uacute;ltima actualizaci&oacute;n: 22 de Enero de 2004
+ </CENTER>
+ <BR>
+ <BR>
+ <BR>
+ <!-- comienzo del texto -->
+ <H2>Introducci&oacute;n</H2>
+ <P>
+  <I>NFS</I>, <I>Network File System</I>, es un servicio muy extendido en UNIX que permite compartir
+  por red sistemas de ficheros, mont&aacute;ndolos en m&aacute;quinas remotas y utilizandolos de forma
+  transparente como si fuesen parte del sistema de ficheros local. La gran ventaja de NFS es su
+  tremenda facilidad de uso. La desventaja, con la que tendremos que lidiar, es que no incorpora
+  ning&uacute;n tipo de seguridad ni autenticaci&oacute;n de los usuarios, por lo que puede
+  suponer un agujero de seguridad importante en nuestro sistema si no se toman las precauciones necesarias.
+ </P>
+ <P>
+  En este peque&ntilde;o tutorial aprenderemos a instalar y configurar un servidor y un cliente de NFS
+  adem&aacute;s de tomar las medidas de seguridad m&iacute;nimas necesarias para protegernos de posibles
+  ataques y asegurarnos de que el servicio es utilizado solamente por usuarios autorizados. Durante el
+  mismo se utilizar&aacute;n una m&aacute;quina <a href="http://www.redhat.com/" target="_blank">Red Hat 9</a>
+  como servidor, y una m&aacute;quina <a href="http://www.gentoo.org/" target="_blank">gentoo 1.4</a>
+  como cliente, aunque los ejemplos son por supuesto aplicables a cualquier otra distribuci&oacute;n de
+  Linux.
+ </P>
+ <BR>
+ <H2>Configuraci&oacute;n del servidor</H2>
+ <P>
+  Entramos de lleno en la configuraci&oacute;n de nuestro servidor bajo Red Hat 9 en este caso. Es
+  necesario que en nuestro servidor habilitemos dos servicios del sistema, NFS, y <I>portmap</I> de
+  uso imprescindible, ya que sin &eacute;l, el demonio de NFS ni siquiera nos permitir&aacute;
+  arrancar. Instalaremos ambos servicios de no haberlo hecho ya. Para ello utilizaremos <I>apt-get</I>,
+  una herramienta original de <A href="http://www.debian.org/" target="_blank">Debian GNU/Linux</A>
+  que ha sido portada a <A href="http://www.redhat.com/" target="_blank">Red Hat Linux</A>. De no tener instalado
+  apt-get, lo descargaremos e instalaremos como cualquier otro rpm desde
+  <A href="http://apt.freshrpms.net/" target="_blank">aqu&iacute;</A>. Proseguiremos en este punto
+  asumiendo que apt-get est&aacute; instalado y configurado correctamente.
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[root@mordor root]# <B>apt-cache search portmap</B>
+portmap - A program which manages RPC connections.
+[root@mordor root]# <B>apt-get install portmap</B></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Una vez hayamos instalado el servicio de <I>RPC</I> portmap, instalamos del mismo modo las
+  utilidades de NFS:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[root@mordor root]# <B>apt-cache search nfs</B>
+nfs-utils - NFS utlilities and supporting daemons for the kernel NFS server.
+[root@mordor root]# <B>apt-get install nfs-utils</B></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Ya tenemos instalados ambos servicios. Ahora, pasamos a configurar NFS. Para ello debemos editar
+  el fichero <I>/etc/exports</I>, en el que indicaremos que recursos exportar&aacute; nuestro servidor
+  y a qu&eacute; m&aacute;quinas les estar&aacute; permitido acceder a dichos recursos. Utilizamos nuestro
+  editor de textos preferido para editar este archivo, e iremos a&ntilde;adiendo l&iacute;neas en la forma
+  <I>path host (opciones)</I>, donde <I>path</I> es el path <B>absoluto</B> del directorio que queremos
+  compartir, <I>host</I> es el nombre o direcci&oacute;n IP de la m&aacute;quina que podr&aacute; acceder
+  a ese recurso, y <I>opciones</I> son los flags, separados por comas, que indican las opciones del
+  servidor NFS para ese recurso completo. Por ejemplo:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>/home rivendel (ro,sync,root_squash)
+/tmp  rivendel (rw,sync,no_root_squash)</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Con un fichero de configuraci&oacute;n como &eacute;ste, indicamos al servidor NFS que exporte dos
+  directorios de nuestro sistema, <I>/home</I> y <I>/tmp</I>. Se da permiso para acceder a ambos recursos
+  desde la m&aacute;quina <I>rivendel</I>. En este caso, deberemos tener una entrada en nuestro fichero
+  <I>/etc/hosts</I> que especifique la IP de esta m&aacute;quina. El recurso <I>/home</I> se montar&aacute;
+  en modo de s&oacute;lo lectura, mientras que <I>/tmp</I> tendr&aacute; permisos tanto de lectura como de
+  escritura. Algunas de las opciones m&aacute;s comunes que se le pueden pasar al servidor por medio
+  de este archivo son:
+ </P>
+ <UL>
+  <LI><B>[ ro | rw ]</B> con la opci&oacute;n <I>ro</I> indicamos que el recurso ser&aacute; exportado en
+   modo de <I>s&oacute;lo lectura</I>, mientras que con <I>rw</I> indicamos que se podr&aacute; tanto
+   leer como escribir en el directorio exportado.
+  </LI>
+  <LI><B>[ sync | async ]</B> con <I>sync</I> indicamos que se ha de respetar el protocolo NFS, mientras
+   que con <I>async</I> no se respetar&aacute; el protocolo y se responder&aacute; a las peticiones antes
+   de que se efect&uacute;e ning&uacute;n cambio sobre el directorio exportado. Esto permite mejorar
+   el rendimiento y agilizar el funcionamiento global, pero supone un riesgo de corrupci&oacute;n de
+   archivos o del sistema de ficheros en caso de ca&iacute;das del servidor, cortes de luz, etc.
+  </LI>
+  <LI><B>[ root_squash | no_root_squash | all_squash ]</B> <I>root_squash</I> indica que las conexiones
+   que efect&uacute;e un cliente identificado como root sean identificadas como el usuario an&oacute;nimo,
+   es decir, sin permisos de root sobre el sistema de ficheros exportado. Si indicamos <I>no_root_squash</I>
+   evitaremos esta degradaci&oacute;n de privilegios, y si indicamos <I>all_squash</I> aplicaremos la regla
+   antes mencionada a todos los usuarios, no s&oacute;lo root.
+  </LI>
+ </UL>
+ <P>
+  Una vez que hayamos terminado de configurar los recursos que queremos compartir, debemos ocuparnos de la
+  seguridad tanto del servicio de RPC (portmap) como del servidor de NFS. Lo m&aacute;s sencillo en este caso
+  es utilizar <I>tcp wrappers</I>. Utilizaremos los ficheros <I>/etc/hosts.allow</I> y <I>/etc/hosts.deny</I>
+  para indicar las m&aacute;quinas y servicios permitidos o denegados en nuestro sistema. Permitiremos el
+  acceso tanto al servicio RPC como NFS a todas las m&aacute;quinas de nuestra red local. Para ello escribiremos
+  las siguientes l&iacute;neas en <I>/etc/hosts.allow</I>:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>portmap:192.168.0.0/255.255.255.0
+nfsd:192.168.0.0/255.255.255.0</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  De este modo indicamos que se permite el acceso a los servicios <I>portmap</I> y <I>nfsd</I> desde
+  cualquier IP perteneciente a la red local 192.168.0.0. En caso de usar otra red, deberemos modificar
+  estas l&iacute;neas acorde con nuestras necesidades. Configuraremos ahora <I>/etc/hosts.deny</I>:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>portmap:ALL
+nfsd:ALL</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Es decir, denegamos el acceso a estos dos servicios a <B>todos</B> los clientes que no esten
+  expl&iacute;citamente autorizados en <I>/etc/hosts.allow</I>. Es posible que si no inclu&iacute;mos
+  la l&iacute;nea restrictiva relativa a portmap en <I>/etc/hosts.deny</I> nuestro servicio NFS no
+  arranque, de modo que es importante asegurarse de hacer las cosas bien en este punto.
+ </P>
+ <P>
+  Hecho esto, podemos pasar a arrancar los servicios de RPC y NFS:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[root@mordor root]# <B>service portmap start</B>
+Iniciando portmapper:                                      [  OK  ]
+[root@mordor root]# <B>service nfs start</B>
+Inicio de los servicios NFS:                               [  OK  ]
+Starting NFS quotas:                                       [  OK  ]
+Inicializaci&oacute;n del demonio NFS:                            [  OK  ]
+Inicializaci&oacute;n de NFS mountd:                              [  OK  ]</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Ya tenemos listo nuestro servicio de NFS. Podemos hilar a&uacute;n m&aacute;s fino y hacer
+  que tanto el servicio RPC como NFS se arranquen como demonios al iniciar la m&aacute;quina.
+  Para hacer esto podemos usar la herramienta <B>ntsysv</B> de Red Hat, y sencillamente marcar con
+  la barra espaciadora las opciones <I>portmap</I> y <I>nfs</I>.
+ </P>
+ <BR>
+ <H2>Configuraci&oacute;n del cliente</H2>
+ <P>
+  Pasamos ahora a configurar nuestro cliente o clientes del servicio de NFS. En realidad este paso
+  ser&aacute; en la mayor&iacute;a de las ocasiones casi trivial. Para empezar, debemos asegurarnos
+  de que nuestra m&aacute;quina soporta vol&uacute;menes NFS. Podemos hacer esto insertando el
+  m&oacute;dulo de kernel de NFS, si es que efectivamente est&aacute; compilado como m&oacute;dulo:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>rivendel root # <b>modprobe nfs</b>
+rivendel root # <B>lsmod | grep nfs</B>
+nfs                   71928   0 (unused)
+lockd                 51248   0 [nfs]
+sunrpc                68668   0 [nfs lockd]</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <br/>
+ <P>
+  En este punto estamos seguros de que nuestro sistema soporta NFS. Tambi&eacute;n es posible que
+  el soporte para NFS est&eacute; compilado directamente en el n&uacute;cleo y no como m&oacute;dulo.
+  En tal caso podemos intentar montar directamente el directorio NFS exportado por nuestro servidor y
+  observar el resultado. Si tenemos instaladas y configuradas las fuentes de nuestro n&uacute;cleo,
+  siempre podemos comprobar <i>in situ</i> si efectivamente tenemos soporte para NFS.
+ </P>
+ <br/>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>rivendel root # <b>cd /usr/src/linux</b>
+rivendel root # <b>make xconfig</b></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <br/>
+ <P>
+  Nos dirigimos a la secci&oacute;n de sistemas de ficheros del n&uacute;cleo, <i>File systems</i>.
+  Una vez all&iacute;, comprobamos los sistemas de ficheros de red, en <i>Network File Systems</i>.
+  Un vistazo r&aacute;pido deber&iacute;a servirnos para localizar la opci&oacute;n <i>NFS file
+  system support</i>, y corroborar que est&eacute; incluida bien como m&oacute;dulo (<i>m</i>), bien
+  directamente en el n&uacute;cleo (<i>y</i>). En caso de no ser as&iacute;, obviamente deberemos
+  recompilar nuestro <i>kernel</i> incorporando el soporte para NFS, preferentemente <b>como
+  m&oacute;dulo</b>.
+ </P>
+ <p>
+  Asumiremos una total seguridad de que nuestro sistema soporta sistemas de archivos NFS. De modo
+  que el siguiente paso es directamente montar el directorio exportado por el servidor. Primero,
+  crearemos un punto de montaje desde el que acceder a nuestro sistema de ficheros de red:
+ </p>
+ <br/>
+ <center>
+  <table class="tabla">
+   <tr>
+    <td>
+     <pre>rivendel root # <b>mkdir /mnt/nfsdir</b></pre>
+    </td>
+   </tr>
+  </table>
+ </center>
+ <br/>
+ <p>
+  Ya tenemos una ubicaci&oacute;n donde montar nuestro directorio exportado. Ahora, sencillamente, lo
+  montamos con el comando mount, casi como si de una partici&oacute;n normal se tratase:
+ </p>
+ <br/>
+ <center>
+  <table class="tabla">
+   <tr>
+    <td>
+     <pre>rivendel root # <b>mount servidor:/home /mnt/nfsdir -o nolock</b></pre>
+    </td>
+   </tr>
+  </table>
+ </center>
+ <br/>
+ <p>
+  Como se puede intuir, el manejo de vol&uacute;menes NFS es tan sencillo como si de cualquier otro
+  tipo de partici&oacute;n se tratase. Incluimos la opci&oacute;n <b>-o nolock</b> para evitar que
+  el comando mount arranque <i>lockd</i> y se quede de este modo colgado en ciertas ocasiones. A partir
+  de aqu&iacute;, podemos montar y desmontar la partici&oacute;n NFS como cualquier otra:
+ </p>
+ <br/>
+ <center>
+  <table class="tabla">
+   <tr>
+    <td>
+     <pre>rivendel root # <b>umount /mnt/nfsdir</b>
+rivendel root # <b>mount -t nfs servidor:/home /mnt/nfsdir -o nolock</b></pre>
+    </td>
+   </tr>
+  </table>
+ </center>
+ <br/>
+ <p>
+  Para facilitar a&uacute;n m&aacute;s las cosas, podemos incluir entradas en <i>/etc/fstab</i> para
+  nuestros directorios exportados por NFS. Podemos restringir el acceso a s&oacute;lo lectura, o permitir
+  lectura y escritura si el directorio exportado tambi&eacute;n lo permite, dejar que los usuarios monten
+  y desmonten directorios exportados a placer sin necesidad de la intervenci&oacute;n del <i>superusuario</i>,
+  o incluso hacer que ciertos directorios se monten autom&aacute;ticamente en el arranque del sistema. Como
+  ejemplo:
+ </p>
+ <br/>
+ <center>
+  <table class="tabla">
+   <tr>
+    <td>
+     <pre>servidor:/home         /mnt/nfsdir    nfs          rw,noauto,user,exec,intr,nolock       0 0</pre>
+    </td>
+   </tr>
+  </table>
+ </center>
+ <br/>
+ <p>
+  Configurando una entrada similar a &eacute;sta en <i>/etc/fstab</i>, podremos montar y desmontar el
+  directorio <i>/home</i> del <i>servidor</i> en <i>/mnt/nfsdir</i> como cualquier usuario del sistema,
+  para leer y escribir en ella (y ejecutar binarios). Sin embargo, el directorio ha de ser en este caso
+  montado expl&iacute;citamente (es decir, no se montar&aacute; al inicio del sistema). Obs&eacute;rvese
+  la inclusi&oacute;n de los par&aacute;metros <b>intr</b>, que permite interrumpir operaciones en curso
+  sobre un archivo montado por NFS, y <b>nolock</b>, necesario como se explic&oacute; anteriormente. Para
+  m&aacute;s informaci&oacute;n sobre las opciones de <i>mount</i> y del fichero <i>/etc/fstab</i>,
+  consultar sus respectivas p&aacute;ginas de manual.
+ </p>
+ <br/>
+ <!-- seccion de enlaces -->
+ <H2><A name="enlaces">Enlaces Interesantes</A></H2>
+ <P>
+  Linux NFS FAQ: <A href="http://nfs.sourceforge.net/"
+   target="_blank">http://nfs.sourceforge.net/</A>
+  <BR>
+  P&aacute;gina de manual de <I>exports</I>: <A href="http://unixhelp.ed.ac.uk/CGI/man-cgi?exports+5"
+   target="_blank">http://unixhelp.ed.ac.uk/CGI/man-cgi?exports+5</A>
+  <BR>
+  P&aacute;gina de manual de <I>fstab</I>: <A href="http://unixhelp.ed.ac.uk/CGI/man-cgi?fstab+5"
+   target="_blank">http://unixhelp.ed.ac.uk/CGI/man-cgi?fstab+5</A>
+  <BR>
+  P&aacute;gina de manual de <I>mount</I>: <A href="http://unixhelp.ed.ac.uk/CGI/man-cgi?mount+8"
+   target="_blank">http://unixhelp.ed.ac.uk/CGI/man-cgi?mount+8</A>
+  <BR>
+ </P>
+ <BR>
+ <!-- seccion de licencia -->
+ <H2>Licencia</H2>
+ <P>
+  Este documento p&uacute;blico puede ser distribuido y/o traducido libremente, siempre y cuando 
+  en el documento resultante se incluyan los datos del autor indicados en la cabecera, esta 
+  secci&oacute;n de licencia, y la url del documento original:<BR>
+ </P>
+</BODY>
+</HTML>

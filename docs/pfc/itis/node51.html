@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node50.html">
+<LINK REL="up" HREF="node47.html">
+<LINK REL="next" HREF="node52.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html852"
+  HREF="node52.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html848"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html844"
+  HREF="node50.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html850"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html853"
+  HREF="node52.html">Conclusiones y trabajos futuros</A>
+<B> Subir:</B> <A NAME="tex2html849"
+  HREF="node47.html">Cuestiones de seguridad</A>
+<B> Anterior:</B> <A NAME="tex2html845"
+  HREF="node50.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html851"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exIKE Probe e IKE Crack
+
+<P>
+Ya hemos avisado anteriormente de la problem&#225;tica de usar claves pre-compartidas
+con el modo agresivo de intercacambio de claves en IKE. Advertimos que exist&#237;an
+herramientas capaces de comprometer la seguridad de IPSec en este caso particular.
+<TT>ikeprobe</TT> es una de esas herramientas, creada por Michael Thumann y
+disponible en <TT><A NAME="tex2html79"
+  HREF="http://www.ernw.de/download/ikeprobe.zip">http://www.ernw.de/download/ikeprobe.zip</A></TT>. Con ella podremos
+obtener la clave de autenticaci&#243;n codificada que se usa en una asociaci&#243;n de
+seguridad concreta, para posteriormente romperla con alg&#250;n software espec&#237;fico
+como <TT>Cain &amp; Abel</TT> (<TT><A NAME="tex2html80"
+  HREF="http://www.oxid.it/cain.html">http://www.oxid.it/cain.html</A></TT>).
+
+<P>
+<TT>ikecrack</TT> es el equivalente para entornos unix de <TT>ikeprobe</TT>,
+que se limita hasta el momento a claves MD5, aunque tiene planes para soportar
+en el futuro SHA1. Se puede encontrar en <TT><A NAME="tex2html81"
+  HREF="http://ikecrack.sourceforge.net/">http://ikecrack.sourceforge.net/</A></TT>.
+Adicionalmente, en <TT><A NAME="tex2html82"
+  HREF="http://www.ernw.de/download/pskattack.pdf">http://www.ernw.de/download/pskattack.pdf</A></TT> tenemos un
+excelente documento por Michael Thumann que explica de forma sencilla c&#243;mo
+atacar sistemas que hacen uso de claves pre-compartidas y el modo agresivo de IKE.
+
+<P>
+Utilizaremos estas herramientas para comprobar la seguridad de nuestras conexiones
+IPSec y las claves pre-compartidas utilizadas, a la hora de establecer el servicio
+entre los terminadores de t&#250;neles de Telef&#243;nica y nuestro propio terminador.
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html852"
+  HREF="node52.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html848"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html844"
+  HREF="node50.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html850"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html853"
+  HREF="node52.html">Conclusiones y trabajos futuros</A>
+<B> Subir:</B> <A NAME="tex2html849"
+  HREF="node47.html">Cuestiones de seguridad</A>
+<B> Anterior:</B> <A NAME="tex2html845"
+  HREF="node50.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html851"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

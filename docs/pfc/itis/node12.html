@@ -1,0 +1,210 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Radius</TITLE>
+<META NAME="description" CONTENT="Radius">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node11.html">
+<LINK REL="up" HREF="node10.html">
+<LINK REL="next" HREF="node13.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html322"
+  HREF="node13.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html318"
+  HREF="node10.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html314"
+  HREF="node11.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html320"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html323"
+  HREF="node13.html">Objetivos</A>
+<B> Subir:</B> <A NAME="tex2html319"
+  HREF="node10.html">Autenticación y Autorización</A>
+<B> Anterior:</B> <A NAME="tex2html315"
+  HREF="node11.html">El protocolo IKE</A>
+ &nbsp; <B>  <A NAME="tex2html321"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00313200000000000000">
+Radius</A>
+</H3>
+
+<P>
+Antes de hablar del Radius en s&#237; mismo resulta conveniente introducir el marco <I>AAA</I>
+al lector, que implica una serie de conceptos b&#225;sicos de los que se encarga el protocolo
+que nos ocupa. AAA son las siglas de <I>Authentication</I>, <I>Authorization</I> y
+<I>Accounting</I>, los tres aspectos de los que se ocupa la arquitectura:
+
+<P>
+<DL>
+<DT><STRONG>Autenticaci&#243;n:</STRONG></DT>
+<DD>es el proceso de verificar si la identidad de una persona o una
+m&#225;quina es efectivamente la que declara. Busca establecer una relaci&#243;n de confianza
+entre los interlocutores. Cuando hablamos de autenticar usuarios el primer ejemplo
+que se nos viene a la cabeza es el del nombre de usuario y la contrase&#241;a, aunque no
+todo es tan simple. Infraestructuras tan completas como los certificados digitales
+son soluciones m&#225;s actuales y complejas al problema de la autenticaci&#243;n.
+</DD>
+<DT><STRONG>Autorizaci&#243;n:</STRONG></DT>
+<DD>involucra la utilizaci&#243;n de reglas y plantillas para decidir si
+un usuario previamente autenticado goza de privilegios suficientes para acceder o no
+a un recurso. Por ejemplo, los permisos en un sistema de ficheros que determinan si
+un usuario puede leer, escribir o incluso ejecutar un archivo.
+</DD>
+<DT><STRONG>Cuentas:</STRONG></DT>
+<DD>entorno a la arquitectura AAA se encuentran las cuentas de usuario,
+que miden y documentan los recursos que un usuario utiliza durante su acceso. Por
+ejemplo, en un sistema UNIX es frecuente limitar a sus usuarios el n&#250;mero de procesos
+que pueden ejecutar concurrentemente, o la cantidad de CPU a utilizar.
+</DD>
+</DL>
+
+<P>
+Centr&#225;ndonos en el aspecto que nos interesa de la arquitectura AAA, la autenticaci&#243;n
+se puede realizar siguiendo diversos esquemas:
+
+<P>
+<DL>
+<DT><STRONG>Secuencia de agente:</STRONG></DT>
+<DD>en esta secuencia, el servidor AAA act&#250;a como delegado
+entre el equipamiento que presta el servicio<A NAME="tex2html42"
+  HREF="footnode.html#foot394"><SUP>1.26</SUP></A> y el usuario final. El usuario contacta
+inicialmente con el servidor AAA, quien autoriza su petici&#243;n y notifica al equipamiento
+de su decisi&#243;n para que se le preste el servicio al usuario. El equipamiento del
+servicio notifica al servidor AAA cuando ha cumplido su petici&#243;n, y el mismo servidor
+AAA notifica en &#250;ltima instancia al usuario.
+</DD>
+<DT><STRONG>Secuencia <I>de tiro</I> o <I>pull</I>:</STRONG></DT>
+<DD>la m&#225;s frecuente en servicios
+<I>dial</I> (de marcaci&#243;n telef&#243;nica) tradicionales. El usuario realiza la petici&#243;n
+directamente al NAS y &#233;ste comprueba con el servidor AAA si debe proporcionar acceso.
+</DD>
+<DT><STRONG>Secuencia <I>de empuje</I> o <I>push</I>:</STRONG></DT>
+<DD>esta secuencia, por contra,
+hace que el usuario pida alg&#250;n tipo de certificaci&#243;n al servidor AAA, la cual
+deber&#225; presentar m&#225;s tarde al equipamiento que presta el servicio para garantizar
+su identidad y acceso al mismo.
+</DD>
+</DL>
+
+<P>
+La primera intuici&#243;n hace pensar en usuarios, equipamientos y servidores de
+autenticaci&#243;n dentro de una misma red corporativa. El hecho es que esto no tiene por
+qu&#233; ser as&#237; en absoluto, y es muy com&#250;n encontrar escenarios en los que existe la
+distinci&#243;n entre empresa que contrata al cliente, y empresa que provee el acceso
+al servicio. Un ejemplo claro son los actuales proveedores de acceso a Internet en
+Espa&#241;a, que suelen utilizar las infraestructuras propiedad de Telef&#243;nica para dar
+acceso al servicio a sus propios usuarios. El due&#241;o de la infraestructura que llega
+al usuario tiene alg&#250;n tipo de acuerdo con el prestador del servicio final de forma
+que el equipamiento del primero ha de ponerse en contacto con los servidores de
+autenticaci&#243;n del segundo. Este ejemplo ilustra muy por encima el concepto de
+<I>roaming</I>.
+
+<P>
+Radius es una implementaci&#243;n concreta de la arquitectura AAA, descrito en [<A
+ HREF="node55.html#rfcradius">8</A>]
+con sumo detalle. Se encuentra ampliamente extendido al ser el primer protocolo
+de su tipo (de hecho, la especificaci&#243;n de Radius es previa al modelo AAA). Provee
+servicios de autenticaci&#243;n, autorizaci&#243;n y cuentas de usuarios de forma gen&#233;rica y
+completamente personalizable, y utiliza un esquema de autorizaci&#243;n de secuencia
+<I>pull</I>, descrito ya previamente.
+
+<P>
+Pero como protocolo ya con bastantes a&#241;os a sus espaldas tiene severas deficiencias
+que lo hacen cada d&#237;a m&#225;s reemplazable. Utiliza MD5 como algoritmo de dispersi&#243;n
+para almacenar contrase&#241;as, algoritmo que por otra parte se ha demostrado inseguro
+hace apenas unos meses. Tiene graves problemas de escalabilidad, admitidos ya en su
+propia RFC. Al estar basado en UDP y no implementar el concepto de <I>conexi&#243;n</I>,
+no permite llevar ning&#250;n tipo de control sobre el uso de un servicio una vez el
+usuario ha sido autenticado.
+
+<P>
+Adicionalmente, Radius es un protocolo <I>salto a salto</I><A NAME="tex2html43"
+  HREF="footnode.html#foot395"><SUP>1.27</SUP></A>, lo que quiere decir que cada servidor Radius en la cadena de autenticaci&#243;n
+tiene acceso a los datos de autenticaci&#243;n del usuario. Este modelo de seguridad puede
+parecer suficiente cuando se utilizan escenarios simples en los que no existe el
+concepto de <I>roaming</I>, pero la realidad es que por lo general las cadenas de
+autenticaci&#243;n son largas e implican diversos servidores de distintas empresas. En
+estas circunstancias, el modelo salto a salto es claramente inseguro.
+
+<P>
+Radius se sirve de identificadores conocidos como <I>realms</I><A NAME="tex2html44"
+  HREF="footnode.html#foot396"><SUP>1.28</SUP></A> para distinguir a los usuarios
+por tipos y saber en todo momento qui&#233;n debe autenticarlos. Los realms pueden
+encontrarse en forma de sufijo o prefijo junto al nombre de usuario, separados
+por caracteres definibles, t&#237;picamente barras o arrobas. De esta forma un servidor
+Radius puede extraer patrones en los nombres de los usuarios en los que basarse
+a la hora de autenticar a un usuario. Por ejemplo, un servidor de la compa&#241;&#237;a
+Telef&#243;nica al que le llegue una petici&#243;n de autenticaci&#243;n con un realm del tipo
+<TT>usuario@telefonica.net</TT> sabr&#225; que para autenticar a ese usuario debe
+consultar, por ejemplo, una base de datos local. Por contra, si recibe un realm
+del tipo <TT>usuario@urjc.es</TT> sabr&#225; inmediatamente que debe redireccionar
+la petici&#243;n a uno de los servidores de autenticaci&#243;n de la Universidad Rey Juan
+Carlos que tenga configurados. Esta es la base conceptual que permite a Radius
+implementar esquemas complejos de roaming.
+
+<P>
+Para informaci&#243;n m&#225;s detallada sobre este extenso protocolo sin duda conviene
+consultar su RFC [<A
+ HREF="node55.html#rfcradius">8</A>]. [<A
+ HREF="node55.html#radius">13</A>] presenta adem&#225;s una excelente
+explicaci&#243;n de la arquitectura AAA en su conjunto y de una implementaci&#243;n concreta
+de Radius: FreeRadius.
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html322"
+  HREF="node13.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html318"
+  HREF="node10.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html314"
+  HREF="node11.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html320"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html323"
+  HREF="node13.html">Objetivos</A>
+<B> Subir:</B> <A NAME="tex2html319"
+  HREF="node10.html">Autenticación y Autorización</A>
+<B> Anterior:</B> <A NAME="tex2html315"
+  HREF="node11.html">El protocolo IKE</A>
+ &nbsp; <B>  <A NAME="tex2html321"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

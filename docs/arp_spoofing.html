@@ -1,0 +1,421 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Envenenamiento ARP</TITLE>
+<META NAME="description" CONTENT="Envenenamiento ARP">
+<META NAME="keywords" CONTENT="arp_spoofing">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="http://blackspiral.org/docs/arp_spoofing.css">
+
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="img/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="img/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="img/prev_g.png">   
+<BR>
+<BR><BR>
+<!--End of Navigation Panel-->
+
+<P>
+
+<P>
+
+<P>
+
+<P>
+<H1 ALIGN="CENTER">Envenenamiento ARP</H1><DIV>
+
+<P ALIGN="CENTER"><STRONG>Jaime P&#233;rez Crespo &lt;japecre@gsyc.escet.urjc.es&gt;</STRONG></P>
+<P ALIGN="CENTER"><STRONG>29 de Junio del 2005</STRONG></P>
+</DIV>
+
+<P>
+
+<H1><A NAME="SECTION00010000000000000000">
+1 Introducci&#243;n</A>
+</H1>
+
+<P>
+Actualmente la forma m&#225;s habitual de construcci&#243;n de redes de &#225;rea
+local consiste en el uso de conmutadores o <I>switches</I> para conectar
+entre s&#237; los equipos inform&#225;ticos que las componen.
+
+<P>
+Un <I>switch</I> trabaja a nivel de enlace, pero de forma diferente
+a como lo hace un concentrador o <I>hub</I>, o un medio compartido
+cl&#225;sico. Al disponer de <I>buffers</I> de almacenamiento, un <I>switch</I>
+es capaz de analizar una trama <I>ethernet</I> antes de replicarla
+por sus bocas. De esta manera, puede comprobar a d&#243;nde va dirigida
+y replicarla <B>exclusivamente</B> por la boca correspondiente al
+destinatario. Esto tiene dos ventajas inmediatas. Por un lado, es
+posible que distintos equipos utilicen la red de forma simult&#225;nea
+sin interferirse entre ellos, lo cual aumenta considerablemente el
+rendimiento efectivo de la misma. Adicionalmente, al no replicar las
+tramas por todas las bocas, evita en un principio la posibilidad de
+<I>sniffing</I> o captura de paquetes de forma fraudulenta.
+
+<P>
+La t&#233;cnica del <I>sniffing</I> se aprovecha de una caracter&#237;stica
+de todas las tarjetas de red conocida como <I>modo prom&#237;scuo</I>.
+B&#225;sicamente, una tarjeta de red descarta todas las tramas que le llegan
+pero no van destinadas a la direcci&#243;n <I>MAC</I> que le corresponde.
+De esta manera s&#243;lo se captura el tr&#225;fico leg&#237;timo que le corresponde
+a la tarjeta. El modo prom&#237;scuo elimina esta limitaci&#243;n, de forma
+que una aplicaci&#243;n tiene acceso a todo el tr&#225;fico que circula por
+la red. Por lo general esto tiene aplicaci&#243;n dentro de la gesti&#243;n
+de la propia red y la resoluci&#243;n de problemas, pero nada impide que
+se utilice de forma maliciosa para obtener informaci&#243;n sensible que
+circule por la misma.
+
+<P>
+
+<H1><A NAME="SECTION00020000000000000000">
+2 Protocolo ARP</A>
+</H1>
+
+<P>
+En las redes actuales que hacen uso de la pila de protocolos <I>TCP/IP</I>,
+como Internet y la mayor&#237;a de redes de &#225;rea local, el encargado de
+establecer una correspondencia entre las direcciones del nivel de
+enlace y del nivel de red es el protocolo <I>ARP</I>. Se trata de
+un protocolo sencillo que permite averiguar la direcci&#243;n hardware
+de nivel de enlace, en <I>ethernet</I> conocida como la direcci&#243;n
+<I>MAC</I>, partiendo de una direcci&#243;n <I>IP</I> de nivel de red.
+De la resoluci&#243;n inversa se encarga el protocolo <I>RARP</I> (<I>Reverse
+ARP</I>).
+
+<P>
+El protocolo se desarrolla en apenas el intercambio de dos mensajes.
+El nodo que desea realizar la traducci&#243;n compone una petici&#243;n <I>ARP</I>
+que encapsula en una trama <I>ethernet</I> con la direcci&#243;n <I>broadcast</I>
+del segmento, FF:FF:FF:FF:FF:FF, solicitando que el nodo
+con la IP buscada responda a dicha petici&#243;n. Esta trama es recogida
+por todos los <I>hosts</I> de la red, al ir dirigida a la direcci&#243;n
+de <I>broadcast</I>. Aquellos nodos cuya direcci&#243;n <I>IP</I> no se
+corresponda con la indicada en la petici&#243;n <I>ARP</I> la ignorar&#225;n
+sin m&#225;s. Si un nodo encuentra una coincidencia en la petici&#243;n con
+su propia <I>IP</I>, enviar&#225; una trama <I>ethernet</I> dirigida al
+emisor de la petici&#243;n identific&#225;ndose a s&#237; mismo. El nodo que origin&#243;
+la petici&#243;n recibir&#225; la respuesta <I>ARP</I> con la direcci&#243;n <I>MAC</I>
+que deseaba averiguar como origen de la trama.
+
+<P>
+De esta forma es posible obtener correspondencias de forma din&#225;mica
+entre direcciones <I>IP</I> de 32 bits y direcciones <I>MAC</I> de
+48 bits, necesarias para que el n&#250;cleo del sistema pueda enviar tramas
+a otras m&#225;quinas, pero de las que no se sabe nada a priori. Esto facilita
+sobremanera la contrucci&#243;n y administraci&#243;n de una red, ya que &#233;sta
+es capaz de afrontar los cambios que surjan en tiempo real.
+
+<P>
+Adicionalmente, y como forma de evitar tr&#225;fico innecesario en la red,
+se optimiza el protocolo con la introducci&#243;n de cach&#233;s de <I>ARP</I>.
+En estas cach&#233;s se almacena la correspondencia entre direcciones <I>MAC</I>
+del segmento de red y las direcciones <I>IP</I> asociadas, de forma
+que antes de enviar una petici&#243;n <I>ARP</I> se trata de resolver buscando
+en las propias entradas de la cach&#233;. Dado que todos los nodos de la
+red reciben tanto las peticiones como las respuestas de <I>ARP</I>,
+un nodo aprovechar&#225; generalmente las respuestas para introducirlas
+en su propia cach&#233;, pese a que no vayan dirigidas a &#233;l mismo. Esto
+hace que una petici&#243;n <I>ARP</I> actualice las cach&#233;s no s&#243;lo del
+que la hace, sino del resto de <I>hosts</I> de la misma red.
+
+<P>
+Es posible servirse del protocolo para otros fines. Gracias a la t&#233;cnica
+<I>ARP gratuito</I>, consistente en el env&#237;o de peticiones <I>ARP</I>
+preguntando por la direcci&#243;n <I>IP</I> propia, una m&#225;quina puede detectar
+conflictos con otros nodos con su misma direcci&#243;n <I>IP</I> (en caso
+de recibir respuesta), e informar al resto de su presencia durante
+el arranque, induciendo la actualizaci&#243;n de sus cach&#233;s.
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+3 T&#233;cnica de envenenamiento ARP</A>
+</H1>
+
+<P>
+El protocolo <I>ARP</I> tiene ciertas carencias que facilitan el uso
+ileg&#237;timo del mismo para recibir tr&#225;fico ajeno. En particular, en
+el caso que nos ocupa, resultan clave las siguientes caracter&#237;sticas:
+
+<P>
+
+<UL>
+<LI>Ausencia absoluta de autenticaci&#243;n en el protocolo. Una m&#225;quina modificar&#225;
+su comportamiento acorde con los paquetes <I>ARP</I> recibidos, sin
+poder determinar de ning&#250;n modo la autenticidad de los mismos.
+</LI>
+<LI>Cach&#233;s sujetas a alteraciones externas. Es posible modificar los contenidos
+de una cach&#233; <I>ARP</I> tan s&#243;lo con construir y enviar una petici&#243;n
+o respuesta adecuada.
+</LI>
+<LI>Actualizaci&#243;n de las cach&#233;s a iniciativa externa. Con la t&#233;cnica de
+<I>ARP gratuito</I>, una m&#225;quina puede actualizar las cach&#233;s <I>ARP</I>
+del resto en cualquier momento.
+</LI>
+</UL>
+Precisamente de estas caracter&#237;sticas nos aprovecharemos en la t&#233;cnica
+del <I>envenenamiento AR</I>P o <I>ARP spoofing</I> para recibir tr&#225;fico
+ajeno en una red construida con conmutadores. Se basa en ``envenenar''
+la cach&#233; <I>ARP</I> de los dos nodos cuya comunicaci&#243;n queremos intervenir
+con informaci&#243;n falsa, haci&#233;ndoles creer que su interlocutor es la
+m&#225;quina atacante. De esta forma, el tr&#225;fico generado entre ambas m&#225;quinas
+tiene como destino nuestra propia m&#225;quina, y desde &#233;sta las tramas
+son reenviadas al destino real, evitando as&#237; la detecci&#243;n del ataque.
+M&#225;s en detalle, un ataque de envenenamiento <I>ARP</I> se produce
+en las siguientes condiciones:
+
+<P>
+
+<OL>
+<LI>La m&#225;quina atacante, conociendo las direcciones IP de los dos nodos
+cuyas comunicaciones se quieren intervenir, resuelve mediante <I>ARP</I>,
+si es necesario, las direcciones <I>MAC</I> que les corresponden.
+</LI>
+<LI>Bien mediante respuestas <I>ARP</I> o mediante la t&#233;cnica de <I>ARP
+gratuito</I>, el atacante modifica el contenido de las cach&#233;s de las
+v&#237;ctimas de forma que para la direcci&#243;n IP de su interlocutor se corresponda
+la direcci&#243;n <I>MAC</I> real del atacante.
+</LI>
+<LI>Cada vez que alguno de los nodos quiera enviar informaci&#243;n al otro,
+resolver&#225; la direcci&#243;n <I>MAC</I> del mismo mediante su cach&#233; de <I>ARP</I>
+previamente envenenada, enviando as&#237; el tr&#225;fico al atacante en vez
+de al destinatario real.
+</LI>
+<LI>El <I>switch</I> enviar&#225; las tramas por la boca del destinatario,
+que en este caso es el atacante. &#201;ste las recibir&#225; y las pasar&#225; a
+la aplicaci&#243;n adecuada, que puede ser un <I>sniffer</I> que capture
+todo el tr&#225;fico. Al estar todas las tramas destinadas a su direcci&#243;n
+<I>MAC</I>, <B>no</B> es necesario que la tarjeta de red se encuentre
+en modo prom&#237;scuo.
+</LI>
+<LI>El atacante reenviar&#225; el contenido de las tramas al destinatario real.
+La &#250;nica diferencia entre la trama original y la modificada es, en
+un principio, la direcci&#243;n <I>ethernet</I> del destinatario, que var&#237;a
+de la del atacante a la de una de las v&#237;ctimas.
+</LI>
+<LI>El nodo correspondiente recibir&#225; el tr&#225;fico como si nada hubiese ocurrido.
+El atacante, haciendo uso del <I>envenenamiento ARP</I> y la t&#233;cnica
+del <I>hombre en el medio</I> o <I>man in the middle</I> ha interceptado
+el tr&#225;fico sin que ninguno de los interlocutores se percate.
+</LI>
+</OL>
+
+<P>
+
+<H1><A NAME="SECTION00040000000000000000">
+4 Herramientas disponibles</A>
+</H1>
+
+<P>
+En la actualidad existen m&#250;ltiples herramientas que permiten, de forma
+m&#225;s o menos sofisticada, realizar ataques de <I>envenenamiento
+ARP</I> para espiar el tr&#225;fico en una red de &#225;rea local o incluso modificarlo
+a voluntad.
+
+<P>
+<DL>
+<DT><STRONG>Cain&amp;Abel</STRONG></DT>
+<DD>es un programa para sistemas operativos de Microsoft
+que permite recuperar contrase&#241;as. Aunque no es su principal funci&#243;n,
+utiliza t&#233;cnicas de <I>ARP spoofing</I> para capturar el tr&#225;fico de
+la red y recuperar o incluso modificar contrase&#241;as. Es capaz de interpretar
+m&#250;ltiples protocolos, incluso <I>VoIP</I> para realizar escuchas telef&#243;nicas
+de forma sencilla. Toda la informaci&#243;n relacionada en [<A
+ HREF="arp_spoofing.html#Mont">4</A>].
+</DD>
+<DT><STRONG>dsniff</STRONG></DT>
+<DD>es un conjunto de herramientas para la auditor&#237;a de redes
+de cualquier tipo, incluyendo aquellas construidas con conmutadores.
+Algunas de sus caracter&#237;sticas m&#225;s llamativas incluyen la intercepci&#243;n
+de tr&#225;fico cifrado con los protocolos <I>HTTPS</I> (<I>HTTP Secure</I>)
+y <I>SSHv1</I> (<I>Secure SHell</I>), aprovechando la debilidad de
+los mismos a la hora de establecer contextos de seguridad basados
+en una infraestructura de clave p&#250;blica (<I>PKI</I>).
+
+<P>
+El uso es bastante sencillo. En primer lugar habilitamos el encaminamiento
+en el n&#250;cleo del sistema:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;echo&nbsp;1&nbsp;&gt;&nbsp;&#92;
+
+<P>
+&gt;&nbsp;/proc/sys/net/ipv4/ip_forward
+</DD>
+</DL>A continuaci&#243;n modificamos las tablas <I>ARP</I> de los dos nodos
+que deseamos intervenir:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;arpspoof&nbsp;-i&nbsp;eth0&nbsp;192.168.0.1&nbsp;&#92;
+
+<P>
+&gt;&nbsp;-t&nbsp;192.168.0.35
+
+<P>
+#&nbsp;arpspoof&nbsp;-i&nbsp;eth0&nbsp;192.168.0.35&nbsp;&#92;
+
+<P>
+&gt;&nbsp;-t&nbsp;192.168.0.1
+
+<P>
+</DD>
+</DL>Por &#250;ltimo arrancamos <I>dsniff</I> indic&#225;ndole que recomponga el
+tr&#225;fico de red en caso de estar interviniendo una comunicaci&#243;n con
+la puerta de enlace del segmento de red:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;dsniff&nbsp;-c&nbsp;-m&nbsp;-i&nbsp;eth0
+</DD>
+</DL><I>dsniff</I> capturar&#225; todos los paquetes intercambiados por los
+nodos, detectando autom&#225;ticamente los protocolos utilizados, y extrayendo
+contrase&#241;as siempre que sea posible. Si consultamos las tablas <I>ARP</I>
+de cada una de las v&#237;ctimas mientras se est&#225; produciendo el ataque,
+observaremos que la direcci&#243;n <I>MAC</I> que contienen para el otro
+nodo ha cambiado a la de la m&#225;quina atacante. En [<A
+ HREF="arp_spoofing.html#Song">5</A>] se puede
+ampliar informaci&#243;n sobre este potente conjunto de programas.
+
+<P>
+</DD>
+<DT><STRONG>arp-sk</STRONG></DT>
+<DD>se define por sus propios autores como una ``navaja suiza''
+para <I>ARP</I>. Se trata de un generador de paquetes <I>ARP</I> que
+permite casi cualquier uso posible del protocolo para realizar numerosos
+ataques, no s&#243;lo aquellos basados en el envenenamiento de cach&#233;s.
+Desde suplantaciones m&#225;s elaboradas, hasta denegaciones de servicio
+a una m&#225;quina o incluso toda la subred. En [<A
+ HREF="arp_spoofing.html#Rayn">6</A>] se incluye
+una gu&#237;a b&#225;sica de los usos posibles de <I>arp-sk</I>.
+</DD>
+<DT><STRONG>arp-tool</STRONG></DT>
+<DD>es un sencillo programa para plataformas <I>UNIX</I> que
+permite realizar envenenamientos de cach&#233;s <I>ARP</I> y otras manipulaciones
+construyendo paquetes personalizados. Se ha hecho muy famoso al ser
+incluido junto a un exploit que permite la obtenci&#243;n de contrase&#241;as
+de los usuarios de los servicios Hotmail y Messenger de Microsoft,
+as&#237; como la denegaci&#243;n de servicio de los clientes o la instalaci&#243;n
+en los mismos de software no deseado. M&#225;s informaci&#243;n en [<A
+ HREF="arp_spoofing.html#Duch">7</A>].
+</DD>
+<DT><STRONG>arpoison</STRONG></DT>
+<DD>es otra herramienta para construir paquetes <I>ARP</I>
+personalizados que permitan realizar ataques de envenenamiento de
+cach&#233;s o similares. Su principal ventaja reside en la posibilidad
+de ajustar el n&#250;mero de paquetes y el lapso de tiempo entre los mismos
+a los par&#225;metros que mejor se ajusten a la red que estamos analizando.
+</DD>
+<DT><STRONG>ettercap</STRONG></DT>
+<DD>es la herramienta por excelencia para realizar ataques
+de tipo <I>man in the middle</I>, utilizando <I>ARP spoofing</I> y
+otras sofisticadas t&#233;cnicas. Permite la monitorizaci&#243;n y filtrado
+del tr&#225;fico de una red o entre dos nodos de la misma, incluyendo la
+disecci&#243;n tanto activa como pasiva de m&#250;ltiples protocolos. Al igual
+que <I>dsniff</I> o <I>Cain &amp; Abel</I>, es capaz de extraer informaci&#243;n
+sensible del tr&#225;fico analizado. Est&#225; disponible para m&#250;ltiples plataformas
+(tanto <I>UNIX</I> como Windows) y provee adem&#225;s varias interfaces
+de uso diferentes, para adaptarse a las circunstancias de la mejor
+forma posible.
+
+<P>
+ettercap es capaz de intervenir comunicaciones cifradas bajo <I>SSL</I>
+en protocolos como <I>HTTPS</I> o <I>SSHv1</I>, lo que lo convierte
+en una herramienta muy polivalente y ampliamente utilizada. Incluye
+la posibilidad de realizar ataques de envenenamiento de <I>DHCP</I>,
+robo de puertos o redirecciones <I>ICMP</I>, as&#237; como el descubrimiento
+preciso de una red de ordenadores. Por si todas estas caracter&#237;sticas
+no fuesen suficientes, implementa una arquitectura escalable por medio
+de <I>plugins</I> que permite ampliar su funcionalidad. En [<A
+ HREF="arp_spoofing.html#Orna">8</A>]
+se encuentra toda la informaci&#243;n relativa a este excelente programa
+de auditor&#237;a y an&#225;lisis de redes inform&#225;ticas.
+
+<P>
+</DD>
+</DL> 
+<H2><A NAME="SECTION00050000000000000000">
+Bibliography</A>
+</H2><DL COMPACT><DD><P></P><DT><A NAME="Stev">1</A>
+<DD>W. Richard Stevens (1994), ``TCP/IP Illustrated, Volume 1: The
+Protocols'', Addison-Wesley Professional.
+<P></P><DT><A NAME="Plum">2</A>
+<DD>David C. Plummer (1982), ``Ethernet Address Resolution Protocol'',
+http://www.faqs.org/rfcs/rfc826.html
+<P></P><DT><A NAME="Whal">3</A>
+<DD>Sean Whalen (2001), ``An introduction to ARP Spoofing'', http://packetstormsecurity.com/papers/
+protocols/intro_to_arp_spoofing.pdf
+<P></P><DT><A NAME="Mont">4</A>
+<DD>Massimiliano Montoro, <I>Cain &amp; Abel</I>, http://www.oxid.it/cain.html
+<P></P><DT><A NAME="Song">5</A>
+<DD>Dug Song, <I>dsniff</I>, http://www.monkey.org/~dugsong/dsniff/
+<P></P><DT><A NAME="Rayn">6</A>
+<DD>Fr&#233;d&#233;ric Raynal, &#201;ric Detoisien, C&#233;dric Blancher, <I>arp-sk</I>, http://www.arp-sk.org/
+<P></P><DT><A NAME="Duch">7</A>
+<DD>Gregory Duchemin (2001), <I>Messenger and Hotmail MITM Exploit
+(Arptool and Neaky)</I>, http://www.securiteam.com/exploits/ 5IP0E2A4UE.html
+<P></P><DT><A NAME="Orna">8</A>
+<DD>Alberto Ornaghi, Marco Valleri, <I>ettercap</I>, http://ettercap.sourceforge.net/
+</DL>
+
+<P>
+
+<H1><A NAME="SECTION00060000000000000000">
+About this document ...</A>
+</H1>
+ <STRONG>Envenenamiento ARP</STRONG><P>
+This document was generated using the
+<A HREF="http://www.latex2html.org/"><STRONG>LaTeX</STRONG>2<tt>HTML</tt></A> translator Version 2002-2-1 (1.71)
+<P>
+Copyright &#169; 1993, 1994, 1995, 1996,
+<A HREF="http://cbl.leeds.ac.uk/nikos/personal.html">Nikos Drakos</A>, 
+Computer Based Learning Unit, University of Leeds.
+<BR>Copyright &#169; 1997, 1998, 1999,
+<A HREF="http://www.maths.mq.edu.au/~ross/">Ross Moore</A>, 
+Mathematics Department, Macquarie University, Sydney.
+<P>
+The command line arguments were: <BR>
+ <STRONG>latex2html</STRONG> <TT>-no_subdir -split 0 -show_section_numbers /tmp/lyx_tmpdir3409tQx4Or/lyx_tmpbuf0/arp_spoofing.tex</TT>
+<P>
+The translation was initiated by  on 2005-07-17<HR>
+<!--Navigation Panel-->
+<IMG WIDTH="81" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next_inactive"
+ SRC="img/nx_grp_g.png"> 
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="img/up_g.png"> 
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="img/prev_g.png">   
+<BR>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2005-07-17
+</ADDRESS>
+</BODY>
+</HTML>

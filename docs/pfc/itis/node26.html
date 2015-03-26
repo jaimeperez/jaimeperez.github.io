@@ -1,0 +1,139 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Software para S/WAN</TITLE>
+<META NAME="description" CONTENT="Software para S/WAN">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node27.html">
+<LINK REL="previous" HREF="node25.html">
+<LINK REL="up" HREF="node25.html">
+<LINK REL="next" HREF="node27.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html525"
+  HREF="node27.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html521"
+  HREF="node25.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html515"
+  HREF="node25.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html523"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html526"
+  HREF="node27.html">Software para encaminamiento</A>
+<B> Subir:</B> <A NAME="tex2html522"
+  HREF="node25.html">Estudio de alternativas</A>
+<B> Anterior:</B> <A NAME="tex2html516"
+  HREF="node25.html">Estudio de alternativas</A>
+ &nbsp; <B>  <A NAME="tex2html524"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00421000000000000000">
+Software para S/WAN</A>
+</H2>
+
+<P>
+S/WAN o <I>Secure Wide Area Network</I> es el t&#233;rmino que designa
+com&#250;nmente redes de &#225;rea ancha con seguridad incorporada, lo cual suele
+implicar el uso de IPSec. Como ya se ha dicho, IPSec es una extensi&#243;n de
+IPv4 que garantiza seguridad a nivel de red. Sus implementaciones suelen
+requerir tanto cambios en la pila de protocolos TCP/IP del n&#250;cleo del
+sistema operativo, como utilidades que se ejecutan a un nivel mayor en
+espacio de usuario.
+
+<P>
+El proyecto por excelencia que implementa IPSec para sistemas Linux es
+<I>FreeS/WAN</I><A NAME="tex2html52"
+  HREF="footnode.html#foot724"><SUP>2.6</SUP></A>. Como
+caracter&#237;stica a destacar sobresale la robustez de esta implementaci&#243;n
+y lo extendido de la misma durante a&#241;os. FreeS/WAN es un proyecto muy
+grande que exige bastante dedicaci&#243;n. Es por ello que surgi&#243; alg&#250;n
+proyecto para extender las funcionalidades de FreeS/WAN a una velocidad
+mayor que la habitual, ya que el desarrollo era demasiado lento en
+ocasiones. De este modo, mientras los desarrolladores de FreeS/WAN se
+dedicaban a mejorar el n&#250;cleo del proyecto, ganando en estabilidad y
+robustez, Super FreeS/WAN, agregaba cada vez m&#225;s funcionalidades
+demandadas por los usuarios.
+
+<P>
+Esta situaci&#243;n se fue agravando paulatinamente por diferencias m&#225;s bien
+pol&#237;ticas en el seno del grupo de desarrollo de FreeS/WAN, y por la
+aparici&#243;n definitiva del n&#250;cleo 2.6 de Linux, que incluye soporte nativo
+para IPSec. El c&#250;mulo de problemas deriv&#243; en el abandono del proyecto
+en el mes de abril del 2004 por parte de sus desarrolladores, liberando
+la que ser&#237;a la &#250;ltima versi&#243;n del mismo.
+
+<P>
+Dos proyectos surgieron a partir de FreeS/WAN continuando el camino
+abierto, openswan [<A
+ HREF="node55.html#openswan">2</A>] y strongswan [<A
+ HREF="node55.html#strongswan">4</A>]. Ambos
+son un <I>fork</I> o bifurcaci&#243;n del proyecto original, con objetivos
+diferentes para el futuro. Se mantienen muy actualizados (tanto el uno
+como el otro han liberado ya nuevas versiones en el a&#241;o 2005) y llevan
+un buen ritmo de desarrollo. A d&#237;a de hoy parece que openswan est&#225;
+ganando una mayor aceptaci&#243;n y n&#250;mero de usuarios, adem&#225;s de contar con
+el patrocinio de importantes empresas del sector como Novell o Suse.
+
+<P>
+En vista de la situaci&#243;n, y dado que ambos proyectos soportan a la
+perfecci&#243;n las funcionalidades que se les requieren para su cometido
+en este trabajo, la decisi&#243;n de utilizar uno u otro estuvo meramente
+sujeta a la estabilidad del proyecto y los visos de continuidad de cada
+uno. Es por esto que se eligi&#243; finalmente openswan como implementaci&#243;n
+de IPSec, cuyo futuro parece garantizado gracias al patrocinio de Novell.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html525"
+  HREF="node27.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html521"
+  HREF="node25.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html515"
+  HREF="node25.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html523"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html526"
+  HREF="node27.html">Software para encaminamiento</A>
+<B> Subir:</B> <A NAME="tex2html522"
+  HREF="node25.html">Estudio de alternativas</A>
+<B> Anterior:</B> <A NAME="tex2html516"
+  HREF="node25.html">Estudio de alternativas</A>
+ &nbsp; <B>  <A NAME="tex2html524"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

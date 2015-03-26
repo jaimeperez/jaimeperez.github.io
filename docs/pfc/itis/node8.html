@@ -1,0 +1,140 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>El protocolo AH</TITLE>
+<META NAME="description" CONTENT="El protocolo AH">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node7.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node9.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html277"
+  HREF="node9.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html273"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html269"
+  HREF="node7.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html275"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html278"
+  HREF="node9.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html274"
+  HREF="node6.html">Confidencialidad e integridad</A>
+<B> Anterior:</B> <A NAME="tex2html270"
+  HREF="node7.html">IPSec</A>
+ &nbsp; <B>  <A NAME="tex2html276"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00312200000000000000">
+El protocolo AH</A>
+</H3>
+
+<P>
+La Cabecera de Autenticaci&#243;n o <I>AH</I><A NAME="tex2html20"
+  HREF="footnode.html#foot379"><SUP>1.13</SUP></A>proporciona en el &#225;mbito de IPSec la autenticaci&#243;n del emisor y la integridad del mensaje
+mediante el c&#225;lculo de un c&#243;digo HMAC<A NAME="tex2html21"
+  HREF="footnode.html#foot380"><SUP>1.14</SUP></A>. Una vez ambos extremos han
+establecido una SA, utilizan la clave acordada durante el intercambio inicial como clave
+sim&#233;trica con la que generar los res&#250;menes que se incluyen en las cabeceras. S&#243;lo ambos
+extremos conocedores de la clave podr&#225;n calcular los res&#250;menes y verificar la integridad
+del paquete. Del mismo modo, un resumen que se corresponde con los contenidos de un paquete
+garantiza la autenticaci&#243;n del emisor, ya que s&#243;lo &#233;ste conocer&#225; la clave con la que
+generar el resumen.
+
+<P>
+En AH, el resumen es calculado sobre la carga &#250;til del paquete y las cabeceras est&#225;ticas
+del mismo, esto es, aquellas que no se modificar&#225;n durante el proceso, lo cual incluye
+las direcciones IP de origen y destino. Esto provoca que AH tenga graves problemas para
+tratar con NAT<A NAME="tex2html22"
+  HREF="footnode.html#foot381"><SUP>1.15</SUP></A>, ya que las pasarelas que utilizan este protocolo modifican la direcci&#243;n
+IP de origen de los paquetes salientes, y la direcci&#243;n IP de destino de los paquetes
+entrantes, acci&#243;n que precisamente AH se encarga de detectar<A NAME="tex2html23"
+  HREF="footnode.html#foot382"><SUP>1.16</SUP></A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:ah"></A><A NAME="383"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.7:</STRONG>
+<FONT SIZE="-1">Cabeceras AH. Se insertan las cabeceras
+entre la cabecera IP original y la carga &#250;til. Se calcula un resumen de las partes
+inmutables del paquete original que se incluye en la cabecera AH.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="132" ALIGN="BOTTOM" BORDER="0"
+ SRC="ah.png"
+ ALT="Image ah">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+No entraremos a explicar en detalle las cabeceras utilizadas por este protocolo,
+mostradas en la figura <A HREF="node8.html#fig:ah">1.7</A>. Puede ampliarse informaci&#243;n en [<A
+ HREF="node55.html#ah">9</A>].
+
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsecciones</STRONG></A>
+
+<UL>
+<LI><A NAME="tex2html279"
+  HREF="node9.html">memoria</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html277"
+  HREF="node9.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html273"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html269"
+  HREF="node7.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html275"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html278"
+  HREF="node9.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html274"
+  HREF="node6.html">Confidencialidad e integridad</A>
+<B> Anterior:</B> <A NAME="tex2html270"
+  HREF="node7.html">IPSec</A>
+ &nbsp; <B>  <A NAME="tex2html276"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

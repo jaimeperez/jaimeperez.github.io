@@ -1,0 +1,195 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>Clave p&uacute;blica en SSH HOWTO</TITLE>
+ 
+ <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <META name="Generator" content="Vi Improved">
+ <META name="Author" content="Jaime Perez">
+
+ <LINK rel="stylesheet" type="text/css" href="http://blackspiral.org/~jperez/css/doc.css">
+</HEAD>
+
+<BODY>
+ <!-- titulo y datos del autor -->
+ <CENTER>
+ <H1>Clave p&uacute;blica en SSH HOWTO</H1>
+ <BR>
+ Jaime P&eacute;rez Crespo (<A href="mailto:japecre at pantuflo.urjc.es">
+ japecre <I>at</I> pantuflo.escet.urjc.es</A>)
+ <BR>
+ <BR>
+ &Uacute;ltima actualizaci&oacute;n: 11 de Julio de 2003
+ </CENTER>
+ <BR>
+ <BR>
+ <BR>
+ <!-- comienzo del texto -->
+ <H2>Motivaci&oacute;n</H2>
+ <P>
+  Aquellos que trabajamos habitualmente con sesiones remotas usando <B>ssh</B> sabemos lo
+  pesado que llega a ser tener que introducir la contrase&ntilde;a cada vez que nos identificamos en una
+  m&aacute;quina remota, m&aacute;s a&uacute;n si trabajamos a la vez en varias m&aacute;quinas,
+  abriendo y cerrando sesiones. Por eso, ser&iacute;a &uacute;til el poder abrir sesiones ssh sin 
+  necesidad de estar tecleando continuamente la contrase&ntilde;a, m&aacute;xime si nuestra 
+  contrase&ntilde;a es larga o complicada, pero, obviamente, sin perder la seguridad que nos garantiza
+  utilizar ssh.
+ </P>
+ <P>
+  Esto es precisamente lo que aprenderemos a hacer en este mini-howto, utilizar un esquema de
+  claves p&uacute;blica y privada que sustituya a la cl&aacute;sica contrase&ntilde;a, para conectar
+  desde una m&aacute;quina en la que podemos confiar, a otra m&aacute;quina que ofrece el servicio
+  de ssh.
+ </P>
+ <BR>
+ <H2>Fundamentos t&eacute;cnicos</H2>
+ <P>
+  El m&eacute;todo explicado aqu&iacute; es muy sencillo, y se basa en el modelo 
+  criptogr&aacute;fico de <I>cifrado asim&eacute;trico</I>. Consiste, b&aacute;sicamente, en un par
+  de claves que se corresponden un&iacute;vocamente entre s&iacute;, generadas con cierto grado
+  de aleatoriedad, y si se quiere, con una frase secreta que s&oacute;lo conoce el due&ntilde;o de las
+  mismas, que permite cifrar las claves con el algoritmo <I>3DES</I>. La <I>clave p&uacute;blica</I> es, 
+  como su nombre indica, de libre utilizaci&oacute;n por cualquier persona. Cuando alguien quiere 
+  encriptar un mensaje que s&oacute;lo nosotros podamos leer, utilizar&aacute; nuestra clave 
+  p&uacute;blica para hacerlo. Posteriormente, nosotros usaremos nuestra <I>clave privada</I> (que
+  solamente su due&ntilde;o conoce) para desencriptar ese mensaje. Cualquier cosa encriptada con una
+  clave p&uacute;blica, s&oacute;lo se podr&aacute; desencriptar con su par privada. El proceso inverso,
+  es decir, encriptar usando la clave privada y desencriptar usando la clave p&uacute;blica, se utiliza para
+  las <I>firmas digitales</I>.
+ </P>
+ <P>
+  Este modelo es muy conocido y utilizado para criptograf&iacute;a en general, y aunque no lo es
+  tanto en el uso que nos ocupa, si es muy &uacute;til y eficiente. Para m&aacute;s informaci&oacute;n
+  sobre el modelo de cifrado asim&eacute;trico consultar las p&aacute;ginas referenciadas en 
+  <A href="ssh.html#enlaces"><I>enlaces interesantes</I></A>.
+ </P>
+ <BR>
+ <H2>Generaci&oacute;n de las claves</H2>
+ <P>
+  Lo primero que tenemos que hacer es generar un par de claves, que ser&aacute;n las que
+  utilicemos para identificarnos. Generaremos un par de claves <I>RSA</I>, y otro <I>DSA</I>. El
+  programa que las genera nos preguntar&aacute; primero d&oacute;nde queremos guardarlas. Todo
+  nuestro trabajo ser&aacute; en el directorio <B>.ssh</B> que cuelga de nuestro home, por lo tanto,
+  creamos dicho directorio (en caso de que no exista), y procedemos a utilizar el generador de claves. 
+  Los nombres para las claves suelen ser <I>id_rsa</I> e <I>id_rsa.pub</I> para las claves RSA 
+  privada y p&uacute;blica, respectivamente, e <I>id_dsa</I> e <I>id_dsa.pub</I> para las claves DSA.
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor icarus]$ ls -al | grep ".ssh"
+[icarus@mordor icarus]$ <B>mkdir ~/.ssh</B>
+[icarus@mordor icarus]$ <B>chmod 700 ~/.ssh</B>
+[icarus@mordor icarus]$ <B>ssh-keygen -b 1024 -t rsa</B>
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/icarus/.ssh/id_rsa): <B>ENTER</B>
+Enter passphrase (empty for no passphrase): <B>ENTER</B>
+[icarus@mordor icarus]$ <B>ssh-keygen -b 1024 -t dsa</B>
+Generating public/private dsa key pair.
+Enter file in which to save the key (/home/icarus/.ssh/id_dsa): <B>ENTER</B>
+Enter passphrase (empty for no passphrase): <B>ENTER</B></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Esto habr&aacute; creado las claves p&uacute;blicas y privadas RSA y DSA y las habr&aacute; 
+  almacenado en nuestro directorio ~/.ssh. El motivo de no haber indicado ninguna <I>passphrase</I>
+  es simple. En nuestro caso, queremos que el login se realice de forma <B>autom&aacute;tica</B>,
+  por lo que si indic&aacute;semos una frase, &eacute;sta se nos pedir&iacute;a cada vez que 
+  inici&aacute;semos una sesi&oacute;n de ssh, con lo cual no habr&iacute;amos hecho nada. Pero el no
+  indicar la passphrase tiene un problema, y es que si alguien consigue de alguna manera nuestras
+  claves privadas, podr&aacute; entrar en el sistema haci&eacute;ndose pasar por nosotros. Ni que
+  decir tiene, por tanto, que debemos mantener bien seguras nuestras claves privadas, de modo que no 
+  es necesaria explicaci&oacute;n alguna de porqu&eacute; damos permisos <B>rwx------</B> a nuestro
+  directorio .ssh.
+ </P>
+ <P>
+  Este sistema, por tanto, no es aconsejable utilizarlo en ordenadores en los que no tengamos una 
+  confianza plena en la seguridad de nuestras claves privadas. No obstante, si a&uacute;n as&iacute;
+  lo usamos y tenemos la sospecha de que alguien ha podido robar nuestras claves privadas, deberemos
+  eliminar inmediatamente dichas claves, y regenerarlas de nuevo utilizando el procedimiento explicado.
+ </P>
+ <BR>
+ <H2>Preparaci&oacute;n del entorno</H2>
+ <P>
+  La configuraci&oacute;n del servidor y del ordenador seguro desde el que queremos acceder es
+  sencilla. En el servidor, han de encontrarse las claves p&uacute;blicas que hemos generado, todas
+  ellas juntas en un archivo llamado <B>authorized_keys</B>, almacenado bajo nuestro directorio
+  <I>~/.ssh</I>. Por contra, en el ordenador desde el que conectaremos debemos tener almacenadas
+  las claves <B>privadas</B>, esto es, los ficheros <I>id_rsa</I> e <I>id_dsa</I>, bajo nuestro
+  directorio ~/.ssh. Es por esto que es tan importante tener una buena seguridad en esta m&aacute;quina,
+  puesto que en ella almacenaremos nuestras <I>credenciales</I>.
+ </P>
+ <P>
+  Preparamos entonces el archivo <I>authorized_keys</I> que necesitaremos colocar en el 
+  servidor, y lo subimos mediante ftp a trav&eacute;s de un t&uacute;nel ssh, algo m&aacute;s sencillo,
+  como <I>scp</I>.
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor icarus]$ <B>cat ~/.ssh/id_rsa.pub ~/.ssh/id_dsa.pub > ~/.ssh/authorized_keys
+</B>[icarus@mordor icarus]$ <B>scp ~/.ssh/authorized_keys japecre@pantuflo.escet.urjc.es/tmp</B>
+<I>[...]</I>
+japecre@pantuflo.escet.urjc.es's password: <B>password del servidor</B></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Esto crea un archivo <I>authorized_keys</I> en el directorio .ssh de nuestro home, y lo copia
+  de forma segura al servidor, en este caso llamado <I>pantuflo.escet.urjc.es</I>, en el que tenemos una
+  cuenta llamada <I>japecre</I>. Tras pedirnos la contrase&ntilde;a y verificarla, el archivo se copia
+  en /tmp/authorized_keys del servidor remoto. Una vez hecho esto, entramos al servidor via ssh con 
+  nuestra cuenta, y movemos el archivo en cuesti&oacute;n a su ubiaci&oacute;n definitiva. Si no existe
+  el directorio .ssh, lo creamos, y le damos los permisos necesarios.
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor icarus]$ <B>ssh japecre@pantuflo.escet.urjc.es</B>
+japecre@pantuflo.escet.urjc.es's password: <B>password del servidor</B>
+japecre@pantuflo:japecre$ <B>mkdir ~/.ssh</B>
+japecre@pantuflo:japecre$ <B>chmod 700 ~/.ssh</B>
+japecre@pantuflo:japecre$ <B>mv /tmp/authorized_keys ~/.ssh/</B></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Ya tenemos todo configurado y listo para probar nuestro nuevo sistema de autenticaci&oacute;n.
+  No tenemos m&aacute;s que salir del servidor y volver a conectarnos por ssh. Si todo hay ido bien,
+  esta vez no nos preguntar&aacute; nuestra contrase&ntilde;a y entraremos directamente.
+ </P>
+ <BR>
+ <!-- seccion de enlaces -->
+ <H2><A name="enlaces">Enlaces Interesantes</A></H2>
+ <P>
+  Sistemas de cifrado asim&eacute;trico: <A href="http://www.gnupg.org/gph/es/manual/x212.html"
+   target ="_blank">http://www.gnupg.org/gph/es/manual/x212.html</A><BR>
+  Caracter&iacute;sticas de OpenSSH: <A href="http://openbsd.bug.it/openssh/es/features.html"
+   target ="_blank">http://openbsd.bug.it/openssh/es/features.html</A><BR>
+  Seguridad en OpenSSH: <A href="http://openbsd.unixtech.be/openssh/es/security.html"
+   target ="_blank">http://openbsd.unixtech.be/openssh/es/security.html</A>
+ </P>
+ <BR>
+ <!-- seccion de licencia -->
+ <H2>Licencia</H2>
+ <P>
+  Este documento p&uacute;blico puede ser distribuido y/o traducido libremente, siempre y cuando 
+  en el documento resultante se incluyan los datos del autor indicados en la cabecera, esta 
+  secci&oacute;n de licencia, y la url del documento original:<BR>
+ </P>
+</BODY>
+</HTML>

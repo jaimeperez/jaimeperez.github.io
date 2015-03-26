@@ -1,0 +1,155 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node46.html">
+<LINK REL="previous" HREF="node44.html">
+<LINK REL="up" HREF="node44.html">
+<LINK REL="next" HREF="node46.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html782"
+  HREF="node46.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html778"
+  HREF="node44.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html772"
+  HREF="node44.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html780"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html783"
+  HREF="node46.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html779"
+  HREF="node44.html">Funcionamiento general</A>
+<B> Anterior:</B> <A NAME="tex2html773"
+  HREF="node44.html">Funcionamiento general</A>
+ &nbsp; <B>  <A NAME="tex2html781"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exAcceso mediante GSM
+
+<P>
+Una vez disponible la infraestructura necesaria por parte de Telef&#243;nica y la
+Universidad Rey Juan Carlos para ofrecer el servicio, los usuarios tan s&#243;lo
+necesitan disponer de un PC conectado a un tel&#233;fono m&#243;vil GSM configurado con
+el software provisto por TME para realizar llamadas de datos.
+
+<P>
+
+<OL>
+<LI>En primer lugar el usuario marcar&#225; el n&#250;mero corto 553 (o el n&#250;mero largo
++34 629 000 553), obteniendo as&#237; acceso al servicio de conexi&#243;n a Internet de
+Telef&#243;nica.
+</LI>
+<LI>Los RAS<A NAME="tex2html71"
+  HREF="footnode.html#foot1132"><SUP>3.5</SUP></A> de acceso GSM de Telef&#243;nica
+consultar&#225;n su Radius corporativo para crear un t&#250;nel.
+</LI>
+<LI>El servidor Radius corporativo de Telef&#243;nica examinar&#225; el nombre de usuario
+que se desea autenticar y su <I>realm</I> asociado. Si &#233;ste coincide con el
+indicado por la universidad, <I>@urjc</I>, el servidor indicar&#225; al RAS un
+<I>router adaptador de t&#250;neles</I> concreto contra el que crear el t&#250;nel.
+</LI>
+<LI>Una vez creado dicho t&#250;nel, ser&#225; el propio router adaptador el que env&#237;e
+una petici&#243;n Radius al servidor de Telef&#243;nica para autenticar al usuario.
+</LI>
+<LI>Nuevamente el Radius corporativo de TME comprobar&#225; el <I>realm</I> o
+<I>mnem&#243;nico</I> del usuario. En caso de pertenecer a la URJC escala la
+petici&#243;n de autenticaci&#243;n al Radius instalado en el terminador de t&#250;neles de la
+universidad, a trav&#233;s de una infraestructura de t&#250;neles que finaliza en &#233;ste.
+</LI>
+<LI>El Radius delegado de la universidad comprueba el realm del usuario que
+pide ser autenticado. Al ser reconocido, escala a su vez la petici&#243;n a uno de
+los servidores Radius de la red de la universidad.
+</LI>
+<LI>Los Radius internos de la universidad autentican al usuario contra el
+directorio activo LDAP<A NAME="tex2html72"
+  HREF="footnode.html#foot1133"><SUP>3.6</SUP></A>e informan de su decisi&#243;n al Radius delegado.
+</LI>
+<LI>El Radius delegado de la universidad responde adecuadamente al servidor
+Radius de TME que le hizo la petici&#243;n.
+</LI>
+<LI>El servidor Radius de TME dar&#225; al usuario por autenticado e informar&#225; al
+router adaptador y a un servicio de DHCP<A NAME="tex2html73"
+  HREF="footnode.html#foot1134"><SUP>3.7</SUP></A>, que asignar&#225; al usuario una
+direcci&#243;n IP del <I>pool</I> GSM determinado por la universidad.
+</LI>
+<LI>A partir de este momento, todo el tr&#225;fico generado por el usuario es
+encaminado hacia la red de la universidad por los t&#250;neles correspondientes
+a la misma (cada corporaci&#243;n goza de t&#250;neles independientes), llegando as&#237;
+hasta el terminador de t&#250;neles IPSec de la misma.
+</LI>
+</OL>
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:gsm"></A><A NAME="1135"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 3.3:</STRONG>
+<FONT SIZE="-1">Secuencia de acceso para
+terminales GSM.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER"><IMG
+  WIDTH="199" HEIGHT="142" ALIGN="BOTTOM" BORDER="0"
+ SRC="gsm.png"
+ ALT="Image gsm">
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html782"
+  HREF="node46.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html778"
+  HREF="node44.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html772"
+  HREF="node44.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html780"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html783"
+  HREF="node46.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html779"
+  HREF="node44.html">Funcionamiento general</A>
+<B> Anterior:</B> <A NAME="tex2html773"
+  HREF="node44.html">Funcionamiento general</A>
+ &nbsp; <B>  <A NAME="tex2html781"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

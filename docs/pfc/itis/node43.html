@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Monitorización de servicios</TITLE>
+<META NAME="description" CONTENT="Monitorización de servicios">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node44.html">
+<LINK REL="previous" HREF="node42.html">
+<LINK REL="up" HREF="node42.html">
+<LINK REL="next" HREF="node44.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html756"
+  HREF="node44.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html752"
+  HREF="node42.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html746"
+  HREF="node42.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html754"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html757"
+  HREF="node44.html">Funcionamiento general</A>
+<B> Subir:</B> <A NAME="tex2html753"
+  HREF="node42.html">Análisis del sistema</A>
+<B> Anterior:</B> <A NAME="tex2html747"
+  HREF="node42.html">Análisis del sistema</A>
+ &nbsp; <B>  <A NAME="tex2html755"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00531000000000000000">
+Monitorizaci&#243;n de servicios</A>
+</H2>
+
+<P>
+No debemos olvidar configurar un sistema de logs como <I>syslog</I> para que
+guarde registros de toda la actividad de nuestros servicios en alguna parte. En
+particular nos ser&#225; especialmente &#250;til para trazar el funcionamiento de IPSec.
+Por lo general los logs de IPSec se situar&#225;n en <TT>/var/log/secure</TT>.
+Podemos, por ejemplo, ver en tiempo real los mensajes que se generen seg&#250;n se
+realice la negociaci&#243;n IKE, de forma muy sencilla:
+
+<P>
+<PRE>
+minimum root # tail -f /var/log/secure
+</PRE>
+
+<P>
+El propio IPSec proporciona comandos muy &#250;tiles a la hora de depurar su funcionamiento.
+Por ejemplo, con <TT>ipsec auto -status</TT> podremos comprobar el correcto
+establecimiento de las sesiones IKE y los par&#225;metros asociados a los t&#250;neles
+IPSec que se establezcan con los terminadores de Telef&#243;nica. Otra herramienta
+muy &#250;til es <TT>ipsec barf</TT>, que genera gran cantidad de informaci&#243;n de todo
+tipo relativa a la configuraci&#243;n de openswan y del sistema, as&#237; como un log del
+proceso de negociaci&#243;n y establecimiento de los t&#250;neles IPSec. Por lo general
+no es posible tratar toda la informaci&#243;n que proporciona directamente desde la
+pantalla, por lo que conviene redirigir su salida a un fichero para su posterior
+an&#225;lisis: <TT>ipsec barf &gt; ipsec.log</TT>.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html756"
+  HREF="node44.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html752"
+  HREF="node42.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html746"
+  HREF="node42.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html754"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html757"
+  HREF="node44.html">Funcionamiento general</A>
+<B> Subir:</B> <A NAME="tex2html753"
+  HREF="node42.html">Análisis del sistema</A>
+<B> Anterior:</B> <A NAME="tex2html747"
+  HREF="node42.html">Análisis del sistema</A>
+ &nbsp; <B>  <A NAME="tex2html755"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

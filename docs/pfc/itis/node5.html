@@ -1,0 +1,317 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Redes privadas virtuales</TITLE>
+<META NAME="description" CONTENT="Redes privadas virtuales">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node6.html">
+<LINK REL="previous" HREF="node4.html">
+<LINK REL="up" HREF="node4.html">
+<LINK REL="next" HREF="node6.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html240"
+  HREF="node6.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html236"
+  HREF="node4.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html230"
+  HREF="node4.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html238"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html241"
+  HREF="node6.html">Confidencialidad e integridad</A>
+<B> Subir:</B> <A NAME="tex2html237"
+  HREF="node4.html">Conceptos y definiciones</A>
+<B> Anterior:</B> <A NAME="tex2html231"
+  HREF="node4.html">Conceptos y definiciones</A>
+ &nbsp; <B>  <A NAME="tex2html239"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00311000000000000000">
+Redes privadas virtuales</A>
+</H2>
+
+<P>
+El t&#233;rmino <I>Red Privada Virtual</I>, frecuentemente referido por <I>VPN</I>
+<A NAME="tex2html3"
+  HREF="footnode.html#foot363"><SUP>1.3</SUP></A>, designa conceptos
+muy diferentes dependiendo del interlocutor que lo utilice. Por lo general, se asume
+un significado com&#250;n y m&#237;nimo que lo designa como una extensi&#243;n de una red local o
+privada a trav&#233;s de una red mayor y p&#250;blica, como bien puede ser Internet. El objetivo
+b&#225;sico, por tanto, consiste en proporcionar conectividad completa entre dos redes
+privadas diferentes y separadas, a trav&#233;s de una tercera, de modo que el usuario
+de cualquiera de estas redes realmente no pueda apreciar separaci&#243;n alguna.
+Parad&#243;jicamente, y como veremos m&#225;s adelante, es posible utilizar redes privadas
+virtuales precisamente para todo lo contrario, separar una misma red en partes
+diferentes e independientes entre s&#237;.
+
+<P>
+Por lo general cuando hablamos de redes privadas virtuales nos referimos a su
+implementaci&#243;n concreta m&#225;s popular, unir redes locales a trav&#233;s de Internet de una
+forma segura. En los &#250;ltimos a&#241;os &#233;sta se ha convertido sin duda en la aplicaci&#243;n
+m&#225;s utilizada de este tipo de redes, debido a la r&#225;pida expansi&#243;n y abaratamiento
+de las comunicaciones a trav&#233;s de una red global, <I>Internet</I>. N&#243;tese que
+introducimos el concepto de seguridad del que no hab&#237;amos hablado en absoluto
+anteriormente, y que no est&#225; necesariamente ligado a las redes privadas virtuales.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:vpn"></A><A NAME="364"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.1:</STRONG>
+<FONT SIZE="-1">Esquema
+de una VPN a trav&#233;s de Internet. Se utiliza un medio de acceso p&#250;blico que permita
+la interconexi&#243;n de las dos redes <I>A</I> y <I>B</I> de forma que se unan
+en una &#250;nica red <I>virtual</I> cuyo acceso siga siendo restringido.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="65" ALIGN="BOTTOM" BORDER="0"
+ SRC="vpn.png"
+ ALT="Image vpn">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Podemos distinguir varios tipos de redes privadas virtuales atendiendo a la forma
+de implementarlas:
+
+<P>
+<DL>
+<DT><STRONG>De acceso remoto:</STRONG></DT>
+<DD>permiten a un usuario conectado a Internet desde alg&#250;n
+punto remoto acceder a una red corporativa y sus servicios asociados. Un ejemplo
+de esto son trabajadores que realizan su actividad desde su propia casa, pero
+necesitan acceso a la red de su empresa. A trav&#233;s de su propia conexi&#243;n a Internet
+establecen una red privada virtual que les permite trabajar como si estuviesen
+f&#237;sicamente dentro de la red privada.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:vpn_remoto"></A><A NAME="365"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.2:</STRONG>
+<FONT SIZE="-1">Esquema
+de una VPN de acceso remoto. Un usuario con conexi&#243;n a Internet establece una
+VPN con la red corporativa, pudiendo acceder a la misma como usuario leg&#237;timo.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="65" ALIGN="BOTTOM" BORDER="0"
+ SRC="vpn_remoto.png"
+ ALT="Image vpn_remoto">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+</DD>
+<DT><STRONG>Punto a punto:</STRONG></DT>
+<DD>unen distintas subredes de forma que la red privada resultante
+es el conjunto de todas ellas enlazadas en una VPN. Es un modelo t&#237;pico de entidades
+bancarias, en el que las sucursales establecen una red privada virtual con un
+servidor central corporativo. Permiten eliminar los altos costes de infraestructuras
+en redes y v&#237;nculos punto a punto propios, dirigiendo todo el tr&#225;fico a trav&#233;s de
+una conexi&#243;n a Internet mucho m&#225;s barata.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:vpn_punto"></A><A NAME="366"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.3:</STRONG>
+<FONT SIZE="-1">Esquema
+de una VPN punto a punto. La red local de una sucursal se conecta mediante una red
+privada virtual a un servidor central, que une respectivamente todas las sucursales
+en una misma red.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="65" ALIGN="BOTTOM" BORDER="0"
+ SRC="vpn_punto.png"
+ ALT="Image vpn_punto">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+</DD>
+<DT><STRONG>Internas:</STRONG></DT>
+<DD>una aplicaci&#243;n realmente desconocida pero muy &#250;til y potente consiste
+en establecer redes privadas virtuales dentro de una misma red local. El objetivo &#250;ltimo
+es aislar partes de la red y sus servicios entre s&#237;, aumentando la seguridad. Una
+aplicaci&#243;n muy t&#237;pica de este modelo se utiliza para aumentar la seguridad en redes de
+acceso inal&#225;mbrico, separ&#225;ndolas as&#237; de la red f&#237;sica para evitar posibles fugas
+de informaci&#243;n o accesos no autorizados.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:vpn_interna"></A><A NAME="367"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.4:</STRONG>
+<FONT SIZE="-1">Esquema
+de una VPN interna. Se utiliza una VPN para restringir el acceso a ciertas partes de
+la red o usuarios concretos.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="65" ALIGN="BOTTOM" BORDER="0"
+ SRC="vpn_interna.png"
+ ALT="Image vpn_interna">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+</DD>
+</DL>
+
+<P>
+Existen dos formas t&#237;picas de implementar una red privada virtual, basadas en
+<I>hardware</I> y en <I>software</I> respectivamente. En el fondo ambas soluciones
+implementan los mismos protocolos y soluciones t&#237;picas para construir redes privadas
+virtuales, aunque en distintos niveles. L&#243;gicamente, una soluci&#243;n <I>hardware</I>
+ofrecer&#225; un rendimiento mayor y permitir&#225; construir sistemas complejos y grandes de
+forma sencilla. Como contrapartida, las soluciones <I>software</I> permitir&#225;n
+menor rendimiento, pero un aumento en la flexibilidad de configuraci&#243;n.
+
+<P>
+La mayor&#237;a de estos productos se centran en el actual est&#225;ndar de facto para redes
+privadas virtuales, <I>IPSec</I><A NAME="tex2html8"
+  HREF="footnode.html#foot368"><SUP>1.4</SUP></A> , aunque cada vez aparecen m&#225;s soluciones basadas
+en otros protocolos de distinto nivel, como <I>PPTP</I><A NAME="tex2html9"
+  HREF="footnode.html#foot369"><SUP>1.5</SUP></A>, <I>L2TP</I>
+<A NAME="tex2html10"
+  HREF="footnode.html#foot370"><SUP>1.6</SUP></A>o el cada vez m&#225;s popular <I>SSL/TLS</I><A NAME="tex2html11"
+  HREF="footnode.html#foot371"><SUP>1.7</SUP></A>. Todos estos sistemas establecen
+<I>t&#250;neles</I> entre dos puntos de una red (los que son, estrictamente, los extremos
+de la red privada virtual) a trav&#233;s de los cuales se <I>encapsula</I> el tr&#225;fico
+intercambiado entre las dos redes a unir.
+
+<P>
+Estos &#250;ltimos conceptos son la base te&#243;rica en la que se sustentan las redes
+privadas virtuales. El enlace se establece entre dos equipos que tienen acceso directo
+tanto a las subredes que se pretenden comunicar, como a la red que servir&#225; de apoyo
+para la red privada virtual, como ya se ha dicho, generalmente Internet. Se establece
+una comunicaci&#243;n entre estos dos equipos, de forma que todo el tr&#225;fico que se
+dirige desde una de las subredes a la otra a trav&#233;s de la VPN es enviado desde el
+<I>terminador</I> de la primera al equipo <I>terminador</I> de la segunda.
+
+<P>
+Cuando un paquete cualquiera atraviesa la red privada virtual, el terminador saliente
+encapsula dicho paquete dentro de otro construido especialmente, correspondiente a
+alguno de los protocolos mencionados anteriormente, por norma general IPSec. El destino
+de ese paquete no ser&#225; el destino original del paquete <I>encapsulado</I>, sino
+el terminador de la subred de destino. Una vez el paquete llega a trav&#233;s de la red
+p&#250;blica al otro extremo de la VPN, el terminador correspondiente recoge dicho paquete
+y extrae su contenido intacto, redirigi&#233;ndolo tal cual a la red local de su extremo.
+Este es el concepto de <I>t&#250;nel</I> anteriormente mencionado, tr&#225;fico que se
+encapsula como carga &#250;til de un protocolo utilizado para establecer la red privada
+virtual entre los dos terminadores del t&#250;nel, extremos de la VPN.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:tunel"></A><A NAME="372"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.5:</STRONG>
+<FONT SIZE="-1">Concepto de tunelado. El paquete
+original es encapsulado dentro de un nuevo paquete en el terminador que lo env&#237;a a
+trav&#233;s de la VPN, y el otro terminador lo extrae, envi&#225;ndolo tal cual a su destino.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="65" ALIGN="BOTTOM" BORDER="0"
+ SRC="tunel.png"
+ ALT="Image tunel">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Pese a que como se ha dicho, la funcionalidad principal que se espera de una red privada
+virtual es dar acceso a una red local desde puntos separados en el espacio, sin
+necesidad de realizar un gran desembolso en infraestructuras, se suele considerar
+tambi&#233;n b&#225;sico que la soluci&#243;n alternativa proporcione varios niveles de seguridad.
+En este sentido entendemos por seguridad dos aspectos fundamentales, la privacidad e
+integridad de las comunicaciones, y la autenticaci&#243;n de los usuarios y equipos que
+utilizan la red.
+
+<P>
+Dada la alta frecuencia con la que se utiliza Internet como medio sobre el que
+sustentar una VPN, es necesario establecer mecanismos adicionales que aseguren
+que el tr&#225;fico generado se mantiene fuera de los ojos de usuarios no autorizados.
+Al utilizar una red p&#250;blica es imposible controlar qu&#233; uso se hace de las
+infraestructuras y qui&#233;n tiene acceso a ellas. De hecho, ni siquiera es posible
+controlar cu&#225;les son las infraestructuras que se utilizar&#225;n, que pueden variar a
+lo largo del tiempo. En estas condiciones es necesario recurrir a sofisticados
+esquemas criptogr&#225;ficos que aseguren la privacidad de las comunicaciones.
+
+<P>
+M&#225;s a&#250;n, resulta de inter&#233;s garantizar que el tr&#225;fico no resulta alterado de su
+paso por la red p&#250;blica de comunicaciones. Al igual que alguien podr&#237;a monitorizar
+la red y obtener informaci&#243;n sensible correspondiente al tr&#225;fico generado por la
+VPN, el que ese tr&#225;fico viaje cifrado no asegura que esa misma persona no pudiese
+modificarlo de alguna forma. De modo que no s&#243;lo nos interesa cifrar los datos
+transmitidos, sino tambi&#233;n buscar alg&#250;n mecanismo que nos asegure que llegan
+a su destino tal cual salieron del origen.
+
+<P>
+Por otro lado, se hace patente la necesidad de identificar a los usuarios de la red
+y comprobar que su identidad sea correcta y adecuada para acceder a los recursos
+proporcionados. La aproximaci&#243;n t&#237;pica que se utiliza para solventar este problema
+trabaja a dos niveles, autenticando por un lado el equipo inform&#225;tico desde el que
+se utiliza el servicio, y por otro lado al usuario que se encuentra detr&#225;s del mismo.
+Si alguno de estos dos elementos falla no podremos garantizar que alguien no autorizado
+acceda a los recursos, y por tanto la privacidad e integridad de las comunicaciones
+subyacentes no tienen sentido.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html240"
+  HREF="node6.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html236"
+  HREF="node4.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html230"
+  HREF="node4.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html238"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html241"
+  HREF="node6.html">Confidencialidad e integridad</A>
+<B> Subir:</B> <A NAME="tex2html237"
+  HREF="node4.html">Conceptos y definiciones</A>
+<B> Anterior:</B> <A NAME="tex2html231"
+  HREF="node4.html">Conceptos y definiciones</A>
+ &nbsp; <B>  <A NAME="tex2html239"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

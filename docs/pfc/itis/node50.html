@@ -1,0 +1,115 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node51.html">
+<LINK REL="previous" HREF="node49.html">
+<LINK REL="up" HREF="node47.html">
+<LINK REL="next" HREF="node51.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html842"
+  HREF="node51.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html838"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html832"
+  HREF="node49.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html840"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html843"
+  HREF="node51.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html839"
+  HREF="node47.html">Cuestiones de seguridad</A>
+<B> Anterior:</B> <A NAME="tex2html833"
+  HREF="node49.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html841"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exIKE Scan
+
+<P>
+Un programa muy &#250;til desarrollado por Roy Hill que registra las <I>huellas</I>
+de un servicio de intercambio de claves IKE, y las analiza para tratar de
+averiguar a qu&#233; software se corresponden. &#201;ste puede ser un primer paso para
+tratar de vulnerar la seguridad de un servicio IPSec, ya que conociendo qu&#233;
+software se encuentra detr&#225;s del mismo, podemos buscar en sitios web que publican
+listas de vulnerabilidades alguna que afecte al software al que nos enfrentamos.
+<TT>ike-scan</TT> se encuentra disponible en <TT><A NAME="tex2html78"
+  HREF="http://www.nta-monitor.com/ike-scan/">http://www.nta-monitor.com/ike-scan/</A></TT>.
+
+<P>
+Un atacante que consiga utilizar esta herramienta contra nuestro terminador de
+t&#250;neles desde una direcci&#243;n IP reconocida por el servicio IPSec podr&#237;a obtener
+un indicio concreto y muy efectivo de la identidad del software que implementa
+IPSec en este PC. En concreto, la identificaci&#243;n positiva establece que se trata
+de un equipo ejecutando el sistema operativo Linux y el software para VPN
+FreeS/WAN. Sin embargo, para eso deber&#237;a introducirse previamente en una
+de esas m&#225;quinas reconocidas. En caso contrario, el resultado que obtendr&#237;a no
+le proporcionar&#237;a informaci&#243;n alguna:
+
+<P>
+<PRE>
+fury ike-scan-1.7 # ike-scan --showbackoff 193.147.184.193
+Starting ike-scan 1.7 with 1 hosts (http://www.nta-monitor.com/ike-scan/)
+
+Ending ike-scan 1.7: 1 hosts scanned in 2.499 seconds (0.40 hosts/sec).
+0 returned handshake; 0 returned notify
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html842"
+  HREF="node51.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html838"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html832"
+  HREF="node49.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html840"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html843"
+  HREF="node51.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html839"
+  HREF="node47.html">Cuestiones de seguridad</A>
+<B> Anterior:</B> <A NAME="tex2html833"
+  HREF="node49.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html841"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

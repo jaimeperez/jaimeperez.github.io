@@ -1,0 +1,2846 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Instalaci&#243;n y configuraci&#243;n de una arquitectura PAPI</TITLE>
+<META NAME="description" CONTENT="Instalaci&#243;n y configuraci&#243;n de una arquitectura PAPI">
+<META NAME="keywords" CONTENT="papi">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="http://blackspiral.org/docs/papi.css">
+
+</HEAD>
+
+<BODY >
+
+<P>
+
+<P>
+
+<P>
+<H1 ALIGN="CENTER">Instalaci&#243;n y configuraci&#243;n de una arquitectura PAPI</H1>
+<DIV>
+
+<P ALIGN="CENTER"><STRONG>Jaime P&#233;rez Crespo &lt;jaime.perez@urjc.es&gt;</STRONG></P>
+</DIV>
+
+<H3>Abstract:</H3>
+<DIV>
+Este documento cubre la instalaci&#243;n y configuraci&#243;n de una arquitectura
+PAPI de servicios web. A lo largo del mismo se utilizar&#225;n ejemplos
+y casos reales de la implantaci&#243;n de PAPI en la Universidad Rey Juan
+Carlos.
+</DIV>
+<P>
+
+<P>
+
+<H1><A NAME="SECTION00010000000000000000">
+1 Introducci&#243;n</A>
+</H1>
+
+<P>
+PAPI es un sistema que permite la autenticaci&#243;n y autorizaci&#243;n de
+usuarios a trav&#233;s de una red de servicios web. Sus principales bazas,
+en las que nos centraremos aqu&#237;, son la implementaci&#243;n del concepto
+<I>single-sign-on</I> (s&#243;lo es necesario autenticarse una vez para
+acceder a todos los servicios ofrecidos) y la capacidad de actuar
+como proxy de reescritura transparente al usuario, de forma que permite
+anteponerse a pol&#237;ticas de acceso de filtrado por IP de origen mediante
+una autenticaci&#243;n previa.
+
+<P>
+La arquitectura de PAPI utiliza una serie de conceptos que es necesario
+tener claros en todo momento a la hora de implantar un servicio con
+&#233;l.
+
+<P>
+
+<OL>
+<LI><I>Servidor de autenticaci&#243;n</I> o <I>AS</I>. Es el encargado de autenticar
+a los usuarios en un &#250;nico punto de la red, de la forma que se desee,
+y recolectar informaci&#243;n sobre los mismos para proporcion&#225;rsela a
+los puntos de acceso. Emite <I>aserciones</I> con la informaci&#243;n necesaria
+para verificar la identidad de los usuarios. Por lo general, consulta
+un fichero con usuarios, una base de datos, o un LDAP para autenticar.
+</LI>
+<LI><I>Puntos de acceso</I> o <I>PoA</I>. Son los encargados de proteger
+el acceso a un recurso concreto. Utilizan las <I>aserciones</I> de
+los <I>servidores de autenticaci&#243;n</I> en los que conf&#237;an para verificar
+la identidad de sus usuarios y obtener informaci&#243;n adicional sobre
+los mismos. Un <I>punto de acceso</I> garantizar&#225; el acceso al recurso
+que protege siempre y cuando alg&#250;n <I>servidor de autenticaci&#243;n</I>
+en el que conf&#237;a le proporcione una <I>aserci&#243;n</I> indicando que
+ha autenticado previamente al usuario, y utilizando la informaci&#243;n
+adicional que &#233;ste le puede disponer para autorizaci&#243;n. Los <I>PoA</I>
+pueden funcionar de m&#250;ltiples formas, dependiendo de los requisitos
+de la aplicaci&#243;n que se quiere proteger:
+
+<P>
+
+<OL>
+<LI><I>PoA</I> convencional. Escrito en Perl, se integra directamente
+con el servidor web Apache (versiones 1.x, la rama 2.x no est&#225; soportada
+hasta la fecha). Este tipo de <I>PoA</I> permite usar los mecanismos
+propios del servidor web para permitir el acceso a la aplicaci&#243;n que
+sirve el mismo o denegarla utilizando una simple p&#225;gina de error <I>HTTP
+403 Forbidden</I>.
+</LI>
+<LI><I>PoA</I> en modo proxy de reescritura. En este caso, el <I>PoA</I>
+protege el acceso a una aplicaci&#243;n remota que no se encuentra en su
+mismo servidor web. El <I>PoA</I> act&#250;a como un proxy web convencional,
+editando los contenidos HTML que sirve para que los enlaces hagan
+referencia a &#233;l mismo en lugar de al servicio final que se protege.
+Su principal uso consiste en dar acceso autenticado a aplicaciones
+con filtrado por IP de origen, por ejemplo, p&#225;ginas con recursos bibliogr&#225;ficos
+a las que se puede acceder &#250;nicamente desde direcciones IP suscritas.
+</LI>
+<LI><I>PoA</I> con autocompletado de formularios. En caso de un <I>PoA</I>
+que, actuando como proxy de reescritura, necesite un nivel de autenticaci&#243;n
+m&#225;s impuesto por la aplicaci&#243;n protegida (t&#237;picamente, nombre de usuario
+y contrase&#241;a), el autocompletado de formularios permite obtener la
+informaci&#243;n necesaria de las aserciones realizadas por el <I>AS</I>,
+pudiendo as&#237; rellenar de forma autom&#225;tica y transparente los formularios
+necesarios. &#218;til en casos en los que se desea proteger una aplicaci&#243;n
+remota con el proxy de reescritura, a la que no se tiene acceso para
+integrar directamente con PAPI, y que requiere al usuario identificarse
+de alguna manera adicional.
+</LI>
+<LI><I>PoA</I> en PHP. Una versi&#243;n reducida de un punto de acceso, que
+permite autenticar a un usuario mediante la arquitectura PAPI, desde
+una aplicaci&#243;n escrita en PHP y mediante una simple llamada a una
+funci&#243;n. Su uso m&#225;s generalizado consiste en la delegaci&#243;n (no tiene
+por qu&#233; ser exclusiva) de la autenticaci&#243;n en PAPI en lugar de la
+propia aplicaci&#243;n.
+</LI>
+</OL>
+</LI>
+<LI><I>Agrupaciones de puntos de acceso</I> o <I>GPoA</I>. Se trata de
+un <I>PoA</I> que no protege ning&#250;n recurso en concreto, y en su lugar
+da acceso a un grupo de <I>PoAs</I> con caracter&#237;sticas comunes de
+validaci&#243;n. Permite personalizar la cantidad de informaci&#243;n del usuario
+que se proporciona a los <I>PoA</I>, interponi&#233;ndose entre &#233;stos y
+el <I>AS</I>, de forma que cada <I>PoA</I> reciba exclusivamente la
+informaci&#243;n necesaria para su autenticaci&#243;n y autorizaci&#243;n.
+</LI>
+</OL>
+Para informaci&#243;n m&#225;s detallada sobre PAPI, el protocolo subyacente
+e instalaci&#243;n y configuraci&#243;n del sistema, se recomienda consultar
+el sitio web que <I>RedIris</I> dispone a tal efecto en <I>http://papi.rediris.es/doc/</I>.
+
+<P>
+
+<H1><A NAME="SECTION00020000000000000000">
+2 Instalaci&#243;n y configuraci&#243;n</A>
+</H1>
+
+<P>
+A continuaci&#243;n se proporcionan algunas consideraciones b&#225;sicas para
+la instalaci&#243;n de todos los elementos que componen un servicio PAPI.
+Como convenci&#243;n, los comandos se indicar&#225;n precedidos del <I>prompt</I>
+del usuario <I>root</I> (#).
+
+<P>
+
+<H2><A NAME="SECTION00021000000000000000">
+2.1 Servidor de autenticaci&#243;n</A>
+</H2>
+
+<P>
+En primer lugar configuramos un servidor web en el que instalaremos
+nuestro servidor de autenticaci&#243;n. Lo mejor es redirigir todas las
+peticiones que reciba dicho servidor web a la URL del <I>AS</I> y
+utilizar SSL. En nuestro caso vamos a utilizar un <I>virtual host</I>
+de apache, que configuraremos de la siguiente manera:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>NameVirtualHost&nbsp;192.168.84.92:80
+
+<P>
+NameVirtualHost&nbsp;192.168.84.92:443
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>www.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;<B>RedirectMatch&nbsp;(.*)</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer</B>
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>www.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;<B>ErrorDocument&nbsp;404</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer</B>
+
+<P>
+&nbsp;&nbsp;<B>RedirectMatch&nbsp;/index.html</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer</B>
+
+<P>
+&nbsp;&nbsp;&lt;IfModule&nbsp;mod_ssl.c&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;SSLEngine&nbsp;on
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;SSLCertificateFile&nbsp;/etc/apache/ssl.crt/server.crt
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;SSLCertificateKeyFile&nbsp;/etc/apache/ssl.key/server.key
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;SetEnvIf&nbsp;User-Agent&nbsp;&#34;.*MSIE.*&#34;&nbsp;nokeepalive&nbsp;ssl-unclean-shutdown
+
+<P>
+&nbsp;&nbsp;&lt;/IfModule&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>Descargamos y descomprimimos el c&#243;digo fuente de la &#250;ltima versi&#243;n
+del servidor de autenticaci&#243;n:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;cd&nbsp;/root
+
+<P>
+#&nbsp;wget&nbsp;ftp://ftp.rediris.es/rediris/papi/PAPI-AS.1.4.0.tar.gz
+
+<P>
+#&nbsp;tar&nbsp;xzvf&nbsp;PAPI-AS.1.4.0.tar.gz
+
+<P>
+#&nbsp;cd&nbsp;PAPI-1.4.0
+</DD>
+</DL>Procedemos a compilar e instalar el servidor. Antes de nada debemos
+asegurarnos de que tenemos los siguientes prerrequisitos (e instalarlos
+si no cumplimos alguno):
+
+<P>
+
+<OL>
+<LI>Perl &gt;= 5.6
+</LI>
+<LI>openssl &gt;= 0.9.5 (recomendado openssl &gt;=
+0.9.6g)
+</LI>
+<LI>Perl Convert::ASN1
+</LI>
+<LI>Perl DB_File
+</LI>
+<LI>Perl Digest::MD5
+</LI>
+<LI>Perl MIME::Base64
+</LI>
+<LI>Perl URI::Escape
+</LI>
+<LI>Perl CGI::Lite
+</LI>
+</OL>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;apt-get&nbsp;install&nbsp;perl&nbsp;openssl&nbsp;libssl0.9.7&nbsp;libssl-dev
+
+<P>
+#&nbsp;apt&nbsp;get&nbsp;install&nbsp;libconvert-asn1-perl&nbsp;liburi-perl
+
+<P>
+#&nbsp;apt&nbsp;get&nbsp;install&nbsp;libmd5-perl&nbsp;libmime-perl&nbsp;libdb-file-lock-perl
+
+<P>
+#&nbsp;cd&nbsp;<B>/usr/share/perl/5.8.4/CGI/</B>
+
+<P>
+#&nbsp;<B>wget&nbsp;http://search.cpan.org/src/SMYLERS/CGI-Lite-2.02/Lite.pm</B>
+
+<P>
+#&nbsp;cd&nbsp;<B>/root/PAPI-1.4.0/</B>
+
+<P>
+#&nbsp;perl&nbsp;Makefile.PL
+
+<P>
+<I>You&nbsp;must&nbsp;provide&nbsp;a&nbsp;location&nbsp;for&nbsp;installing&nbsp;the&nbsp;PAPI</I>
+
+<P>
+<I>Authentication&nbsp;Server&nbsp;software.&nbsp;It&nbsp;must&nbsp;be&nbsp;a&nbsp;directory</I>
+
+<P>
+<I>configured&nbsp;to&nbsp;hold&nbsp;CGI&nbsp;programs&nbsp;in&nbsp;your&nbsp;Apache</I>
+
+<P>
+<I>installation&nbsp;[/usr/local/apache/cgi-bin]</I>
+
+<P>
+<B>/usr/lib/cgi-bin</B>
+
+<P>
+<I>The&nbsp;Authentication&nbsp;Server&nbsp;CGI&nbsp;will&nbsp;be&nbsp;in</I>
+
+<P>
+<I>/usr/lib/cgi-bin/AuthServer</I>
+
+<P>
+<I>The&nbsp;configuration&nbsp;file&nbsp;will&nbsp;be&nbsp;/usr/lib/cgi-bin/AuthServer.cf</I>
+
+<P>
+<I>Other&nbsp;data&nbsp;files&nbsp;will&nbsp;be&nbsp;installed&nbsp;under&nbsp;/usr/lib/cgi-bin/etc/</I>
+
+<P>
+[...]
+
+<P>
+<I>The&nbsp;program&nbsp;was&nbsp;not&nbsp;able&nbsp;to&nbsp;determine&nbsp;a&nbsp;location&nbsp;for&nbsp;your</I>
+
+<P>
+<I>OpenSSL&nbsp;installation,&nbsp;required&nbsp;to&nbsp;build&nbsp;PAPI.&nbsp;Please&nbsp;type&nbsp;the</I>
+
+<P>
+<I>full&nbsp;path&nbsp;to&nbsp;the&nbsp;OpenSSL&nbsp;directory&nbsp;[/usr/local/ssl]</I>
+
+<P>
+<B>/usr/lib/ssl</B>
+
+<P>
+[...]
+
+<P>
+#&nbsp;make
+
+<P>
+#&nbsp;make&nbsp;install
+
+<P>
+#&nbsp;mkdir&nbsp;-p&nbsp;/usr/local/PAPI/AS
+
+<P>
+#&nbsp;cp&nbsp;-r&nbsp;AS/etc&nbsp;/usr/local/PAPI/AS/
+</DD>
+</DL>Una vez hecho esto tendremos instalado el servidor de autenticaci&#243;n
+en <I>/usr/lib/cgi-bin/AuthServer</I> y su fichero de configuraci&#243;n
+en <I>/usr/lib/cgi-bin/AuthServer.cf</I>. Procedemos por tanto a configurarlo:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;This&nbsp;is&nbsp;the&nbsp;PAPI&nbsp;AS&nbsp;configuration&nbsp;file,&nbsp;a&nbsp;Perl&nbsp;source
+
+<P>
+#&nbsp;file&nbsp;that&nbsp;essentially&nbsp;contains&nbsp;asignments&nbsp;to&nbsp;a&nbsp;hash&nbsp;named
+
+<P>
+#&nbsp;PAPI::AuthServer::cfgVar.
+
+<P>
+&nbsp;
+
+<P>
+use&nbsp;LWP::UserAgent;
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;Include&nbsp;here&nbsp;the&nbsp;modules&nbsp;referenced&nbsp;by&nbsp;the&nbsp;elements&nbsp;
+
+<P>
+#&nbsp;inside&nbsp;the&nbsp;configuration
+
+<P>
+#use&nbsp;PAPI::BasicAuth;
+
+<P>
+#use&nbsp;PAPI::POPAuth;
+
+<P>
+#use&nbsp;PAPI::IMAPAuth;
+
+<P>
+<B>use&nbsp;PAPI::LDAPAuth;</B>
+
+<P>
+#use&nbsp;PAPI::CertAuth;
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;Just&nbsp;convenience
+
+<P>
+#
+
+<P>
+$cfg&nbsp;=&nbsp;&#92;%PAPI::AuthServer::cfgVar;
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;The&nbsp;definition&nbsp;of&nbsp;the&nbsp;working&nbsp;directory&nbsp;should&nbsp;be&nbsp;the&nbsp;first
+
+<P>
+#&nbsp;configuration&nbsp;assignment
+
+<P>
+#
+
+<P>
+$$cfg{workingDirectory}&nbsp;=&nbsp;'<B>/usr/local/PAPI/AS/etc</B>';
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;This&nbsp;variable&nbsp;will&nbsp;allow&nbsp;the&nbsp;selection&nbsp;of&nbsp;the&nbsp;authentication&nbsp;methods
+
+<P>
+#
+
+<P>
+#&nbsp;Uncomment&nbsp;for&nbsp;using&nbsp;basic&nbsp;PAPI&nbsp;authentication
+
+<P>
+#my&nbsp;$authType&nbsp;=&nbsp;&#34;basic&#34;;
+
+<P>
+#&nbsp;Uncomment&nbsp;for&nbsp;using&nbsp;POP-based&nbsp;authentication
+
+<P>
+#my&nbsp;$authType&nbsp;=&nbsp;&#34;pop&#34;;
+
+<P>
+#&nbsp;Uncomment&nbsp;for&nbsp;using&nbsp;IMAP-based&nbsp;authentication
+
+<P>
+#my&nbsp;$authType&nbsp;=&nbsp;&#34;imap&#34;;
+
+<P>
+#&nbsp;Uncomment&nbsp;for&nbsp;using&nbsp;LDAP-based&nbsp;authentication
+
+<P>
+<B>my&nbsp;$authType&nbsp;=&nbsp;&#34;ldap&#34;;</B>
+
+<P>
+#&nbsp;Uncomment&nbsp;for&nbsp;using&nbsp;X509&nbsp;certificate&nbsp;authentication
+
+<P>
+#my&nbsp;$authType&nbsp;=&nbsp;&#34;cert&#34;;
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;Admin&nbsp;data&nbsp;(included&nbsp;in&nbsp;the&nbsp;HTML&nbsp;templates)
+
+<P>
+#
+
+<P>
+$$cfg{adminContact}&nbsp;=&nbsp;'&lt;b&gt;<B>papi@urjc.es</B>&lt;/b&gt;';
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;HTML&nbsp;templates
+
+<P>
+#
+
+<P>
+$$cfg{loginTemplate}&nbsp;=&nbsp;fromFile(&#34;login.html&#34;);
+
+<P>
+$$cfg{acceptTemplate}&nbsp;=&nbsp;fromFile(&#34;accept.html&#34;);
+
+<P>
+$$cfg{testTemplate}&nbsp;=&nbsp;fromFile(&#34;test.html&#34;);
+
+<P>
+$$cfg{logoutTemplate}&nbsp;=&nbsp;fromFile(&#34;logout.html&#34;);
+
+<P>
+$$cfg{rejectTemplate}&nbsp;=&nbsp;fromFile(&#34;reject.html&#34;);
+
+<P>
+$$cfg{siteInfoTemplate}&nbsp;=
+
+<P>
+'&lt;tr&gt;
+
+<P>
+&nbsp;&nbsp;&lt;td&gt;*&lt;/td&gt;
+
+<P>
+&nbsp;&nbsp;&lt;td&gt;&lt;a&nbsp;href=&#34;<B>&lt;papi&nbsp;var=&#34;poa&#34;/&gt;&lt;papi&nbsp;var=&#34;location&#34;/&gt;</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>&lt;papi&nbsp;var=&#34;accessURI&#34;/&gt;</B>&#34;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;target=&#34;<B>&lt;papi&nbsp;var=&#34;service&#34;/&gt;</B>&#34;&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&lt;strong&gt;<B>&lt;papi&nbsp;var=&#34;desc&#34;/&gt;</B>&lt;/strong&gt;&lt;/a&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/td&gt;
+
+<P>
+&nbsp;&lt;/tr&gt;';
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;Properties&nbsp;of&nbsp;this&nbsp;AS,&nbsp;to&nbsp;be&nbsp;sent&nbsp;to&nbsp;the&nbsp;PoA(s)
+
+<P>
+#
+
+<P>
+$$cfg{asLocation}&nbsp;=&nbsp;'<B>https://www.papi.urjc.es/cgi-bin/AuthServer</B>';
+
+<P>
+$$cfg{serverID}&nbsp;=&nbsp;'<B>URJCAS</B>';
+
+<P>
+$$cfg{privateKey}&nbsp;=&nbsp;'privkey.pem';
+
+<P>
+$$cfg{publicKey}&nbsp;=&nbsp;'pubkey.pem';
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;Comment&nbsp;these&nbsp;if&nbsp;you&nbsp;do&nbsp;not&nbsp;require&nbsp;split&nbsp;(thus&nbsp;SSL-capable)&nbsp;mode
+
+<P>
+#
+
+<P>
+#$$cfg{splitModeURL}&nbsp;=&nbsp;'';
+
+<P>
+#$$cfg{splitModeParamList}&nbsp;=&nbsp;'';
+
+<P>
+#
+
+<P>
+#&nbsp;These&nbsp;parameters&nbsp;make&nbsp;PoAs&nbsp;redirect&nbsp;accept/reject&nbsp;responses&nbsp;to
+
+<P>
+#&nbsp;locally&nbsp;controlled&nbsp;URLs
+
+<P>
+#
+
+<P>
+#$$cfg{acceptURL}&nbsp;=&nbsp;'http://www.papi.urjc.es/accept-file';
+
+<P>
+#$$cfg{rejectURL}&nbsp;=&nbsp;'http://www.papi.urjc.es/reject-file';
+
+<P>
+#
+
+<P>
+#&nbsp;Values&nbsp;for&nbsp;the&nbsp;authentication&nbsp;cookie
+
+<P>
+#&nbsp;Comment&nbsp;them&nbsp;if&nbsp;you&nbsp;do&nbsp;not&nbsp;require&nbsp;its&nbsp;use
+
+<P>
+#
+
+<P>
+$$cfg{authCookie}&nbsp;=&nbsp;'<B>PAPIuid,username,password</B>';
+
+<P>
+$$cfg{authCookieDB}&nbsp;=
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'<B>/usr/local/PAPI/AS/etc/PAPIAuthenCookies</B>';
+
+<P>
+$$cfg{authCookieTimeToLive}&nbsp;=&nbsp;<B>7200</B>;
+
+<P>
+#
+
+<P>
+#&nbsp;Value&nbsp;of&nbsp;the&nbsp;AS&nbsp;symmetric&nbsp;key
+
+<P>
+#&nbsp;Used&nbsp;in&nbsp;split&nbsp;mode&nbsp;and&nbsp;for&nbsp;en-/de-crypting&nbsp;the&nbsp;authentication&nbsp;cookie
+
+<P>
+#&nbsp;It&nbsp;is&nbsp;highly&nbsp;advisable&nbsp;that&nbsp;you&nbsp;change&nbsp;this&nbsp;value
+
+<P>
+#
+
+<P>
+#$$cfg{symKey}&nbsp;=&nbsp;'ca1813914a25b12a14ca121516e26180';
+
+<P>
+#
+
+<P>
+#&nbsp;The&nbsp;connection&nbsp;variable&nbsp;holding&nbsp;user&nbsp;id&nbsp;(for&nbsp;TEST&nbsp;and&nbsp;LOGOUT)
+
+<P>
+$$cfg{uidVar}&nbsp;=&nbsp;'<B>username</B>';
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;Default&nbsp;values&nbsp;for&nbsp;the&nbsp;PoA(s)
+
+<P>
+#
+
+<P>
+$$cfg{defTimeToLive}&nbsp;=&nbsp;<B>7200</B>;
+
+<P>
+$$cfg{defLocation}&nbsp;=&nbsp;'/';
+
+<P>
+$$cfg{defService}=&nbsp;'';
+
+<P>
+$$cfg{defPoA}&nbsp;=&nbsp;'';
+
+<P>
+$$cfg{defDescription}&nbsp;=&nbsp;'';
+
+<P>
+$$cfg{defAuthURI}&nbsp;=&nbsp;'/cookie_handler.cgi';
+
+<P>
+$$cfg{defAccessURI}&nbsp;=&nbsp;'';
+
+<P>
+#
+
+<P>
+#&nbsp;Default&nbsp;assertion&nbsp;about&nbsp;users&nbsp;to&nbsp;be&nbsp;sent&nbsp;to&nbsp;PoA(s)
+
+<P>
+<B>$$cfg{defAssertion}&nbsp;=&nbsp;'';</B>
+
+<P>
+&nbsp;
+
+<P>
+#&nbsp;Hooks&nbsp;and&nbsp;hook&nbsp;config.&nbsp;By&nbsp;default,&nbsp;&#34;basic&#34;&nbsp;authentication&nbsp;is&nbsp;used
+
+<P>
+#
+
+<P>
+if&nbsp;($authType&nbsp;eq&nbsp;&#34;pop&#34;)&nbsp;{
+
+<P>
+<I>[...]</I>
+
+<P>
+elsif&nbsp;($authType&nbsp;eq&nbsp;&#34;imap&#34;)&nbsp;{
+
+<P>
+<I>[...]</I>
+
+<P>
+elsif&nbsp;($authType&nbsp;eq&nbsp;&#34;<B>ldap</B>&#34;)&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{authenticationHook}&nbsp;=&nbsp;&#92;&amp;PAPI::LDAPAuth::VerifyUser;
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{credentialHook}&nbsp;=&nbsp;&#92;&amp;PAPI::LDAPAuth::UserCredentials;
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{attrRequestHook}&nbsp;=&nbsp;&#92;&amp;PAPI::LDAPAuth::UserAttributes;
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPserver}&nbsp;=&nbsp;&#34;<B>dagobah.urjc.es</B>&#34;;
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPport}&nbsp;=&nbsp;389;
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPUSERtemplate}&nbsp;=&nbsp;'<B>uid=&lt;papi&nbsp;var=&#34;username&#34;/&gt;</B>';
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPAuthSearchBase}&nbsp;=&nbsp;'<B>ou=gente,dc=urjc,dc=es</B>';
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPAuthScope}&nbsp;=&nbsp;'sub';
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPsearchBase}&nbsp;=&nbsp;'<B>ou=papiSite,dc=urjc,dc=es</B>';
+
+<P>
+#&nbsp;Uncomment&nbsp;these&nbsp;to&nbsp;use&nbsp;simple&nbsp;authentication&nbsp;when&nbsp;binding
+
+<P>
+#&nbsp;to&nbsp;the&nbsp;LDAP&nbsp;server
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPbindDN}&nbsp;=
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'<B>uid=managerid,ou=admin,dc=urjc,dc=es</B>';
+
+<P>
+&nbsp;&nbsp;&nbsp;$$cfg{LDAPbindPassword}&nbsp;=&nbsp;'<B>contrase&#241;a</B>';
+
+<P>
+#&nbsp;Uncomment&nbsp;these&nbsp;to&nbsp;use&nbsp;a&nbsp;TLS&nbsp;connection&nbsp;and&nbsp;verify&nbsp;server&nbsp;identity
+
+<P>
+#&nbsp;&nbsp;&nbsp;$$cfg{LDAPS}&nbsp;=&nbsp;1;
+
+<P>
+#&nbsp;&nbsp;&nbsp;$$cfg{LDAPSverify}&nbsp;=&nbsp;'require';
+
+<P>
+#&nbsp;&nbsp;&nbsp;$$cfg{LDAPScafile}&nbsp;=&nbsp;'/etc/PAPI/CAs/MyRoot.pem';
+
+<P>
+}
+
+<P>
+elsif&nbsp;($authType&nbsp;eq&nbsp;&#34;cert&#34;)&nbsp;{
+
+<P>
+<I>[...]</I>
+
+<P>
+else&nbsp;{
+
+<P>
+<I>[...]</I>
+
+<P>
+$$cfg{logHook}&nbsp;=&nbsp;undef;
+
+<P>
+&nbsp;
+
+<P>
+<I>[...]</I>
+</DD>
+</DL>Una vez configurado el servidor de autenticaci&#243;n, generamos su par
+de claves asim&#233;tricas <I>/usr/local/PAPI/AS/etc/pubkey.pem</I> y <I>/usr/local/PAPI/AS/etc/privkey.pem</I>,
+referenciadas en la configuraci&#243;n:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;cd&nbsp;/usr/local/PAPI/AS/etc
+
+<P>
+#&nbsp;openssl&nbsp;genrsa&nbsp;1024&nbsp;-out&nbsp;privkey.pem
+
+<P>
+#&nbsp;openssl&nbsp;rsa&nbsp;-in&nbsp;privkey.pem&nbsp;-pubout&nbsp;-out&nbsp;pubkey.pem
+</DD>
+</DL>Editamos adem&#225;s las plantillas HTML indicadas en la configuraci&#243;n,
+para que se adec&#250;en a nuestras necesidades, en el directorio <I>/usr/local/PAPI/AS/etc</I>.
+Podemos modificar las plantillas de ejemplo:
+
+<P>
+
+<UL>
+<LI><I>accept.html</I>
+</LI>
+<LI><I>login.html</I>
+</LI>
+<LI><I>logout.html</I>
+</LI>
+<LI><I>reject.html</I>
+</LI>
+<LI><I>test.html</I>
+</LI>
+</UL>
+Hecho esto disponemos de nuestro servidor de autenticaci&#243;n configurado,
+a falta de incluir puntos de acceso y su configuraci&#243;n asociada.
+
+<P>
+
+<H2><A NAME="SECTION00022000000000000000">
+2.2 Puntos de acceso convencionales</A>
+</H2>
+
+<P>
+La configuraci&#243;n aqu&#237; seguida implica que tanto el <I>AS</I> como
+los <I>PoAs</I> perl que act&#250;an en modo proxy se instalan en el mismo
+servidor, al igual que los <I>GPoAs</I>. De este modo, nuestros <I>PoAs</I>
+ser&#225;n <I>hosts virtuales</I> del servidor. Lo mejor en este caso es
+crear un archivo separado de configuraci&#243;n para los puntos de acceso,
+por ejemplo, <I>/etc/apache/conf.d/papi</I>. Dicho fichero debe ir
+encabezado por la configuraci&#243;n general de PAPI para sus puntos de
+acceso:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#
+
+<P>
+#&nbsp;Configuraci&#243;n&nbsp;general&nbsp;de&nbsp;PAPI
+
+<P>
+#
+
+<P>
+PerlModule&nbsp;PAPI::Conf
+
+<P>
+&lt;PAPI_Main&gt;
+
+<P>
+&nbsp;&nbsp;Service_ID&nbsp;poa_generico
+
+<P>
+&nbsp;&nbsp;HKEY_File&nbsp;<B>/usr/local/PAPI/PoA/hkey</B>
+
+<P>
+&nbsp;&nbsp;LKEY_File&nbsp;<B>/usr/local/PAPI/PoA/lkey</B>
+
+<P>
+&nbsp;&nbsp;Lcook_Timeout&nbsp;<B>86400</B>
+
+<P>
+&nbsp;&nbsp;CRC_Timeout&nbsp;<B>1800</B>
+
+<P>
+&nbsp;&nbsp;URL_Timeout&nbsp;<B>1800</B>
+
+<P>
+&nbsp;&nbsp;Debug&nbsp;0
+
+<P>
+&nbsp;&nbsp;Auth_Location&nbsp;/cookie_handler.cgi
+
+<P>
+#&nbsp;en&nbsp;caso&nbsp;de&nbsp;utilizar&nbsp;el&nbsp;mecanismo&nbsp;de&nbsp;las&nbsp;``bolitas'',
+
+<P>
+#&nbsp;debemos&nbsp;descomentar&nbsp;las&nbsp;siguientes&nbsp;l&#237;neas
+
+<P>
+#&nbsp;&nbsp;Accept_File&nbsp;/usr/local/PAPI/PoA/yes.gif
+
+<P>
+#&nbsp;&nbsp;Reject_File&nbsp;/usr/local/PAPI/PoA/no.gif
+
+<P>
+&nbsp;&nbsp;Pubkeys_Path&nbsp;<B>/usr/local/PAPI/PoA/KEYS</B>
+
+<P>
+&nbsp;&nbsp;Hcook_DB&nbsp;<B>/usr/local/PAPI/PoA/hcook.db</B>
+
+<P>
+&nbsp;&nbsp;<B>PAPI_AS&nbsp;URJCAS</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer&nbsp;AuthServer&nbsp;URJC</B>
+
+<P>
+&lt;/PAPI_Main&gt;
+</DD>
+</DL>Descargamos y descomprimimos el c&#243;digo fuente de la &#250;ltima versi&#243;n
+del servidor de autenticaci&#243;n:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;cd&nbsp;/root
+
+<P>
+#&nbsp;wget&nbsp;ftp://ftp.rediris.es/rediris/papi/PAPI-PoA.1.4.0.tar.gz
+
+<P>
+#&nbsp;tar&nbsp;xzvf&nbsp;PAPI-PoA.1.4.0.tar.gz
+
+<P>
+</DD>
+</DL>Compilamos e instalamos el punto de acceso. Nos aseguramos de que
+tenemos los siguientes prerrequisitos (y los instalamos si no cumplimos
+alguno):
+
+<P>
+
+<OL>
+<LI>mod_perl &gt;= 1.20
+</LI>
+<LI>apache &gt;= 1.3.8
+</LI>
+<LI>Perl SSL
+</LI>
+<LI>Perl MLDBM
+</LI>
+<LI>Perl MLDBM::Sync
+</LI>
+<LI>Perl URI::URL
+</LI>
+<LI>Perl HTML::TokeParser
+</LI>
+<LI>Perl HTTP:Cookies
+</LI>
+<LI>Perl Data::Dumper
+</LI>
+<LI>Perl HTTP::Request::Form
+</LI>
+<LI>Perl Net::LDAP
+</LI>
+</OL>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;apt-get&nbsp;install&nbsp;libapache-mod-perl&nbsp;apache
+
+<P>
+#&nbsp;apt&nbsp;get&nbsp;install&nbsp;libio-socket-ssl-perl&nbsp;libmldbm-perl
+
+<P>
+#&nbsp;apt&nbsp;get&nbsp;install&nbsp;liburi-perl&nbsp;libmldbm-sync-perl&nbsp;
+
+<P>
+#&nbsp;apt-get&nbsp;install&nbsp;libhtml-tokeparser-simple-perl
+
+<P>
+#&nbsp;apt-get&nbsp;install&nbsp;libapache-authcookie-perl
+
+<P>
+#&nbsp;apt-get&nbsp;install&nbsp;libdata-dumper-simple-perl
+
+<P>
+#&nbsp;apt-get&nbsp;install&nbsp;libnet-ldap-perl
+
+<P>
+#&nbsp;cd
+
+<P>
+#&nbsp;wget&nbsp;<B>http://.../HTTP-Request-Form-0.952.tar.gz</B>
+
+<P>
+#&nbsp;tar&nbsp;xzvf&nbsp;HTTP-Request-Form-0.952.tar.gz
+
+<P>
+#&nbsp;cd&nbsp;<B>HTTP-Request-Form-0.952</B>
+
+<P>
+#&nbsp;perl&nbsp;Makefile.PL
+
+<P>
+#&nbsp;make
+
+<P>
+#&nbsp;make&nbsp;install
+</DD>
+</DL>Una vez cumplidos los prerrequisitos, instalamos el PoA:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;cd&nbsp;<B>/root/PAPI-1.4.0</B>
+
+<P>
+#&nbsp;perl&nbsp;Makefile.PL
+
+<P>
+<I>You&nbsp;must&nbsp;provide&nbsp;a&nbsp;location&nbsp;for&nbsp;installing&nbsp;the&nbsp;PAPI</I>
+
+<P>
+<I>Authentication&nbsp;Server&nbsp;software.&nbsp;It&nbsp;must&nbsp;be&nbsp;a&nbsp;directory</I>
+
+<P>
+<I>configured&nbsp;to&nbsp;hold&nbsp;CGI&nbsp;programs&nbsp;in&nbsp;your&nbsp;Apache</I>
+
+<P>
+<I>installation&nbsp;[/usr/local/apache/cgi-bin]</I>
+
+<P>
+<B><I>/usr/lib/cgi-bin</I></B>
+
+<P>
+<I>The&nbsp;Authentication&nbsp;Server&nbsp;CGI&nbsp;will&nbsp;be&nbsp;in</I>
+
+<P>
+<I>/usr/lib/cgi-bin/AuthServer</I>
+
+<P>
+<I>The&nbsp;configuration&nbsp;file&nbsp;will&nbsp;be&nbsp;/usr/lib/cgi-bin/AuthServer.cf</I>
+
+<P>
+<I>Other&nbsp;data&nbsp;files&nbsp;will&nbsp;be&nbsp;installed&nbsp;under&nbsp;/usr/lib/cgi-bin/etc/</I>
+
+<P>
+<I>[...]</I>
+
+<P>
+<I>The&nbsp;program&nbsp;was&nbsp;not&nbsp;able&nbsp;to&nbsp;determine&nbsp;a&nbsp;location&nbsp;for&nbsp;your</I>
+
+<P>
+<I>OpenSSL&nbsp;installation,&nbsp;required&nbsp;to&nbsp;build&nbsp;PAPI.&nbsp;Please&nbsp;type&nbsp;the</I>
+
+<P>
+<I>full&nbsp;path&nbsp;to&nbsp;the&nbsp;OpenSSL&nbsp;directory&nbsp;[/usr/local/ssl]</I>
+
+<P>
+<B><I>/usr/lib/ssl</I></B>
+
+<P>
+<I>[...]</I>
+
+<P>
+#&nbsp;make
+
+<P>
+#&nbsp;make&nbsp;install
+</DD>
+</DL>Estando el PoA instalado, podemos incluir la configuraci&#243;n general
+de PAPI ya expuesta en la configuraci&#243;n de Apache, y proceder a configurar
+los puntos de acceso que necesitemos. Lo m&#225;s sencillo es utilizar
+<I>virtual hosts</I> para cada uno. En nuestro caso, queremos que
+los accesos se hagan siempre mediante conexiones seguras, por lo que
+redirigimos todo el tr&#225;fico para utilizar SSL:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;poa.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;404&nbsp;https://poa.papi.urjc.es/index.html
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;poa.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;403&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;<B>/app</B>&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;poa
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_poa
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>GPoA_URL&nbsp;wayf:built-in</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>Este punto de acceso funciona de la forma m&#225;s simple posible, en nuestro
+caso, protegiendo todos los accesos que se hagan a <I>http://poa.papi.urjc.es/app</I>.
+Si un usuario trata de acceder a cualquier URL que comience por <I>/app</I>,
+ser&#225; redireccionado a una conexi&#243;n segura, y una vez hecho esto se
+comprobar&#225; si tiene las credenciales de PAPI en orden. En caso afirmativo
+se le garantizar&#225; acceso, y en caso contrario se le redirigir&#225; al
+<I>AS</I> para que se autentique. Si el acceso se realiza a otra URL
+que no est&#225; bajo la protecci&#243;n del punto de acceso, PAPI no intervendr&#225;
+de ning&#250;n modo.
+
+<P>
+
+<H2><A NAME="SECTION00023000000000000000">
+2.3 Puntos de acceso en modo proxy de reescritura</A>
+</H2>
+
+<P>
+Los puntos de acceso en modo proxy se configuran exactamente igual
+que cualquier otro punto de acceso, con la particularidad de que debemos
+indicar la URL o el dominio al que redirigir las peticiones entrantes.
+Por ejemplo:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;proxy.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;RedirectMatch&nbsp;/index.html&nbsp;https://proxy.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;404&nbsp;https://proxy.papi.urjc.es/index.html
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;proxy.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;403&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;/&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;proxy
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_proxy
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_URL&nbsp;wayf:built-in
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Remote_URL&nbsp;http://www.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Eval_Proxy_Redirects&nbsp;1</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>De esta forma el punto de acceso en vez de proteger una localizaci&#243;n
+concreta del propio servidor, lo hace respecto a una URL externa comport&#225;ndose
+como un proxy. Si en vez de utilizar la directiva <B>Remote_URL</B>
+utilizamos <B>Remote_Domain</B> acompa&#241;ada de un nombre de dominio,
+todas las peticiones recibidas de la forma <I>http://proxy.papi.urjc.es
+/host/pagina</I> se traducir&#225;n en peticiones a <I>http://host.dominio/pagina</I>.
+Para conseguir esto es conveniente usar tambi&#233;n la directiva <B>Strip_Location</B>
+con el valor <I>1</I>. De este modo las peticiones <I>/host/pagina</I>
+se traducen en <I>/pagina</I> en la URL remota especificada con <B>Remote_URL</B>.
+
+<P>
+Por &#250;ltimo, podemos utilizar las directivas <B>PAPI_Redirect</B>,
+<B>Rewrite_URL</B> y <B>Redirect_All</B> para definir las sustituciones
+de URLs en los documentos HTML servidos, hacerlo incluso en contenidos
+no HTML (como c&#243;digo javascript) y evaluar todas las URLs encontradas
+en el documento en modo agresivo, respectivamente. Para informaci&#243;n
+detallada sobre todas estas y otras directivas adicionales es conveniente
+consultar la gu&#237;a para principiantes de PAPI.
+
+<P>
+
+<H2><A NAME="SECTION00024000000000000000">
+2.4 Autocompletado de formularios</A>
+</H2>
+
+<P>
+El autocompletado de formularios es una vuelta de tuerca sobre la
+configuraci&#243;n de un <I>PoA</I> en modo proxy. B&#225;sicamente consiste
+en utilizar la directiva From_Processor para configurar el m&#243;dulo
+de PAPI que se encargar&#225; de los formularios. Por ejemplo:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;proxy.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;RedirectMatch&nbsp;(.*)&nbsp;https://proxy.papi.urjc.es/
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;proxy.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;/&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;proxy
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_proxy
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_URL&nbsp;wayf:built-in
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remote_URL&nbsp;https://www.urjc.es
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Redirect_All&nbsp;1
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;PAPI_Redirect&nbsp;www.urjc.es(.*?)&nbsp;proxy.papi.urjc.es$1
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Eval_Proxy_Redirects&nbsp;1</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form_Processor&nbsp;urle=&gt;&#94;/.*&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;form=&gt;login&nbsp;buttonName=&gt;action_login&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(password,$r-&gt;notes('PAPIAttr-password'))&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(usuario,$r-&gt;notes('PAPIAttr-username'))</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+</DD>
+</DL>La directiva <B>Form_Processor</B> se compone de los siguientes
+atributos:
+
+<P>
+
+<UL>
+<LI><I>urle</I>: una expresi&#243;n regular que define la URL o URLs en las
+que se encuentra el formulario que queremos completar autom&#225;ticamente.
+</LI>
+<LI><I>form</I>: el nombre del formulario, en caso de que haya m&#225;s de
+uno. Si no se indica este atributo o no existe ning&#250;n formulario con
+el nombre indicado, se elegir&#225; el primer formulario de la p&#225;gina.
+</LI>
+<LI><I>buttonName</I>: el nombre del bot&#243;n de env&#237;o del formulario.
+</LI>
+<LI><I>field</I>: un campo del formulario, definido por una tupla (<I>nombre</I>,
+<I>valor</I>), donde <I>nombre</I> es el nombre del campo en el formulario
+y <I>valor</I> el valor con el que queremos rellenarlo. Incluiremos
+este atributo tantas veces como campos necesitemos enviar, incluyendo
+aquellos ocultos. Podemos utilizar valores fijos o incluso variables
+de PAPI para rellenar un campo con, por ejemplo, el nombre de usuario
+o la contrase&#241;a del mismo. Para esto debemos activar la directiva
+<B>Eval_Proxy_Redirects</B>, que permite que Perl eval&#250;e los valores
+especificados en la configuraci&#243;n. De esta forma, cuando queramos
+obtener un campo de la aserci&#243;n de PAPI utilizaremos la sintaxis <I>$r-&gt;notes('PAPIAttr-nombre')</I>,
+donde <I>nombre</I> es el nombre del campo en la propia aserci&#243;n.
+Esto implica que previamente debemos modificar el formato de la aserci&#243;n
+de la siguiente forma: <I>variable1=valor1,variable2=valor2</I>. Esto
+lo haremos en la propia configuraci&#243;n del punto de acceso en el atributo
+<I>papiAssertion</I> del LDAP. Por ejemplo, si queremos que la aserci&#243;n
+del PoA sea <I>usuario=valor,password=valor</I>, configuraremos <I>papiAssertion</I>
+de la siguiente forma: <I>usuario=&lt;papi attr=&#34;login&#34;/&gt;,
+password=&lt;papi var=&#34;password&#34;/&gt;</I>,
+donde <I>attr</I> especifica que ``<I>login</I>'' es un atributo
+localizado en el perfil del usuario en el LDAP, y <I>var</I> indica
+que ``<I>password</I>'' es una variable del formulario de autenticaci&#243;n
+del AS (y que deber&#225; propagarse en la aserci&#243;n del mismo).
+</LI>
+</UL>
+
+<P>
+
+<H2><A NAME="SECTION00025000000000000000">
+2.5 Puntos de acceso PHP</A>
+</H2>
+
+<P>
+En primer lugar debemos descargar la &#250;ltima versi&#243;n del <I>phpPoA</I>
+del sitio FTP de <I>RedIris</I>: <I>ftp://ftp.rediris.es/rediris/papi/</I>.
+Descomprimimos el archivo a alg&#250;n lugar en nuestro sistema, por ejemplo,
+<I>/usr/local</I>/<I>phpPoA</I>:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;cd&nbsp;/usr/local
+
+<P>
+#&nbsp;wget&nbsp;ftp://ftp.rediris.es/rediris/papi/phpPoA.1.1.tar.gz
+
+<P>
+#&nbsp;tar&nbsp;-xzvf&nbsp;phpPoA.1.1.tar.gz
+</DD>
+</DL>As&#237;, en <I>/usr/local/phpPoA</I> tendremos los contenidos siguientes:
+
+<P>
+
+<UL>
+<LI>[<I>doc</I>]la documentaci&#243;n de la versi&#243;n del <I>phpPoA</I> instalada.
+</LI>
+<LI>[<I>etc</I>]la configuraci&#243;n del <I>phpPoA</I>. Esto incluye un archivo
+con extensi&#243;n <I>ini</I>, ficheros html de error, y un directorio
+para las claves criptogr&#225;ficas utilizadas.
+</LI>
+<LI>[<I>php</I>]el <I>phpPoA</I> propiamente dicho y su librer&#237;a criptogr&#225;fica
+asociada.
+</LI>
+<LI>[<I>samples</I>]ejemplos de uso del <I>phpPoA</I>.
+</LI>
+<LI>[<I>LICENSE</I>]la licencia de distribuci&#243;n.
+</LI>
+<LI>[<I>README</I>]una descripci&#243;n de los contenidos como &#233;sta.
+</LI>
+</UL>Debemos asegurarnos de que la instalaci&#243;n de PHP encuentre el script
+del <I>PoA</I>, por lo que incluiremos la ruta completa en el fichero
+<I>php.ini</I>, en debian t&#237;picamente <I>/etc/php4/apache/php.ini</I>.
+Buscamos la secci&#243;n de rutas y directorios, y a&#241;adimos las siguientes
+lineas:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>include_path&nbsp;=&nbsp;&#34;.:/usr/share/php:/usr/local/phpPoA/php&#34;
+
+<P>
+phpPoA_ini_file&nbsp;=&nbsp;&#34;/usr/local/phpPoA/etc/phpPoA.ini&#34;
+</DD>
+</DL>Dado que PAPI utiliza m&#233;todos criptogr&#225;ficos que no suelen venir instalados
+por defecto, deberemos asegurarnos de tener instalada la librer&#237;a
+<I>mcrypt</I>. De no estarlo, la instalamos:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;apt-get&nbsp;install&nbsp;php4-mcrypt
+</DD>
+</DL>Reiniciamos Apache y colocamos alguno de los ejemplos del directorio
+<I>samples</I> en el directorio ra&#237;z de Apache para comprobar que
+el <I>PoA</I> est&#225; funcionando correctamente. La configuraci&#243;n del
+<I>PoA</I> se realiza en el archivo <I>phpPoA.ini</I>. En dicho archivo
+indicaremos las opciones necesarias para la autenticaci&#243;n y autorizaci&#243;n
+de los usuarios en la aplicaci&#243;n o aplicaciones que proteja este <I>PoA</I>.
+La secci&#243;n [PAPI Main] es obligatoria y define la configuraci&#243;n
+global para todas las aplicaciones. Aparte, es posible definir nuevas
+secciones que redefinan el comportamiento de PAPI para aplicaciones
+concretas. Por ejemplo:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>[PAPI_Main]&nbsp;Lcook_Timeout&nbsp;=&nbsp;86400
+
+<P>
+;&nbsp;localizaci&#243;n&nbsp;de&nbsp;la&nbsp;base&nbsp;de&nbsp;datos&nbsp;de&nbsp;peticiones
+
+<P>
+;&nbsp;el&nbsp;directorio&nbsp;DB&nbsp;debe&nbsp;ser&nbsp;propiedad&nbsp;del&nbsp;usuario
+
+<P>
+;&nbsp;que&nbsp;ejecuta&nbsp;apache&nbsp;y&nbsp;tener&nbsp;permisos&nbsp;de&nbsp;escritura
+
+<P>
+Request_DB&nbsp;=&nbsp;<B>/usr/local/phpPoA/var</B>/DB/request_db.db4
+
+<P>
+DB_Type&nbsp;=&nbsp;db4
+
+<P>
+;&nbsp;al&nbsp;igual&nbsp;que&nbsp;el&nbsp;directorio&nbsp;DB,&nbsp;el&nbsp;directorio&nbsp;logs
+
+<P>
+;&nbsp;debe&nbsp;tener&nbsp;permisos&nbsp;suficientes&nbsp;para&nbsp;que&nbsp;el&nbsp;usuario
+
+<P>
+;&nbsp;de&nbsp;apache&nbsp;pueda&nbsp;escribir&nbsp;en&nbsp;&#233;l
+
+<P>
+error_log&nbsp;=&nbsp;<B>/usr/local/phpPoA/var</B>/logs/papi_error.log
+
+<P>
+;&nbsp;si&nbsp;se&nbsp;usa&nbsp;el&nbsp;modo&nbsp;autom&#225;tico,&nbsp;se&nbsp;debe&nbsp;proporcionar
+
+<P>
+;&nbsp;la&nbsp;url&nbsp;de&nbsp;los&nbsp;posibles&nbsp;documentos&nbsp;de&nbsp;error
+
+<P>
+Not_Auth_Error_File&nbsp;=&nbsp;<B>https://foo.urjc.es/</B>NotAuthorized.html
+
+<P>
+Cookie_Error_File&nbsp;=&nbsp;<B>https://foo.urjc.es/</B>CookieError.html
+
+<P>
+System_Error_File&nbsp;=&nbsp;<B>https://foo.urjc.es/</B>SystemError.html
+
+<P>
+;&nbsp;definici&#243;n&nbsp;de&nbsp;aserciones&nbsp;que&nbsp;se&nbsp;permiten
+
+<P>
+PAPI_Filter_accept&nbsp;=&nbsp;&#34;<B>.*</B>&#34;
+
+<P>
+;&nbsp;definici&#243;n&nbsp;de&nbsp;aserciones&nbsp;que&nbsp;se&nbsp;deniegan
+
+<P>
+PAPI_Filter_reject&nbsp;=&nbsp;&#34;.*&#34;
+
+<P>
+;&nbsp;Cookie_Domain&nbsp;is&nbsp;Optional
+
+<P>
+Cookie_Domain&nbsp;=&nbsp;papi.urjc.es
+
+<P>
+;&nbsp;clave&nbsp;compartida&nbsp;con&nbsp;el&nbsp;GPoA
+
+<P>
+LKEY_File&nbsp;=&nbsp;<B>/usr/local/phpPoA/</B>KEYS/lkey
+
+<P>
+;&nbsp;clave&nbsp;p&#250;blica&nbsp;del&nbsp;GPoA
+
+<P>
+GPoA_Pub_Key&nbsp;=&nbsp;<B>/usr/local/phpPoA</B>/KEYS/_GPoA_pubkey.pem
+
+<P>
+;&nbsp;la&nbsp;url&nbsp;completa&nbsp;del&nbsp;GPoA,&nbsp;debe&nbsp;coincidir&nbsp;con&nbsp;la
+
+<P>
+;&nbsp;definida&nbsp;por&nbsp;la&nbsp;directiva&nbsp;Auth_Location&nbsp;en&nbsp;el&nbsp;GPoA
+
+<P>
+GPoA_URL&nbsp;=&nbsp;https://gpoa.papi.urjc.es/cookie_handler.cgi
+
+<P>
+&nbsp;
+
+<P>
+[<B>admin</B>]
+
+<P>
+Location&nbsp;=&nbsp;<B>/papi/admin</B>
+
+<P>
+;&nbsp;Cookie_Domain&nbsp;is&nbsp;Optional
+
+<P>
+Cookie_Domain&nbsp;=&nbsp;papi.urjc.es
+
+<P>
+LKEY_File&nbsp;=&nbsp;<B>/usr/local/phpPoA/</B>KEYS/lkey
+
+<P>
+GPoA_Pub_Key&nbsp;=&nbsp;<B>/usr/local/phpPoA/</B>KEYS/_GPoA_pubkey.pem
+
+<P>
+GPoA_URL&nbsp;=&nbsp;https://gpoa.papi.urjc.es/cookie_handler.cgi
+
+<P>
+PAPI_Filter_accept&nbsp;=&nbsp;&#34;.*&#34;
+
+<P>
+PAPI_Filter_reject&nbsp;=&nbsp;&#34;.*&#34;
+
+<P>
+Lcook_Timeout&nbsp;=&nbsp;86400
+
+<P>
+Request_DB&nbsp;=&nbsp;<B>/usr/local/phpPoA/var</B>/DB/request_db.db4
+
+<P>
+DB_Type&nbsp;=&nbsp;db4
+
+<P>
+error_log&nbsp;=&nbsp;<B>/usr/local/phpPoA/var/</B>logs/papi_error.log
+
+<P>
+Not_Auth_Error_File&nbsp;=&nbsp;https://foo.urjc.es/NotAuthorized.html
+
+<P>
+Cookie_Error_File&nbsp;=&nbsp;https://foo.urjc.es/CookieError.html
+
+<P>
+System_Error_File&nbsp;=&nbsp;https://foo.urjc.es/SystemError.html
+</DD>
+</DL>En particular, debemos tener en cuenta las siguientes consideraciones
+a la hora de tocar el fichero de configuraci&#243;n:
+
+<P>
+
+<OL>
+<LI>El PoA necesita escribir en dos lugares concretos, tanto una base
+de datos de peticiones, como un archivo de log. <B>El proceso
+Apache debe tener los permisos necesarios</B> para escribir en ambos
+sitios.
+</LI>
+<LI><B>El modo autom&#225;tico redirige al usuario directamente</B> a los
+documentos de error cuando la autenticaci&#243;n no ha sido correcta. Esto
+es interesante cuando queremos utilizar PAPI como &#250;nica alternativa
+de autenticaci&#243;n y autorizaci&#243;n. Si por contra es un m&#233;todo adicional,
+y queremos presentar al usuario alternativas (por ejemplo, un formulario
+en el que introducir nombre de usuario y contrase&#241;a) en caso de que
+PAPI no pueda autenticar, debemos desactivar el modo autom&#225;tico y
+controlar el valor devuelto por la llamada a <I>check_Access()</I>.
+</LI>
+<LI><I>phpPoA</I> no implementa un <I>PoA</I> completo. Por eso <B>es
+necesario instalar y configurar un</B> <B><I>GPoA</I></B> al que el
+<I>phpPoA</I> pedir&#225; informaci&#243;n. Por tanto en la configuraci&#243;n hay
+que indicar la URL del mismo, incluyendo la ruta absoluta indicada
+en la directiva <I>Auth_Location</I> del <I>GPoA</I>.
+</LI>
+<LI>Los filtros permiten determinar la autorizaci&#243;n de acceso al <I>PoA</I>
+para usuarios que el <I>GPoA</I> define como autenticados. Por ello
+se especifican filtros mediante expresiones regulares de Perl que
+definan qu&#233; aserciones se aceptan y cu&#225;les se deniegan. Lo habitual
+es <B>denegar todas salvo aquellas que cumplan cierta propiedad</B>
+(por ejemplo, que el usuario pertenezca a un grupo concreto).
+</LI>
+</OL>
+Si estamos utilizando <I>PAPI</I> con el mecanismo de autenticaci&#243;n
+mediante ``bolitas'', podemos conseguir que las entradas en la
+p&#225;gina del AS para <I>PoAs</I> en PHP tambi&#233;n tengan su imagen asociada
+(y que indique correctamente el estado de las credenciales en dicha
+aplicaci&#243;n), mediante un sencillo script en PHP:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;?php
+
+<P>
+$AS&nbsp;=&nbsp;&#34;https://www.papi.urjc.es/cgi-bin/AuthServer&#34;;
+
+<P>
+$BASE&nbsp;=&nbsp;&#34;https://sympa.papi.urjc.es/&#34;;
+
+<P>
+$YES&nbsp;=&nbsp;$BASE.&#34;<B>yes.gif</B>&#34;;
+
+<P>
+$NO&nbsp;=&nbsp;$BASE.&#34;<B>no.gif</B>&#34;;
+
+<P>
+$_SERVER['HTTPS']&nbsp;=&nbsp;&#34;on&#34;;&nbsp;//&nbsp;only&nbsp;if&nbsp;we&nbsp;use&nbsp;https
+
+<P>
+<B>include('PoA.php');</B>
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;check&nbsp;PAPI&nbsp;auth
+
+<P>
+<B>$auto&nbsp;=&nbsp;0;</B>&nbsp;//&nbsp;do&nbsp;not&nbsp;use&nbsp;papi&nbsp;auto&nbsp;mode
+
+<P>
+<B>$poa&nbsp;=&nbsp;new&nbsp;PoA('scheme',$auto);</B>
+
+<P>
+list($res,$userAssertion)&nbsp;=&nbsp;<B>$poa-&gt;check_Access();</B>
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;show&nbsp;image&nbsp;according&nbsp;to&nbsp;auth&nbsp;status
+
+<P>
+<B>if&nbsp;($res&nbsp;==&nbsp;0)</B>
+
+<P>
+&nbsp;&nbsp;//&nbsp;GPoA&nbsp;doesn't&nbsp;know&nbsp;user
+
+<P>
+&nbsp;&nbsp;header(&#34;Location:&nbsp;$NO&#34;);
+
+<P>
+else
+
+<P>
+&nbsp;&nbsp;header(&#34;Location:&nbsp;$YES&#34;);
+
+<P>
+?&gt;
+</DD>
+</DL>Guardamos el fichero en el directorio raiz de Apache y configuramos
+el <I>AS</I> para que consulte la URL correspondiente al script en
+nuestro <I>phpPoA</I>.
+
+<P>
+
+<H2><A NAME="SECTION00026000000000000000">
+2.6 Agrupaciones de puntos de acceso</A>
+</H2>
+
+<P>
+La configuraci&#243;n de un grupo de puntos de acceso o <I>GPoA</I> es
+id&#233;ntica al de un <I>PoA</I> convencional, salvo por la inclusi&#243;n
+de algunas directivas propias del <I>GPoA</I>. A continuaci&#243;n se muestra
+una posible configuraci&#243;n con hosts virtuales de Apache de un <I>GPoA</I>:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>gpoa.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;RedirectMatch&nbsp;(.*)&nbsp;https://gpoa.papi.urjc.es/
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>gpoa.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;403&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer
+
+<P>
+&nbsp;&nbsp;DocumentRoot&nbsp;/var/www/gpoa/
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;/&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;gpoa
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_gpoa
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>GPoA_Priv_Key&nbsp;/usr/local/PAPI/AS/etc/privkey.pem</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_Hash_User_Data&nbsp;0</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_URL&nbsp;wayf:built-in
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>La directiva <I>GPoA_Priv_Key</I> indica al <I>GPoA</I> d&#243;nde localizar
+la clave privada con la que encriptar los datos asociados a sus respuestas,
+mientras que la directiva <I>GPoA_Hash_User_Data</I> indica si
+el <I>GPoA</I> debe aplicar una funci&#243;n hash sobre los datos del usuario
+antes de enviarlos. En caso de activarse (<B>1</B>) los datos jam&#225;s
+se enviar&#225;n en claro, y por tanto los puntos de acceso finales no
+podr&#225;n acceder a ellos, mientras que manteni&#233;ndola desactivada (<B>0</B>)
+nos aseguramos de que los clientes puedan acceder a dichos datos (lo
+cual puede suponer un riesgo de seguridad). Adicionalmente, y mediante
+la directiva <I>GPoA_Rewrite</I>, podemos controlar la informaci&#243;n
+que enviamos a cada <I>PoA</I> subordinado. La directiva recibe tres
+par&#225;metros. El primero, una expresi&#243;n regular que se comparar&#225; con
+el nombre del <I>PoA</I>, el segundo una expresi&#243;n regular que se
+aplicar&#225; a la aserci&#243;n emitida por el <I>GPoA</I>, y el tercero el
+patr&#243;n con el que se debe sobreescribir dicha aserci&#243;n.
+
+<P>
+Por &#250;ltimo, si queremos que el <I>GPoA</I> no aparezca como opci&#243;n
+en la lista de <I>PoAs</I> disponibles para un usuario, bastar&#225; con
+que modifiquemos su configuraci&#243;n en el LDAP, dejando el campo <I>papiSiteService</I>
+vac&#237;o (con uno o m&#225;s espacios).
+
+<P>
+
+<H1><A NAME="SECTION00030000000000000000">
+3 Integraci&#243;n con aplicaciones</A>
+</H1>
+
+<P>
+A continuaci&#243;n se encuentran detalladas las implementaciones concretas
+para cada aplicaci&#243;n integrada en el sistema <I>PAPI</I> de la universidad.
+
+<P>
+
+<H2><A NAME="SECTION00031000000000000000">
+3.1 Safari (publicaciones online)</A>
+</H2>
+
+<P>
+<I>Safari</I> es un servicio online de <I>O'Reilly</I> mediante el
+cual se pueden consultar publicaciones desde cualquier direcci&#243;n IP
+de la universidad. Nuestra intenci&#243;n es poder utilizar dicho servicio
+desde cualquier ubicaci&#243;n (no s&#243;lo desde la universidad) mediante
+una autenticaci&#243;n previa. Para ello instalamos un servidor que actuar&#225;
+como <I>proxy PoA</I>, y lo configuramos de la siguiente manera:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>safari.papi.urjc.es</B>
+
+<P>
+&nbsp;<B>&nbsp;RedirectMatch&nbsp;/index.html</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;https://safari.papi.urjc.es/index.html</B>
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;404&nbsp;https://safari.papi.urjc.es/index.html
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>safari.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;403&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;/&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;safari
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_safari
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_URL&nbsp;wayf:built-in
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remote_URL&nbsp;http://safari.oreilly.com</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION00032000000000000000">
+3.2 LAPA (aplicaci&#243;n de comunicaciones)</A>
+</H2>
+
+<P>
+En esta aplicaci&#243;n el m&#233;todo de autenticaci&#243;n consist&#237;a en un usuario
+y contrase&#241;a con los que se creaba una sesi&#243;n que se comprobaba el
+resto del tiempo. En su lugar, crearemos un <I>index.php</I> que compruebe
+las credenciales de PAPI y haga lo necesario para autenticar al usuario
+en caso de que no lo est&#233; ya (en este caso, redirigirle al <I>GPoA</I>
+asociado). Cuando las credenciales sean las esperadas, se le crear&#225;
+una sesi&#243;n que servir&#225; para identificarle hasta que cierre la aplicaci&#243;n,
+de modo que no es necesario tocar ning&#250;n c&#243;digo de la misma, sino
+que basta con incluir un <I>index.php</I> similar al que sigue:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;?php
+
+<P>
+$AS&nbsp;=&nbsp;&#34;https://www.papi.urjc.es/cgi-bin/AuthServer&#34;;
+
+<P>
+session_start();
+
+<P>
+include('/var/www/include/dbconnectv2.php');
+
+<P>
+include('/var/www/clases/c_log.php');
+
+<P>
+<B>include'PoA.php';</B>
+
+<P>
+&nbsp;
+
+<P>
+//logs
+
+<P>
+$log-&gt;seccion&nbsp;=&nbsp;&#34;autenticacion&#34;;
+
+<P>
+$log-&gt;operador&nbsp;=&nbsp;$correo;
+
+<P>
+&nbsp;
+
+<P>
+<B>$poa&nbsp;=&nbsp;new&nbsp;PoA('lapa');</B>
+
+<P>
+list($res,&nbsp;$userAssertion)&nbsp;=&nbsp;<B>$poa-&gt;check_Access()</B>;
+
+<P>
+&nbsp;
+
+<P>
+<B>if&nbsp;($res&nbsp;==&nbsp;0)</B>&nbsp;{
+
+<P>
+&nbsp;&nbsp;//&nbsp;el&nbsp;GPoA&nbsp;no&nbsp;autentica
+
+<P>
+&nbsp;&nbsp;header(&#34;Location:&nbsp;$AS&#34;);
+
+<P>
+&nbsp;&nbsp;exit;
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+list($mail,$set)&nbsp;=&nbsp;split(&#34;,&#34;,$userAssertion,2);
+
+<P>
+list($login,$domain)&nbsp;=&nbsp;split(&#34;@&#34;,$mail,2);
+
+<P>
+$consulta&nbsp;=&nbsp;mysql_query(&#34;select&nbsp;*&nbsp;from&nbsp;operadores&nbsp;where&nbsp;login='$login'&#34;);
+
+<P>
+if&nbsp;(mysql_num_rows($consulta)&nbsp;==&nbsp;0)&nbsp;{
+
+<P>
+&nbsp;&nbsp;//No&nbsp;esta&nbsp;en&nbsp;la&nbsp;tabla&nbsp;de&nbsp;operadores
+
+<P>
+&nbsp;&nbsp;header(&#34;Location:&nbsp;$AS&#34;);
+
+<P>
+&nbsp;&nbsp;exit;
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;autenticado&nbsp;con&nbsp;&#233;xito&nbsp;por&nbsp;PAPI,&nbsp;y&nbsp;es&nbsp;operador
+
+<P>
+if&nbsp;(session_is_registered(&#34;SESSION&#34;))
+
+<P>
+&nbsp;&nbsp;session_unregister(&#34;SESSION&#34;);
+
+<P>
+<B>session_register(&#34;SESSION&#34;);</B>
+
+<P>
+<B>$SESSION[&#34;login&#34;]&nbsp;=&nbsp;$login;</B>
+
+<P>
+$log-&gt;descripcion&nbsp;=&nbsp;&#34;Exito&nbsp;en&nbsp;la&nbsp;autenticacion&#34;;
+
+<P>
+$log-&gt;putlog();
+
+<P>
+&nbsp;
+
+<P>
+<B>header(&#34;Location:&nbsp;/main.php&#34;);</B>
+
+<P>
+exit;
+
+<P>
+?&gt;
+</DD>
+</DL>En este ejemplo se incluye c&#243;digo que se utilizaba en el antiguo sistema
+de autenticaci&#243;n para crear la sesi&#243;n y guardar un hist&#243;rico de accesos.
+En <B>negrita</B> se encuentra el c&#243;digo m&#225;s importante desde nuestro
+punto de vista, que se encarga de consultar al <I>PoA</I> las credenciales
+del usuario, y redirigirle, bien al <I>AS</I>, bien a otro fichero
+PHP previa creaci&#243;n de una sesi&#243;n, en funci&#243;n de las mismas.
+
+<P>
+
+<H2><A NAME="SECTION00033000000000000000">
+3.3 HORDE (correo web)</A>
+</H2>
+
+<P>
+<I>Horde</I> es el sistema de correo web utilizado en la universidad.
+Permite la utilizaci&#243;n de diferentes servidores IMAP y por tanto dar
+acceso a varios dominios de correo. Partiendo de la base de que tenemos
+<I>Horde</I> configurado y que utilizamos <I>IMP</I> para la autenticaci&#243;n,
+lo &#250;nico que tenemos que hacer es sustituir el fichero <I>index.php</I>
+de <I>Horde</I> por uno ligeramente modificado. Encontraremos el original
+en <I>/usr/share/horde3/index.php</I>. Realizamos una copia de seguridad
+y editamos su contenido:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>#&nbsp;cp&nbsp;/usr/share/horde3/index.php&nbsp;/usr/share/horde3/index.php.bak
+
+<P>
+#&nbsp;vi&nbsp;/usr/share/horde3/index.php
+</DD>
+</DL>Un <I>index.php</I> similar al siguiente servir&#225; para que los usuarios
+puedan acceder directamente a su buz&#243;n si ya est&#225;n identificados en
+<I>PAPI</I>, y sean redirigidos al <I>AS</I> en caso contrario:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;?php
+
+<P>
+/**
+
+<P>
+&nbsp;*&nbsp;$Horde:&nbsp;horde/index.php,v&nbsp;2.105.4.3&nbsp;2005/03/02&nbsp;07:10:35&nbsp;chuck&nbsp;Exp&nbsp;$
+
+<P>
+&nbsp;*
+
+<P>
+&nbsp;*&nbsp;Copyright&nbsp;1999-2005&nbsp;Charles&nbsp;J.&nbsp;Hagenbuch&nbsp;&lt;chuck@horde.org&gt;
+
+<P>
+&nbsp;*&nbsp;Copyright&nbsp;1999-2005&nbsp;Jon&nbsp;Parise&nbsp;&lt;jon@horde.org&gt;
+
+<P>
+&nbsp;*
+
+<P>
+&nbsp;*&nbsp;See&nbsp;the&nbsp;enclosed&nbsp;file&nbsp;COPYING&nbsp;for&nbsp;license&nbsp;information&nbsp;(LGPL).&nbsp;&nbsp;If&nbsp;you
+
+<P>
+&nbsp;*&nbsp;did&nbsp;not&nbsp;receive&nbsp;this&nbsp;file,&nbsp;see&nbsp;http://www.fsf.org/copyleft/lgpl.html.
+
+<P>
+&nbsp;*/
+
+<P>
+&nbsp;
+
+<P>
+@define('AUTH_HANDLER',&nbsp;true);
+
+<P>
+@define('HORDE_BASE',&nbsp;'/usr/share/horde3');
+
+<P>
+$horde_configured&nbsp;=
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(@file_exists(HORDE_BASE&nbsp;.&nbsp;'/config/conf.php')&nbsp;&amp;&amp;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@file_exists(HORDE_BASE&nbsp;.&nbsp;'/config/mime_drivers.php')&nbsp;&amp;&amp;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@file_exists(HORDE_BASE&nbsp;.&nbsp;'/config/nls.php')&nbsp;&amp;&amp;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@file_exists(HORDE_BASE&nbsp;.&nbsp;'/config/prefs.php')&nbsp;&amp;&amp;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@file_exists(HORDE_BASE&nbsp;.&nbsp;'/config/registry.php'));
+
+<P>
+&nbsp;
+
+<P>
+if&nbsp;(!$horde_configured)&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;require&nbsp;HORDE_BASE&nbsp;.&nbsp;'/lib/Test.php';
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;Horde_Test::configFilesMissing('Horde',&nbsp;HORDE_BASE,&nbsp;'prefs.php',
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;array('conf.php'&nbsp;=&gt;&nbsp;'This&nbsp;is&nbsp;the&nbsp;main&nbsp;Horde&nbsp;configuration&nbsp;file.&nbsp;It&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;contains&nbsp;paths&nbsp;and&nbsp;basic&nbsp;items&nbsp;that&nbsp;apply&nbsp;to&nbsp;the&nbsp;core&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;framework&nbsp;and&nbsp;all&nbsp;Horde&nbsp;applications.',
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'mime_drivers.php'&nbsp;=&gt;&nbsp;'This&nbsp;file&nbsp;controls&nbsp;the&nbsp;global&nbsp;set&nbsp;of&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;MIME&nbsp;&nbsp;drivers&nbsp;for&nbsp;the&nbsp;Horde&nbsp;framework,&nbsp;allowing&nbsp;applications&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;to&nbsp;make&nbsp;use&nbsp;of&nbsp;programs&nbsp;such&nbsp;as&nbsp;enscript&nbsp;or&nbsp;mswordview&nbsp;to&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;render&nbsp;&nbsp;content&nbsp;into&nbsp;HTML&nbsp;for&nbsp;viewing&nbsp;in&nbsp;a&nbsp;browser.',
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'nls.php'&nbsp;=&gt;&nbsp;'This&nbsp;file&nbsp;provides&nbsp;localisation&nbsp;support&nbsp;for&nbsp;the&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Horde&nbsp;framework.',
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;'registry.php'&nbsp;=&gt;&nbsp;'The&nbsp;registry&nbsp;is&nbsp;how&nbsp;Horde&nbsp;applications&nbsp;find&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;out&nbsp;how&nbsp;to&nbsp;talk&nbsp;to&nbsp;each&nbsp;other.&nbsp;You&nbsp;should&nbsp;list&nbsp;any&nbsp;installed&#92;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Horde&nbsp;applications&nbsp;that&nbsp;you&nbsp;have&nbsp;here.'));
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+require_once&nbsp;HORDE_BASE&nbsp;.&nbsp;'/lib/base.php';
+
+<P>
+//&nbsp;a&#241;adimos&nbsp;la&nbsp;biblioteca&nbsp;criptogr&#225;fica&nbsp;de&nbsp;Horde
+
+<P>
+<B>require_once&nbsp;HORDE_BASE&nbsp;.&nbsp;'/lib/Horde/Secret.php';</B>
+
+<P>
+&nbsp;
+
+<P>
+if&nbsp;($browser-&gt;isMobile())&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;require&nbsp;HORDE_BASE&nbsp;.&nbsp;'/services/portal/mobile.php';
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;exit;
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+$main_page&nbsp;=&nbsp;Util::getFormData('url');
+
+<P>
+if&nbsp;(!$main_page)&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;$main_page&nbsp;=&nbsp;Horde::initialPage();
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;autenticamos&nbsp;mediante&nbsp;PAPI
+
+<P>
+$AS&nbsp;=&nbsp;&#34;https://www.papi.urjc.es/cgi-bin/AuthServer&#34;;
+
+<P>
+$_SERVER['HTTPS']&nbsp;=&nbsp;&#34;on&#34;;&nbsp;//&nbsp;s&#243;lo&nbsp;si&nbsp;usamos&nbsp;https
+
+<P>
+<B>include('PoA.php');</B>
+
+<P>
+&nbsp;
+
+<P>
+<B>$poa&nbsp;=&nbsp;new&nbsp;PoA('horde');</B>
+
+<P>
+list($res,$userAssertion)&nbsp;=&nbsp;<B>$poa-&gt;check_Access()</B>;
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;si&nbsp;no&nbsp;est&#225;&nbsp;autenticado,&nbsp;redirigimos&nbsp;al&nbsp;AS
+
+<P>
+<B>if&nbsp;($res&nbsp;==&nbsp;0)</B>&nbsp;{
+
+<P>
+&nbsp;&nbsp;header(&#34;Location:&nbsp;$AS&#34;);
+
+<P>
+&nbsp;&nbsp;exit;
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;parseo&nbsp;de&nbsp;la&nbsp;asercion
+
+<P>
+list(<B>$mail</B>,$other)&nbsp;=&nbsp;split(&#34;,&#34;,$userAssertion,2);
+
+<P>
+list(<B>$imapuser</B>,<B>$server</B>)&nbsp;=&nbsp;<B>split(&#34;@&#34;,$mail,2);</B>
+
+<P>
+list(<B>$pass</B>,$AS)&nbsp;=&nbsp;split(&#34;@&#34;,$other,2);
+
+<P>
+&nbsp;
+
+<P>
+if&nbsp;($imapuser&nbsp;==&nbsp;''&nbsp;||&nbsp;$pass&nbsp;==&nbsp;'')&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;header(&#34;Location:&nbsp;$AS&#34;);
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;exit;
+
+<P>
+}&nbsp;
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;rellenamos&nbsp;las&nbsp;variables&nbsp;post&nbsp;del&nbsp;formulario&nbsp;de&nbsp;login
+
+<P>
+$_POST['imapuser']&nbsp;=&nbsp;$imapuser;
+
+<P>
+$_POST['pass']&nbsp;=&nbsp;$pass;
+
+<P>
+<B>$_POST['autologin']&nbsp;=&nbsp;&#34;0&#34;;</B>
+
+<P>
+$_POST['mailbox']&nbsp;=&nbsp;&#34;INBOX&#34;;
+
+<P>
+<B>$_POST['load_frameset']&nbsp;=&nbsp;&#34;1&#34;;</B>
+
+<P>
+$_POST['actionID']&nbsp;=&nbsp;&#34;&#34;;
+
+<P>
+$_POST['folders']&nbsp;=&nbsp;&#34;INBOX.&#34;;
+
+<P>
+<B>$_POST['url']&nbsp;=&nbsp;&#34;index.php&#34;;</B>
+
+<P>
+$_POST['new_lang']&nbsp;=&nbsp;&#34;es_ES&#34;;
+
+<P>
+&nbsp;
+
+<P>
+/*&nbsp;codigo&nbsp;espec&#237;fico&nbsp;para&nbsp;los&nbsp;servidores&nbsp;de&nbsp;correo&nbsp;configurados
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;habr&#237;a&nbsp;que&nbsp;cambiarlo!&nbsp;*/
+
+<P>
+if&nbsp;($server&nbsp;==&nbsp;&#34;alumnos.urjc.es&#34;)
+
+<P>
+&nbsp;&nbsp;<B>$server&nbsp;=&nbsp;&#34;imapALUMNOS&#34;;</B>
+
+<P>
+if&nbsp;($server&nbsp;==&nbsp;&#34;urjc.es&#34;)
+
+<P>
+&nbsp;&nbsp;<B>$server&nbsp;=&nbsp;&#34;imapURJC&#34;;</B>
+
+<P>
+$_POST['server']&nbsp;=&nbsp;$server;
+
+<P>
+&nbsp;
+
+<P>
+if&nbsp;(!Util::getFormData('frameset_loaded')&nbsp;&amp;&amp;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;($conf['menu']['always']&nbsp;||
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(Auth::getAuth()&nbsp;&amp;&amp;&nbsp;$prefs-&gt;getValue('show_sidebar'))))&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;if&nbsp;($browser-&gt;hasQuirk('scrollbar_in_way'))&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$scrollbar&nbsp;=&nbsp;'yes';
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;}&nbsp;else&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$scrollbar&nbsp;=&nbsp;'auto';
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;}
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;/*&nbsp;nos&nbsp;aseguramos&nbsp;de&nbsp;mantener&nbsp;la&nbsp;password&nbsp;en&nbsp;la&nbsp;variable&nbsp;de
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;sesion&nbsp;en&nbsp;caso&nbsp;de&nbsp;que&nbsp;no&nbsp;sea&nbsp;nuestro&nbsp;primer&nbsp;acceso&nbsp;*/
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;<B>$_SESSION['imp']['pass']&nbsp;=&nbsp;Secret::write(</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Secret::getKey('imp'),&nbsp;$pass);</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;require&nbsp;HORDE_TEMPLATES&nbsp;.&nbsp;'/index/frames_index.inc';
+
+<P>
+}&nbsp;else&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;//&nbsp;tras&nbsp;rellenar&nbsp;a&nbsp;mano&nbsp;el&nbsp;formulario,&nbsp;lo&nbsp;&#34;enviamos&#34;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;<B>require&nbsp;HORDE_BASE&nbsp;.&nbsp;'/imp/redirect.php';</B>
+
+<P>
+}
+
+<P>
+?&gt;
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION00034000000000000000">
+3.4 SYMPA (listas de correo)</A>
+</H2>
+
+<P>
+En el caso del gestor de listas de correo no se puede utilizar el
+<I>phpPoA</I>, pero si un <I>PoA</I> convencional, con la particularidad
+de que es necesario adaptar <I>Sympa</I> para que utilice dicho <I>PoA</I>
+como sistema <I>single-sign-on</I>. Para ello es necesario modificar
+el c&#243;digo del propio <I>Sympa</I> y crear conectores que se encarguen
+de enlazar con la funcionalidad proporcionada por <I>PAPI</I>.
+
+<P>
+En nuestro caso, por sencillez, es preferible configurar un proxy
+de reescritura que utilice el autocompletado de formularios para rellenar
+el mismo autom&#225;ticamente. <B>Es necesario modificar la plantilla
+principal de Sympa ya que no incluye nombre en sus formularios</B>. Para
+ello, editamos el archivo <I>/usr/share/sympa/wws_templates/loginbanner.es.tpl</I>
+y en la l&#237;nea 17 a&#241;adimos el atributo <I>NAME=login</I>. Configuramos
+adicionalmente un <I>virtual host</I> de apache para nuestro proxy,
+del siguiente modo:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>sympa.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;RedirectMatch&nbsp;(.*)&nbsp;<B>https://sympa.papi.urjc.es/</B>
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>sympa.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;/&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;<B>sympa</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_sympa
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_URL&nbsp;wayf:built-in
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Remote_URL&nbsp;https://listas.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Redirect_All&nbsp;1</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>PAPI_Redirect&nbsp;listas.urjc.es(.*?)&nbsp;sympa.papi.urjc.es$1</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Eval_Proxy_Redirects&nbsp;1</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Form_Processor&nbsp;urle=&gt;&#94;/wws.*&nbsp;form=&gt;login</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;buttonName=&gt;action_login</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(passwd,$r-&gt;notes('PAPIAttr-password'))</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(email,$r-&gt;notes('PAPIAttr-username'))</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION00035000000000000000">
+3.5 GENTE (directorio)</A>
+</H2>
+
+<P>
+Gente es la aplicaci&#243;n de directorio utilizada en la universidad,
+y se utiliza adicionalmente para que el personal modifique sus datos
+personales, entre los que se encuentran, por ejemplo, el nombre de
+usuario y la contrase&#241;a que utilizar&#225; PAPI para autenticar. Es por
+tanto una aplicaci&#243;n un poco especial, ya que acepta dos formas de
+autenticaci&#243;n a trav&#233;s del mismo formulario. Cuando un usuario no
+tiene un nombre de usuario y una contrase&#241;a, deber&#225; hacer login con
+su NIF y su fecha de nacimiento, ambos valores almacenados en una
+base de datos. Tras identificarse por primera vez y elegir un nombre
+de usuario y contrase&#241;a, esta forma de acceso no volver&#225; a permitirse
+para este usuario. Por si fuera poco, s&#243;lo se permite el acceso autenticado
+(de cualquier forma) a trav&#233;s de la propia red de la universidad,
+lo cual complica a&#250;n m&#225;s la implementaci&#243;n.
+
+<P>
+Las implicaciones directas de este modelo son que la aplicaci&#243;n debe
+mantener su formulario, en vez de delegar absolutamente la autenticaci&#243;n
+en PAPI. Deber&#225; recoger los datos del usuario y realizar los an&#225;lisis
+pertinentes (como verificar si se ha introducido un nombre de usuario
+o un DNI y si se conecta desde la red corporativa), y proceder de
+forma adecuada. En particular, si se recibe un DNI la aplicaci&#243;n deber&#225;
+autenticar por su cuenta contra la base de datos, y si recibe un nombre
+de usuario deber&#225; delegar la autenticaci&#243;n en un <I>phpPoA</I>. Al
+introducir un <I>phpPoA</I> como forma de autenticaci&#243;n se elimina
+la necesidad de acceder exclusivamente desde la red de la universidad,
+ya que PAPI proporciona las garant&#237;as de seguridad necesarias para
+que los usuarios accedan a la aplicaci&#243;n desde otras localizaciones.
+
+<P>
+La implementaci&#243;n de este sistema no es en absoluto trivial. Una forma
+m&#225;s sencilla de implementar el acceso autenticado a la aplicaci&#243;n
+a trav&#233;s de PAPI consiste en implementar un fichero PHP aparte, por
+ejemplo, papi.php, al que se acceder&#225; desde la lista de aplicaciones
+del servidor de autenticaci&#243;n, y que b&#225;sicamente realizar&#225; un POST
+manual al formulario de gente. De esta forma podemos acceder una vez
+autenticados en PAPI, pero perdemos la capacidad de hacerlo directamente,
+vi&#233;ndonos obligados a hacerlo obligatoriamente a trav&#233;s del <I>AS</I>.
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;?php
+
+<P>
+$AS&nbsp;=&nbsp;&#34;https://www.papi.urjc.es/cgi-bin/AuthServer&#34;;
+
+<P>
+include'PoA.php';
+
+<P>
+&nbsp;
+
+<P>
+$poa&nbsp;=&nbsp;new&nbsp;PoA('<B>gente</B>');
+
+<P>
+list($res,&nbsp;$userAssertion)&nbsp;=&nbsp;<B>$poa-&gt;check_Access()</B>;
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;comprobamos&nbsp;si&nbsp;el&nbsp;usuario&nbsp;est&#225;&nbsp;autenticado
+
+<P>
+<B>if&nbsp;($res&nbsp;==&nbsp;0)&nbsp;{</B>
+
+<P>
+&nbsp;&nbsp;//&nbsp;el&nbsp;GPoA&nbsp;no&nbsp;autentica
+
+<P>
+&nbsp;&nbsp;header(&#34;Location:&nbsp;$AS&#34;);
+
+<P>
+&nbsp;&nbsp;exit;
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;verificamos&nbsp;la&nbsp;aserci&#243;n
+
+<P>
+if&nbsp;(!strpos($userAssertion,','))&nbsp;{
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;header(&#34;Location:&nbsp;$AS&#34;);
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;exit;
+
+<P>
+}
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;obtenemos&nbsp;las&nbsp;variables&nbsp;de&nbsp;la&nbsp;aserci&#243;n
+
+<P>
+list(<B>$mail</B>,<B>$other</B>)&nbsp;=&nbsp;split(&#34;,&#34;,$userAssertion,2);
+
+<P>
+list(<B>$usuario</B>,<B>$server</B>)&nbsp;=&nbsp;split(&#34;@&#34;,$mail,2);
+
+<P>
+list(<B>$clave</B>,<B>$AS</B>)&nbsp;=&nbsp;split(&#34;@&#34;,$other,2);
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;rellenamos&nbsp;manualmente&nbsp;las&nbsp;variables&nbsp;del&nbsp;formulario
+
+<P>
+@$_REQUEST['accion']&nbsp;=&nbsp;&#34;entrar&#34;;
+
+<P>
+<B>@$_REQUEST['usuario']&nbsp;=&nbsp;$usuario;</B>
+
+<P>
+<B>@$_REQUEST['clave']&nbsp;=&nbsp;$clave;</B>
+
+<P>
+@$_REQUEST['submit']&nbsp;=&nbsp;&#34;Aceptar&#34;;
+
+<P>
+&nbsp;
+
+<P>
+//&nbsp;invocamos&nbsp;manualmente&nbsp;a&nbsp;la&nbsp;autenticaci&#243;n
+
+<P>
+<B>require&nbsp;(&#34;login.php&#34;);</B>
+
+<P>
+?&gt;
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION00036000000000000000">
+3.6 Campus Virtual (WebCT)</A>
+</H2>
+
+<P>
+El caso de WebCT es relativamente sencillo, ya que basta con instalar
+un proxy de reescritura que rellene autom&#225;ticamente el formulario
+de autenticaci&#243;n. Ya que la aplicaci&#243;n se distribuye con su propio
+servidor web y es propietaria, utilizar otros m&#233;todos de integraci&#243;n
+con PAPI se complica considerablemente. A continuaci&#243;n se muestra
+una configuraci&#243;n de ejemplo:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>campusvirtual.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;RedirectMatch&nbsp;/index.html&nbsp;https://campusvirtual.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;404&nbsp;<B>https://campusvirtual.papi.urjc.es/index.html</B>
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>campusvirtual.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;403&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;/&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;<B>campusvirtual</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_campusvirtual
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_URL&nbsp;wayf:built-in
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Remote_URL&nbsp;http://www.campusvirtual.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Eval_Proxy_Redirects&nbsp;1</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Form_Processor&nbsp;urle=&gt;.*/webct/ticket/ticketLogin&#92;?&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;action=print_login&amp;request_uri=/webct/homearea/homearea.*&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;form=&gt;authenticate&nbsp;buttonName=&gt;submitbutton&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(Password,$r-&gt;notes('PAPIAttr-password'))&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(WebCT_ID,$r-&gt;notes('PAPIAttr-username'))</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>
+<P>
+
+<H2><A NAME="SECTION00037000000000000000">
+3.7 Secretar&#237;a Virtual</A>
+</H2>
+
+<P>
+El caso de la secretar&#237;a virtual es un poco m&#225;s delicado. Su formulario
+de identificaci&#243;n utiliza distintos par&#225;metros dependiendo del tipo
+de usuario. En caso de que el usuario sea PAS o PDI utilizar&#225; el nombre
+de usuario y contrase&#241;a que se utiliza en el resto de servicios, mientras
+que los alumnos deber&#225;n utilizar su DNI (sin letra) y su contrase&#241;a.
+Instalaremos un proxy de reescritura con autocompletado de formulario,
+con la particularidad de que necesitaremos hacer uso de la directiva
+<I>Hcook_Generator</I> para modificar la aserci&#243;n emitida por el
+AS atendiendo al tipo de usuario. De este modo comprobaremos si el
+usuario tiene perfil de alumno, y en tal caso sustituiremos su nombre
+de usuario por su DNI sin letra.
+
+<P>
+A continuaci&#243;n se muestra una configuraci&#243;n muy b&#225;sica de un proxy
+PAPI que rellenar&#225; el formulario correspondiente, <B>sin</B> modificar
+la cookie, de modo que s&#243;lo permitir&#225; identificarse al personal universitario:
+
+<P>
+
+<DL COMPACT>
+<DT>
+<DD>&lt;VirtualHost&nbsp;192.168.84.92:80&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>gestion.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;RedirectMatch&nbsp;/index.html&nbsp;https://gestion.papi.urjc.es
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;404&nbsp;<B>https://gestion.papi.urjc.es/index.html</B>
+
+<P>
+&lt;/VirtualHost&gt;
+
+<P>
+&nbsp;
+
+<P>
+&lt;VirtualHost&nbsp;192.168.84.92:443&gt;
+
+<P>
+&nbsp;&nbsp;ServerName&nbsp;<B>gestion.papi.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;ErrorDocument&nbsp;403&nbsp;https://www.papi.urjc.es/cgi-bin/AuthServer
+
+<P>
+&nbsp;&nbsp;&lt;Location&nbsp;/&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlSendHeader&nbsp;On
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;PerlAccessHandler&nbsp;PAPI::Main
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Service_ID&nbsp;<B>gestion</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Req_DB&nbsp;/usr/local/PAPI/PoA/req_gestion
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;GPoA_URL&nbsp;wayf:built-in
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Remote_URL&nbsp;https://gestion.urjc.es</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Redirect_All&nbsp;1</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>PAPI_Redirect&nbsp;gestion.urjc.es(.*?)&nbsp;gestion.papi.urjc.es$1</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Eval_Proxy_Redirects&nbsp;1</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<B>Form_Processor&nbsp;urle=&gt;&#94;/Redcampus/acceso.htm$&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;form=&gt;formAcceso&nbsp;buttonName=&gt;image&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(TXT_CLAVE,$r-&gt;notes('PAPIAttr-password'))&nbsp;&#92;</B>
+
+<P>
+&nbsp;<B>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;field=&gt;(TXT_USUARIO,$r-&gt;notes('PAPIAttr-username'))</B>
+
+<P>
+&nbsp;&nbsp;&nbsp;&nbsp;&lt;/PAPI_Local&gt;
+
+<P>
+&nbsp;&nbsp;&lt;/Location&gt;
+
+<P>
+&lt;/VirtualHost&gt;
+</DD>
+</DL>
+<P>
+
+</BODY>
+</HTML>

@@ -1,0 +1,202 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node40.html">
+<LINK REL="up" HREF="node38.html">
+<LINK REL="next" HREF="node42.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html725"
+  HREF="node42.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html721"
+  HREF="node38.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html717"
+  HREF="node40.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html723"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html726"
+  HREF="node42.html">Análisis del sistema</A>
+<B> Subir:</B> <A NAME="tex2html722"
+  HREF="node38.html">Servicios requeridos</A>
+<B> Anterior:</B> <A NAME="tex2html718"
+  HREF="node40.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html724"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exGNU Radius
+
+<P>
+Por &#250;ltimo, pasamos a dejar a punto nuestro servidor proxy de Radius, que se
+utilizar&#225; para realizar las consultas de autenticaci&#243;n del servicio. Sus ficheros
+de configuraci&#243;n se encuentran en el directorio <TT>/etc/raddb/</TT>. Modificaremos
+las opciones generales del servidor en <TT>/etc/raddb/config</TT>. Para una
+informaci&#243;n detallada sobre todas las posibles opciones de configuraci&#243;n se
+recomienda mirar la p&#225;gina de manual o ejecutar <TT>info Radius config</TT>. La
+mayor&#237;a de opciones por defecto ser&#225;n m&#225;s que suficientes.
+
+<P>
+<PRE>
+# opciones generales
+option {
+        max-requests 1024;
+        # usuario con el que ejecutará el demonio
+        radiusd-user radiusd;
+        # caracteres válidos en nombres de usuario
+        username-chars ".-_";
+        # resolución inversa de DNS
+        resolve no;
+};
+# opciones de registro de actividad
+logging {
+        prefix-hook "default_log_prefix";
+        channel default {
+                file "radius.log";
+                print-category yes;
+                print-level yes;
+        };
+        channel info {
+                file "radius.info";
+                print-pid yes;
+        };
+        channel debug {
+                file "radius.debug";
+        };
+        category auth {
+                print-auth yes;
+                print-failed-pass yes;
+        };
+        category info {
+                channel info;
+        };
+        category =debug {
+                channel debug;
+        };
+        category * {
+                channel default;
+        };
+};
+# opciones de autenticación
+auth {
+        max-requests 48;
+        request-cleanup-delay 2;
+        detail yes;
+        # divide en dos los nombres de usuario, el
+        # propio nombre de usuario y su realm
+        strip-names yes;
+        checkrad-assume-logged yes;
+};
+# opciones para las cuentas de usuario
+acct {
+        max-requests 48;
+        request-cleanup-delay 2;
+};
+# configuración del módulo rewrite
+rewrite {
+        load "checknas.rw";
+        load "log-hook.rw";
+};
+</PRE>
+
+<P>
+En el archivo de configuraci&#243;n <TT>/etc/raddb/clients</TT> indicaremos
+una lista de los servidores Radius a los que permitiremos realizar consultas
+a nuestro proxy, incluyendo el secreto compartido a utilizar con los mismos.
+Especificamos las direcciones IP de los servidores Radius de Telef&#243;nica:
+
+<P>
+<PRE>
+194.224.26.133          SECRETO!
+194.224.26.134          SECRETO!
+</PRE>
+
+<P>
+Por contra, en el archivo <TT>/etc/raddb/client.conf</TT> escribiremos los
+datos concretos que deber&#225; utilizar nuestro proxy para escalar sus consultas
+a los servidores Radius de la universidad.
+
+<P>
+<PRE>
+server ganimedes 193.147.184.3 s3cr3t0 1812 1813
+server europa 193.147.184.22 s3cr3t0 1812 1813
+# dirección del proxy
+source_ip 193.147.184.193
+# tiempo a esperar por las respuestas
+timeout 5
+# número de reintentos
+retry 1
+</PRE>
+
+<P>
+Llegados a este punto tenemos configurada la red Radius de clientes y servidores
+que vamos a utilizar. Nos falta tan s&#243;lo para acabar con nuestras tareas de
+configuraci&#243;n indicar a nuestro proxy cual es el realm que debe escalar a los
+servidores privados, y qu&#233; debe hacer concretamente. Esto lo podemos realizar en
+el propio archivo <TT>/etc/raddb/realms</TT>:
+
+<P>
+<PRE>
+# indicamos que los usuarios del dominio urjc sean autenticados por
+# radius.urjc.es, que se divida el nombre de usuario y el realm en
+# la consulta, y que no se tenga en cuenta la distinción entre
+# mayúsculas y minúsculas
+urjc            radius.urjc.es          ignorecase,strip
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html725"
+  HREF="node42.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html721"
+  HREF="node38.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html717"
+  HREF="node40.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html723"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html726"
+  HREF="node42.html">Análisis del sistema</A>
+<B> Subir:</B> <A NAME="tex2html722"
+  HREF="node38.html">Servicios requeridos</A>
+<B> Anterior:</B> <A NAME="tex2html718"
+  HREF="node40.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html724"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

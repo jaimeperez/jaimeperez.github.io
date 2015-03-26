@@ -1,0 +1,355 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>DNS &amp; IP's DINÁMICAS HOWTO</TITLE>
+ 
+ <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <META name="Generator" content="Vi Improved">
+ <META name="Author" content="Jaime Perez">
+
+ <LINK rel="stylesheet" type="text/css" href="http://blackspiral.org/~jperez/css/doc.css">
+</HEAD>
+
+<BODY>
+ <!-- titulo y datos del autor -->
+ <CENTER>
+ <H1>DNS &amp; IP's DINÁMICAS HOWTO</H1>
+ <BR>
+ Jaime P&eacute;rez Crespo (<A href="mailto:japecre at pantuflo.urjc.es">japecre <I>at</I> pantuflo.escet.urjc.es</A>)
+ <BR>
+ <BR>
+ &Uacute;ltima actualizaci&oacute;n: 11 de Julio de 2003
+ </CENTER>
+ <BR>
+ <BR>
+ <BR>
+ <!-- comienzo del texto -->
+ <H2>Motivaci&oacute;n</H2>
+ <P>
+  Hoy en d&iacute;a el tener en casa una conexi&oacute;n de alta velocidad, con una direcci&oacute;n IP 
+  (<I>Internet Protocol</I>) fija asociada a dicha conexi&oacute;n, se ha convertido en algo habitual. 
+  Y por tanto, m&aacute;s habitual a&uacute;n es comprobar como usuarios de este tipo de conexiones 
+  aprovechan el tener una IP fija para ofrecer ellos mismos ciertos servicios al resto de 
+  la comunidad internauta, como bien pueden ser servidores FTP (<I>File Transfer Protocol</I>), 
+  de correo, WEB, e incluso otros.
+ </P>
+ <P>
+  Sin embargo la masiva utilizaci&oacute;n de este tipo de l&iacute;neas, est&aacute; provocando un uso
+  desmesurado de direcciones IP fijas, lo cual hace que el de por si limitado mapa de 
+  direcciones IP que disfrutamos a&uacute;n hoy en IPv4 se vea muy saturado. Es por ello que muchos
+  ISP (<I>Internet Service Provider</I>) han optado para su modelo de negocio por un sistema
+  de asignaci&oacute;n din&aacute;mica de direcciones IP mediante DHCP (<I>Dinamic Host Configuration Protocol</I>) 
+  u otros protocolos; y muchos otros ya est&aacute;n pensando en pasarse a este modelo para ahorrar costes 
+  y direcciones IP en definitiva. Esto dificulta la tarea de aquellos que quieran montar un 
+  servicio p&uacute;blico en su m&aacute;quina, al no tener una IP fija sobre la que dar el servicio, 
+  si bien, gracias al sistema de DNS (<I>Domain Name System</I>) que hoy por hoy es el pilar 
+  de la red, pueden asociar un nombre a su servicio de forma permanente, gratuita, y sencilla, 
+  sin importar el tipo de conexi&oacute;n que se utilice.
+ </P>
+ <P>
+  El objetivo de este mini HOWTO es por tanto facilitar la tarea a aquellos que, bajo <B>GNU/Linux</B>, 
+  quieren montar un servicio disponible en Internet, bajo una conexi&oacute;n que les proporciona una 
+  direcci&oacute;n IP din&aacute;mica o semidin&aacute;mica. La idea general es asociar un nombre DNS, mediante uno
+  de los m&uacute;ltiples servicios gratuitos que existen en la red, a nuestra m&aacute;quina, por medio de un
+  <I>DNS updater</I>. A continuaci&oacute;n detallamos el proceso.
+ </P>
+ <BR>
+ <H2>Primeras consideraciones</H2>
+ <P>
+  Obviamente, el servicio que prestemos es lo de menos importancia. Durante este HOWTO, los 
+  ejemplos se pondr&aacute;n bajo una plataforma i686 trabajando con <A href ="http://www.redhat.com/">
+  Red Hat GNU/Linux</A> 7.3, si bien ser&aacute;n extrapolables a otras plataformas GNU/Linux, en mayor o
+  menor medida.
+ </P>
+ <P>
+  Lo primero que necesitamos es un servicio que permita asociar un registro DNS con una 
+  direcci&oacute;n IP, para lo cual, no nos vale cualquiera. Hay que tener en cuenta que lo que nos 
+  interesa es disponer de un nombre fijo, asociado en todo momento y de forma actualizada, a la
+  direcci&oacute;n IP que tiene la m&aacute;quina en la que ofrecemos el servicio. Por tanto, deberemos elegir 
+  un servicio de DNS que nos proporcione un peque&ntilde;o actualizador, un sencillo programa que se 
+  conecte con el servicio y actualice autom&aacute;ticamente la IP asociada al registro DNS cada vez
+  que detecte un cambio. En este caso, vamos a utilizar los servicios de <A href="http://www.no-ip.com/">
+  http://www.no-ip.com/</A>, ampliamente usados y reconocidos por la comunidad internauta, y con todas las 
+  caracter&iacute;sticas que nos permitir&aacute;n explicar este HOWTO con todo lujo de detalles.
+ </P>
+ <P>
+  Nos registramos en el servicio, y elegimos el nombre que queremos asociado con nuestra m&aacute;quina.
+  Podemos utilizar un nombre que sea descriptivo, de entre los que nos proporcionan, del servicio que
+  queremos dar en nuestro PC. Por ejemplo, si queremos montar un servidor FTP, podemos elegir un dominio
+  para nuestro nombre como <I>serveftp.com</I> y darle un nombre que nos identifique, como puede ser
+  el nombre de nuestra m&aacute;quina o host. Un ejemplo: <I>mordor.serveftp.com</I>
+ </P>
+ <P>
+  Una vez hayamos completado el proceso, tendremos que descargar el 
+  <A href="http://www.no-ip.com/client/linux/noip_updater_v1.6.tar.gz">cliente</A> que se nos proporciona
+  para actualizar autom&aacute;ticamente el registro DNS. Ya descargado a nuestra m&aacute;quina, lo descomprimimos
+  como siempre:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ tar zxvf noip_updater_v1.6.tar.gz
+noip_updater_v1.6/
+noip_updater_v1.6/Makefile
+noip_updater_v1.6/COPYING
+noip_updater_v1.6/README.FIRST
+noip_updater_v1.6/no-ip.sh
+noip_updater_v1.6/no-ip.conf.sample
+noip_updater_v1.6/noip.c
+noip_updater_v1.6/i386binaries/
+noip_updater_v1.6/i386binaries/noip-for-libc6</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Esto nos descomprime todos los archivos del cliente en un directorio llamado <I>noip_updater_v1.6</I>
+  bajo el directorio en el que nos encontremos a la hora de descomprimir. Como siempre, es conveniente leerse
+  dos veces los archivos de texto que acompa&ntilde;an a cualquier programa, como el <B>README.FIRST</B> en este caso.
+ </P>
+ <P>
+  Procedemos ahora a instalar correctamente el cliente, utilizando para ello <I>make</I>, <I>make conf</I> y
+  <I>make install</I> (&eacute;ste &uacute;ltimo estando identificado como root):
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ cd noip_updater_v1.6
+[icarus@mordor]$ make
+gcc -O2 -g -Dlinux noip.c -o noip
+[icarus@mordor]$ make conf
+./no-ip.sh
+Greetings!
+
+The no-ip dynamic DNS system requires a configuration file.
+The answers to the next five questions will build one.
+
+What is your email address for no-ip.com? (name@email.addr)
+> <B>nuestro_correo@dominio.com</B>
+What is the password for the login account? (password)
+> <B>nuestro_password</B>
+Are you using a groupname instead of a host.domain.name? (Y/N)
+Answer 'N' if you do not understand the question.
+> <B>N</B>
+What is the host.domain.name you are using? (host.no-ip.com)
+> <B>mordor.serveftp.com</B>
+Do you have a router which uses NAT/masquerading? (Y/N)
+> <B>N</B>
+Which device is your net connection? (one of: lo eth0 eth1 )
+> <B>eth0</B>
+Configuration file [./no-ip.conf] created.</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  El comando <I>make</I> compila el cliente de no-ip a partir del <I>Makefile</I> que hemos descomprimido
+  previamente. Una vez tenemos el binario, pasamos a configurar el cliente con <I>make conf</I>. Indicamos por 
+  este orden, seg&uacute;n se nos pregunta, la direcci&oacute;n de correo con la que nos registramos en el
+  servicio de no-ip; la contrase&ntilde;a que tenemos en dicho servicio; <I>N</I> si hemos registrado el
+  nombre de nuestra m&aacute;quina; el nombre completo que hemos asociado, en nuestro caso, el mostrado;
+  <I>N</I> de nuevo si no tenemos un router dando servicio a varias m&aacute;quinas (en multipuesto) utilizando
+  NAT (<I>Network Address Translation</I>); y finalmente el nombre del adaptador de red que da conexi&oacute;n
+  a la m&aacute;quina, en la mayor&iacute;a de los casos, eth0.
+ </P>
+ <P>
+  Procedemos a terminar de instalar el cliente en nuestro sistema. Este paso requiere que nos identifiquemos
+  como superusuario (root) con lo cual, no podremos llevarlo a cabo en aquellos sistemas en los que tan solo
+  tengamos una cuenta de usuario sin privilegio alguno. En cualquier caso, no es imprescindible llevar a cabo
+  este paso para poder utilizar el cliente, ya que en este punto, ya se puede usar simplemente
+  situ&aacute;ndonos en el directorio donde descomprimimos el cliente, y tecleando <I>./noip -c no-ip.conf</I>
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ su
+Password:
+[icarus@mordor]$ make install
+cp noip /usr/local/bin/noip
+cp no-ip.conf /usr/local/lib/no-ip.conf
+chmod 600 /usr/local/lib/no-ip.conf</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Como podemos ver, simplemente se ha copiado el binario a un directorio que forma parte del path del sistema,
+  y el archivo de configuraci&oacute;n al directorio donde nuestro cliente busca por defecto dicho archivo. Por
+  &uacute;ltimo se han quitado permisos al archivo de configuraci&oacute;n para evitar una manipulaci&oacute;n
+  malintencionada por parte de alg&uacute;n usuario de la m&aacute;quina. Hecho esto, tenemos nuestro cliente
+  listo para ejecutar, con tan solo teclear en una shell el comando <I>noip</I>.
+ </P>
+ <BR>
+ <H2>Cuestiones avanzadas</H2>
+ <P>
+  Si bien ya tenemos todo lo estrictamente necesario para poder empezar a ofrecer nuestro servicio, ser&iacute;a
+  deseable que nuestro registro DNS estuviese siempre actualizado, sin necesidad alguna de que nosotros tengamos
+  que intervenir arrancando el cliente. Lo que vamos a hacer ahora pues, es crear un nuevo servicio del sistema
+  para correr nuestro cliente como un demonio, que se podr&aacute; arrancar con cada inicio y as&iacute;
+  mantendr&aacute; la DNS actualizada siempre.
+ </P>
+ <P>
+  Comenzamos por crear el servicio. Nos identificamos como root, y nos dirigimos a <I>/etc/init.d</I>.
+  Una vez all&iacute;, creamos un nuevo archivo, que ser&aacute; un script de shell asociado a nuestro nuevo
+  servicio, y lo editamos.
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ su
+Password:
+[root@mordor]# cd /etc/init.d
+[root@mordor]$ vi noip</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  En este caso usamos <B>vi</B> por ser un editor ampliamente extendido y presente en casi todos los sistemas.
+  No nos extenderemos aqu&iacute; en explicar el uso de este editor. Sirva decir que creamos el archivo con
+  <I>vi noip</I> tras lo cual en el propio editor, pegaremos el siguiente contenido:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>#!/bin/sh
+case "$1" in
+        start)
+                noip
+                echo "Cliente no-ip arrancado."
+        ;;
+        stop)
+                killall -TERM /usr/local/bin/noip &gt; /dev/null
+                echo "Cliente no-ip parado."
+        ;;
+        status)
+                lines="`ps aux | grep -c "noip"`"
+                if [ "$lines" -gt 1 ]
+                then
+                        echo "Cliente no-ip arrancado."
+                else
+                        echo "Cliente no-ip parado."
+                fi
+        ;;
+        *)
+                echo "Uso: $0 {start|stop|status}"
+                exit 1
+esac
+exit 0</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Una vez hemos pegado el contenido, y guardado el archivo, procedemos a dar permisos adecuados al nuevo script
+  de shell para poder utilizarlo:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[root@mordor]# chmod 755 noip</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Hecho esto, ya podemos utilizar nuestro nuevo servicio de sistema. En nuestro caso hemos dado soporte a tres
+  opciones distintas para nuestro servicio, <I>start</I>, <I>stop</I> y <I>status</I>, que nos permitir&aacute;n
+  arrancar, detener, y consultar el estado del demonio respectivamente. A continuaci&oacute;n se muestra un
+  ejemplo de c&oacute;mo accederemos al servicio:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[root@mordor]# service noip
+Uso: /etc/init.d/noip {start|stop|status}
+[root@mordor]# service noip status
+Cliente no-ip parado.
+[root@mordor]# service noip start
+Cliente no-ip arrancado.
+[root@mordor]# service noip status
+Cliente no-ip arrancado.
+[root@mordor]# service noip stop
+Cliente no-ip parado.
+[root@mordor]# service noip status
+Cliente no-ip parado.</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  S&oacute;lo resta configurar el nivel de ejecuci&oacute;n que deseemos para que nuestro nuevo demonio se
+  arranque cada vez que iniciemos ese nivel (o niveles). Por ejemplo, para una m&aacute;quina que act&uacute;a
+  como servidor las 24 horas y que no utiliza entorno gr&aacute;fico, lo usual es que arranque en nivel de
+  ejecuci&oacute;n 3. Si solemos arrancar la m&aacute;quina con el entorno de ventanas que prefiramos, usaremos
+  nivel de ejecuci&oacute;n 5. Para comprobar en qu&eacute; nivel de ejecuci&oacute;n estamos en cualquier
+  momento, podemos utilizar el siguiente comando:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ grep initdefault /etc/inittab | awk -F: '{print $2}'
+
+5</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Una vez conocido el nivel de ejecuci&oacute;n, podemos usar alguna herramienta que nos proporcione nuestra
+  distribuci&oacute;n de GNU/Linux para editar el inicio. En nuestro caso, utilizamos <B>ksysv</B>, que
+  mediante una sencilla GUI, permite arrastrar servicios de la lista de servicios disponibles a los niveles
+  de ejecuci&oacute;n que deseemos, precisando si en ese nivel de ejecuci&oacute;n queremos parar o arrancar
+  el servicio. No nos extenderemos m&aacute;s en este punto, ya que la variedad de herramientas
+  disponibles para este prop&oacute;sito hacen imposible explicar todas las formas de hacer esto.
+ </P>
+ <P>
+  Y esto es todo. Llegados aqu&iacute; nuestro sistema deber&iacute;a tener un nombre de escala mundial,
+  asociado permanentemente, sea cual sea nuestra conexi&oacute;n, y actualizado puntualmente con cada cambio.
+  Espero que este tutorial haya servido de ayuda a aquellos que no saben bien como ofrecer un servicio tal
+  como un FTP al resto de usuarios de la red.
+ </P>
+ <BR>
+ <!-- seccion de enlaces -->
+ <H2>Enlaces Interesantes</H2>
+ <P>
+  No-ip: <A href="http://www.no-ip.com/">www.no-ip.com</A>
+  <BR>
+  Virtual Services HOWTO: <A href="http://www.ibiblio.org/mdw/HOWTO/Virtual-Services-HOWTO.html">
+   www.ibiblio.org/mdw/HOWTO/Virtual-Services-HOWTO.html</A>
+ </P>
+ <BR>
+ <!-- seccion de licencia -->
+ <H2>Licencia</H2>
+ <P>
+  Este documento p&uacute;blico puede ser distribuido y/o traducido libremente, siempre y cuando 
+  en el documento resultante se incluyan los datos del autor indicados en la cabecera, esta 
+  secci&oacute;n de licencia, y la url del documento original:
+ </P>
+</BODY>
+</HTML>

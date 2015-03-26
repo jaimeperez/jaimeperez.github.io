@@ -1,0 +1,157 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node41.html">
+<LINK REL="previous" HREF="node39.html">
+<LINK REL="up" HREF="node38.html">
+<LINK REL="next" HREF="node41.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html715"
+  HREF="node41.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html711"
+  HREF="node38.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html705"
+  HREF="node39.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html713"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html716"
+  HREF="node41.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html712"
+  HREF="node38.html">Servicios requeridos</A>
+<B> Anterior:</B> <A NAME="tex2html706"
+  HREF="node39.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html714"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exQuagga
+
+<P>
+Pasamos a configurar las opciones necesarias para utilizar el protoclo RIP de
+encaminamiento de forma correcta, tal como requiere Telef&#243;nica. La configuraci&#243;n
+del software quagga se realiza mediante varios ficheros situados en <TT>/etc/quagga/</TT>.
+La configuraci&#243;n general de zebra se encuentra en el archivo <TT>/etc/quagga/zebra.conf</TT>.
+En ella definiremos los par&#225;metros del <I>router</I> principal:
+
+<P>
+<PRE>
+! nombre del router virtual
+hostname minimum
+! clave de acceso telnet al router virtual
+password clave_acceso
+! clave de acceso para modo privilegiado
+enable password clave_admin
+!
+interface lo
+interface eth0
+interface ipsec0
+!
+interface tunnel0
+ description SERVICIO MOVISTAR INTRANET
+ multicast
+!
+interface tunnel1
+ description SERVICIO MOVISTAR INTRANET
+ multicast
+!
+line vty
+</PRE>
+
+<P>
+Una vez configurado de esta forma, podemos arrancar el servicio del demonio zebra
+y a&#241;adirlo al inicio de la forma habitual. Podremos conectar por telnet al puerto
+2601, lo que nos permitir&#225; manejar el servicio de una forma similar a la de un
+router Cisco.
+
+<P>
+<PRE>
+minimum root # /etc/init.d/zebra start
+ * Starting zebra...                                                       [ ok ]
+minimum root # rc-update add zebra default
+ * zebra added to runlevel default
+ * Caching service dependencies...
+ * rc-update complete.
+</PRE>
+
+<P>
+Configuramos ahora las opciones concretas del router virtual RIP, en su archivo
+correspondiente, <TT>/etc/quagga/ripd.conf</TT>:
+
+<P>
+<PRE>
+! nombre del router virtual
+hostname minimum-rip
+! clave de acceso telnet al router virtual
+password clave_acceso
+! clave de acceso para modo privilegiado
+enable password clave_admin
+!
+interface lo
+interface eth0
+interface ipsec0
+interface tunnel0
+interface tunnel1
+!
+router rip
+ timers basic 30 90 5
+ default-information originate
+ redistribute kernel
+ network tunnel0
+ network tunnel1
+ distribute-list 1 out
+! indicamos que esta será la ruta por defecto
+access-list 1 permit 0.0.0.0
+access-list 1 deny any
+!
+line vty
+</PRE>
+
+<P>
+Realizamos el mismo proceso que con zebra. En esta ocasi&#243;n, podremos acceder al
+interfaz tipo Cisco mediante telnet al puerto 2602.
+
+<P>
+<PRE>
+minimum root # /etc/init.d/ripd start
+ * Starting ripd...                                                       [ ok ]
+minimum root # rc-update add ripd default
+ * ripd added to runlevel default
+ * Caching service dependencies...
+ * rc-update complete.
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

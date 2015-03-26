@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node40.html">
+<LINK REL="previous" HREF="node38.html">
+<LINK REL="up" HREF="node38.html">
+<LINK REL="next" HREF="node40.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html703"
+  HREF="node40.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html699"
+  HREF="node38.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html693"
+  HREF="node38.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html701"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html704"
+  HREF="node40.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html700"
+  HREF="node38.html">Servicios requeridos</A>
+<B> Anterior:</B> <A NAME="tex2html694"
+  HREF="node38.html">Servicios requeridos</A>
+ &nbsp; <B>  <A NAME="tex2html702"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exOpenSWAN
+
+<P>
+La configuraci&#243;n de IPSec tiene dos partes bien diferenciadas. Por un lado, la
+configuraci&#243;n de los par&#225;metros generales y las VPN que vamos a establecer, y por
+otro la configuraci&#243;n de criptograf&#237;a que compartimos con los terminadores de
+t&#250;neles de Telef&#243;nica. Los ficheros de configuraci&#243;n se encuentran en el
+directorio <TT>/etc/ipsec/</TT>.
+
+<P>
+Uno de los requisitos impuestos por Telef&#243;nica es la utilizaci&#243;n de claves
+alfan&#250;mericas de 8 caracteres, en may&#250;sculas, como secretos pre-compartidos para
+el intercambio de claves IKE. Como hemos visto en la descripci&#243;n te&#243;rica de la
+introducci&#243;n, esto es nefasto si se combina con el uso de IKE en modo agresivo.
+Para indicar a IPSec los secretos compartidos con los clientes remotos utilizamos
+el fichero <TT>/etc/ipsec/ipsec.secrets</TT>. En este fichero indicamos por cada
+l&#237;nea un cliente conocido con el que compartimos un secreto, en el formato
+<TT>IP_Local IP_Remota : PSK "SECRETO"</TT>. Seguimos esta
+sintaxis para indicar los dos terminadores de t&#250;neles de Telef&#243;nica:
+
+<P>
+<PRE>
+193.147.184.193 195.55.47.10 : PSK "SECRETO!"
+193.147.184.193 195.55.47.11 : PSK "SECRETO!"
+</PRE>
+
+<P>
+La configuraci&#243;n general de IPSec y los perfiles para las asociaciones de seguridad
+se establece en el fichero <TT>/etc/ipsec/ipsec.conf</TT>. Est&#225; estructurado en
+secciones, cada una con sus correspondientes tuplas de configuraci&#243;n, en la forma
+<TT>variable=valor</TT>. El bloque <I>setup</I> establece las opciones generales
+de la pila de protocolos de IPSec, como por ejemplo, si utilizar o no las opciones
+de <I>NAT Traversal</I>, o el nivel de detalle de los registros de actividad.
+Dentro del bloque <I>%default</I> definiremos las opciones que deseamos sean
+comunes a cada asociaci&#243;n de seguridad, de forma que no tengamos que especificarlas
+por cada conexi&#243;n que creemos. Por &#250;ltimo, definimos los perfiles <I>cifrador1</I>
+y <I>cifrador2</I> que describen los par&#225;metros concretos de las conexiones con
+los terminadores de t&#250;neles de Telef&#243;nica. Nos limitaremos a indicar las direcciones
+IP de los mismos, y la ruta a un script que deber&#225; ejecutarse al iniciar una
+asociaci&#243;n de seguridad con ellos.
+
+<P>
+<PRE>
+version 2.0     # conforms to second version of ipsec.conf specification
+
+# configuración básica
+config setup
+        interfaces="ipsec0=eth0"
+        klipsdebug=none
+        plutodebug=none
+        plutoopts=%search
+        pluto=%search
+        uniqueids=yes
+        nat_traversal=no
+
+# valores por defecto para todas las conexiones
+conn %default
+        # modo transporte
+        type=transport
+        keyingtries=0
+        disablearrivalcheck=no
+        authby=secret
+        pfs=no
+        ikelifetime=10000s
+        # algoritmos de cifrado y resumen
+        esp=3des-sha1
+        keylife=3600s
+        # ip del terminador urjc
+        left=193.147.184.193
+        # gateway
+        leftnexthop=193.147.184.1
+        leftprotoport=0/0
+        rightprotoport=0/0
+        auto=start
+
+# perfil para conexiones con cifrador 1
+conn cifrador1
+        # script de inicio de la conexión
+        leftupdown=/etc/conf.d/network-scripts/ud_tun0
+        right=195.55.47.10
+
+# perfil para conexiones con cifrador 2
+conn cifrador2
+        # script de inicio de la conexión
+        leftupdown=/etc/conf.d/network-scripts/ud_tun1
+        right=195.55.47.11
+</PRE>
+
+<P>
+En la configuraci&#243;n anterior indicamos dos scripts,
+<TT>/etc/conf.d/network-scripts/ud_tun0</TT> y 
+<TT>/etc/conf.d/network-scripts/ud_tun1</TT>, que se ejecutar&#225;n cuando se
+crean o se destruyen las asociaciones definidas en el perfil correspondiente.
+A continuaci&#243;n inclu&#237;mos cada uno de los dos scripts referenciados, respectivamente.
+Cuando la asociaci&#243;n cambie de estado entre los terminadores, se eliminar&#225; el
+t&#250;nel en caso de existir, y se volver&#225; a crear con los par&#225;metros adecuados. Para
+que estos cambios se vean reflejados en el encaminamiento, reiniciaremos los
+demonios <I>zebra</I> y <I>RIP</I>.
+
+<P>
+<PRE>
+# script que se ejecuta cuando la asociación ipsec cambia de estado
+TUNEL=`/sbin/ifconfig | grep tunnel0 | awk '{print $1}'`
+
+if [ $TUNNEL ]; then
+        ifconfig tunnel0 down
+        ip tunnel del name tunnel0
+fi
+ip tunnel add name tunnel0 mode ipip remote 195.55.47.10 local 193.147.184.193 \
+ dev ipsec0 ttl 255
+ifconfig tunnel0 up 195.55.47.2 netmask 255.255.255.252 pointopoint 195.55.47.1 \
+ mtu 1500 multicast
+
+/etc/init.d/zebra restart
+/etc/init.d/ripd restart
+</PRE>
+
+<P>
+<PRE>
+# script que se ejecuta cuando la asociación ipsec cambia de estado
+TUNEL=`/sbin/ifconfig | grep tunnel1 | awk '{print $1}'`
+
+if [ $TUNNEL ]; then
+        ifconfig tunnel1 down
+        ip tunnel del name tunnel1
+fi
+ip tunnel add name tunnel1 mode ipip remote 195.55.47.11 local 193.147.184.193 \
+ dev ipsec0 ttl 255
+ifconfig tunnel1 up 195.55.47.6 netmask 255.255.255.252 pointopoint 195.55.47.5 \
+ mtu 1500 multicast
+
+/etc/init.d/zebra restart
+/etc/init.d/ripd restart
+</PRE>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html703"
+  HREF="node40.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html699"
+  HREF="node38.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html693"
+  HREF="node38.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html701"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html704"
+  HREF="node40.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html700"
+  HREF="node38.html">Servicios requeridos</A>
+<B> Anterior:</B> <A NAME="tex2html694"
+  HREF="node38.html">Servicios requeridos</A>
+ &nbsp; <B>  <A NAME="tex2html702"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node49.html">
+<LINK REL="previous" HREF="node47.html">
+<LINK REL="up" HREF="node47.html">
+<LINK REL="next" HREF="node49.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html818"
+  HREF="node49.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html814"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html808"
+  HREF="node47.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html816"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html819"
+  HREF="node49.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html815"
+  HREF="node47.html">Cuestiones de seguridad</A>
+<B> Anterior:</B> <A NAME="tex2html809"
+  HREF="node47.html">Cuestiones de seguridad</A>
+ &nbsp; <B>  <A NAME="tex2html817"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exNMAP
+
+<P>
+Se trata de una herramienta multiprop&#243;sito que sirve desde para identificar
+aplicaciones en una red a trav&#233;s de sus puertos conocidos, tanto TCP como UDP,
+hasta para obtener una estimaci&#243;n del sistema operativo que puede estar
+ejecutando una m&#225;quina conectada a la red.
+
+<P>
+En nuestro caso podemos utilizarla para identificar el servicio de intercambio de
+claves ISAKMP, comprobando si el puerto 500 UDP se encuentra abierto. Podemos
+encontrar esta herramienta adem&#225;s de una excelente documentaci&#243;n en su sitio
+web: <TT><A NAME="tex2html76"
+  HREF="http://www.insecure.org/">http://www.insecure.org/</A></TT>.
+
+<P>
+Por ejemplo, si utilizamos <TT>nmap</TT> desde una m&#225;quina en la que no confiamos
+(con una direcci&#243;n IP de origen que no pertenezca a los rangos permitidos de
+la universidad) para comprobar los puertos TCP abiertos, obtendremos un
+resultado similar al este:
+
+<P>
+<PRE>
+deadstar root # nmap -sS -O 193.147.184.193
+
+Starting nmap 3.50 ( http://www.insecure.org/nmap/ ) at 2005-02-08 10:57 CET
+Warning:  OS detection will be MUCH less reliable because we did not find at
+ least 1 open and 1 closed TCP port
+All 1659 scanned ports on 193.147.184.193 are: filtered
+Too many fingerprints match this host to give specific OS details
+
+Nmap run completed -- 1 IP address (1 host up) scanned in 88.580 seconds
+</PRE>
+
+<P>
+Si por contra lo utilizamos para buscar puertos UDP abiertos, obtendremos como
+resultado que todos los puertos UDP aparecen abiertos. Esto es debido a que los
+paquetes UDP son filtrados a la entrada en el terminador de t&#250;neles, y por tanto
+no provocan ning&#250;n paquete <I>ICMP</I> de <I>destino no alcanzable</I>. En
+tal caso, <TT>nmap</TT> asume que los puertos est&#225;n abiertos, provocando falsos
+positivos.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html818"
+  HREF="node49.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html814"
+  HREF="node47.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html808"
+  HREF="node47.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html816"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html819"
+  HREF="node49.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html815"
+  HREF="node47.html">Cuestiones de seguridad</A>
+<B> Anterior:</B> <A NAME="tex2html809"
+  HREF="node47.html">Cuestiones de seguridad</A>
+ &nbsp; <B>  <A NAME="tex2html817"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

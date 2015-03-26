@@ -1,0 +1,142 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Escenario de uso</TITLE>
+<META NAME="description" CONTENT="Escenario de uso">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node16.html">
+<LINK REL="previous" HREF="node14.html">
+<LINK REL="up" HREF="node14.html">
+<LINK REL="next" HREF="node16.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html385"
+  HREF="node16.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html381"
+  HREF="node14.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html375"
+  HREF="node14.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html383"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html386"
+  HREF="node16.html">Requisitos del servicio</A>
+<B> Subir:</B> <A NAME="tex2html382"
+  HREF="node14.html">Descripción del servicio</A>
+<B> Anterior:</B> <A NAME="tex2html376"
+  HREF="node14.html">Descripción del servicio</A>
+ &nbsp; <B>  <A NAME="tex2html384"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00411000000000000000">
+Escenario de uso</A>
+</H2>
+
+<P>
+La necesidad de construir una compleja infraestructura basada en redes privadas
+virtuales para permitir el acceso remoto a los teletrabajadores<A NAME="tex2html45"
+  HREF="footnode.html#foot719"><SUP>2.1</SUP></A> puede resultar infundada a primera vista. Esto es as&#237; si
+nos dejamos guiar exclusivamente por las interpretaciones habituales de las VPN,
+en las que los servicios de acceso remoto suelen utilizarse para proporcionar
+acceso desde el exterior a redes con direccionamiento privado. Este no es,
+obviamente, el caso de la universidad. A disposici&#243;n de los usuarios hay
+m&#250;ltiples rangos de direcciones IP de clase C que se utilizan casi en exclusiva.
+De este modo el direccionamiento en la inmensa mayor&#237;a de dispositivos utilizados
+en la universidad es p&#250;blico, y por contra son muy pocos los que utilizan
+direccionamiento privado, que se deja en exclusiva para cuestiones de administraci&#243;n
+de la propia red.
+
+<P>
+Los ordenadores que forman parte de la red de la universidad aprovechan este
+direccionamiento p&#250;blico para evitar, por un lado, los problemas que puede generar
+el uso de NAT, y por otro para garantizar que desde ellos se pueda ofrecer un
+servicio al exterior (Internet) cuando se requiera. Tal es el caso por ejemplo
+de los ordenadores de las <I>aulas Linux</I>, que permiten a los alumnos
+realizar sus pr&#225;cticas de forma remota desde sus casas, sin saturar por ello
+un &#250;nico servidor o interferir entre ellos. La &#250;nica forma de conseguir esta
+flexibilidad es utilizar direccionamiento p&#250;blico siempre que sea posible, y no
+haya razones m&#225;s poderosas que lo desaconsejen.
+
+<P>
+En estas circunstancias parece extra&#241;o utilizar una VPN para acceder de forma
+remota a la red, ya que, al fin y al cabo, el direccionamiento p&#250;blico ya
+permite &#233;sto, siempre dentro de unos l&#237;mites definidos por los administradores
+de cada servicio. La clave reside en que no todos los servicios que se prestan
+por o para la universidad permiten el libre acceso desde Internet. Algunos
+servicios no tienen raz&#243;n de ser fuera de la red de la misma. Tal es el caso,
+por ejemplo, del CAU<A NAME="tex2html46"
+  HREF="footnode.html#foot720"><SUP>2.2</SUP></A>, que
+gestiona las incidencias y el soporte t&#233;cnico general de todos los campus.
+Dado que el servicio es exclusivo para usuarios de la universidad, su uso
+est&#225; sujeto a un sistema de control de acceso que solo permite su utilizaci&#243;n
+cuando el usuario se encuentra utilizando una direcci&#243;n IP de la red interna.
+Normalmente esto ser&#237;a equivalente a decir que el usuario se encuentre utilizando
+un equipo de la red de la universidad. Precisamente esta es la situaci&#243;n que
+cubre el presente trabajo, y que permite que los usuarios no tengan por qu&#233;
+utilizar sus equipos, ni siquiera estar presentes f&#237;sicamente en la misma,
+para acceder a este tipo de servicios.
+
+<P>
+Adicionalmente, la universidad cuenta con servicios de terceros que se prestan
+a sus usuarios. El acceso a dichos servicios est&#225; tambi&#233;n controlado mediante
+la direcci&#243;n IP del usuario. Es el caso de suscripciones a revistras
+electr&#243;nicas u otros portales, como <I>Safari</I><A NAME="tex2html47"
+  HREF="footnode.html#foot721"><SUP>2.3</SUP></A>. L&#243;gicamente, es deseable
+que usuarios leg&#237;timos puedan beneficiarse de este tipo de servicios aunque no
+obtengan su acceso a Internet estando f&#237;sicamente conectados a la red
+institucional.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html385"
+  HREF="node16.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html381"
+  HREF="node14.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html375"
+  HREF="node14.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html383"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html386"
+  HREF="node16.html">Requisitos del servicio</A>
+<B> Subir:</B> <A NAME="tex2html382"
+  HREF="node14.html">Descripción del servicio</A>
+<B> Anterior:</B> <A NAME="tex2html376"
+  HREF="node14.html">Descripción del servicio</A>
+ &nbsp; <B>  <A NAME="tex2html384"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

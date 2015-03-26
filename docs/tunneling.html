@@ -1,0 +1,234 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>Tunneling HOWTO</TITLE>
+ 
+ <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <META name="Generator" content="Vi Improved">
+ <META name="Author" content="Jaime Perez">
+
+ <LINK rel="stylesheet" type="text/css" href="http://blackspiral.org/~jperez/css/doc.css">
+</HEAD>
+
+<BODY>
+ <!-- titulo y datos del autor -->
+ <CENTER>
+ <H1>Tunneling HOWTO</H1>
+ <BR>
+ Jaime P&eacute;rez Crespo (<A href="mailto:japecre at pantuflo.urjc.es">japecre <I>at</I> pantuflo.escet.urjc.es</A>)
+ <BR>
+ <BR>
+ &Uacute;ltima actualizaci&oacute;n: 11 de Julio de 2003
+ </CENTER>
+ <BR>
+ <BR>
+ <BR>
+ <!-- comienzo del texto -->
+ <H2>Motivaci&oacute;n</H2>
+ <P>
+  Internet se construy&oacute; desde un principio como un medio inseguro. Muchos de los protocolos utilizados hoy en
+  d&iacute;a para transferir datos de una m&aacute;quina a otra a trav&eacute;s de la red carecen de ning&uacute;n
+  tipo de encriptaci&oacute;n o medio de seguridad que evite que nuestras comunicaciones puedan ser interceptadas y
+  espiadas. HTTP, FTP, POP3 y otros muchos protocolos ampliamente usados, utilizan comunicaciones que viajan <I>en
+  claro</I> a trav&eacute;s de la red. Esto supone un grave problema, en todas aquellas situaciones en las que queremos
+  transferir entre m&aacute;quinas informaci&oacute;n sensible, como pueda ser una cuenta de usuario (nombre de usuario
+  y contraseña), y no tengamos un control absoluto sobre la red, a fin de evitar que alguien pueda interceptar nuestra
+  comunicaci&oacute;n por medio de la t&eacute;cnica del <I>hombre en el medio</I> (<I>man in the middle</I>), como es el
+  caso de la Red de redes.
+ </P>
+ <P>
+  En este pequeño HOWTO explicaremos c&oacute;mo podemos realizar comunicaciones seguras (mediante encriptaci&oacute;n)
+  entre dos m&aacute;quinas de la red, con los protocolos inseguros de los que ya disponemos, como los mencionados FTP o
+  POP3.
+ </P>
+ <BR>
+ <H2>¿Qu&eacute; es el tunneling?</H2>
+ <P>
+  El problema de los protocolos que env&iacute;an sus datos <I>en claro</I>, es decir, sin encriptarlos, es que cualquier
+  persona que tenga acceso f&iacute;sico a la red en la que se sit&uacute;an nuestras m&aacute;quinas puede ver dichos
+  datos. Es tan simple como utilizar un <I>sniffer</I>, que b&aacute;sicamente, es una herramienta que pone nuestra tarjeta
+  de red en modo <I>promiscuo</I> (modo en el que las tarjetas de red operan aceptando todos los paquetes que circulan por
+  la red a la que se conectan, sean o no para esa tarjeta). De este modo, alguien que conecte su m&aacute;quina a una red
+  y arranque un sniffer recibir&aacute; y podr&aacute; analizar por tanto <B>todos</B> los paquetes que circulen por dicha
+  red. Si alguno de esos paquetes pertenece a un protocolo que env&iacute;a sus comunicaciones en claro, y contiene
+  informaci&oacute;n sensible, dicha informaci&oacute;n se ver&aacute; comprometida. Si por contra, encriptamos nuestras
+  comunicaciones con un sistema que permita entenderse s&oacute;lo a las dos m&aacute;quinas que queremos sean
+  part&iacute;cipes de la comunicaci&oacute;n, cualquiera que intercepte desde una tercera m&aacute;quina nuestros
+  paquetes, no podr&aacute; hacer nada con ellos, al no poder desencriptar los datos.
+ </P>
+ <P>
+  Una forma de evitar el problema que nos atañe, sin dejar por ello de utilizar todos aquellos protocolos que carezcan de 
+  medios de encriptaci&oacute;n, es usar una &uacute;til t&eacute;cnica llamada <I>tunneling</I>. B&aacute;sicamente, esta
+  t&eacute;cnica consiste en abrir conexiones entre dos m&aacute;quinas por medio de un protocolo seguro, como puede ser
+  SSH (<I>Secure SHell</I>), a trav&eacute;s de las cuales realizaremos las transferencias inseguras, que pasar&aacute;n de
+  este modo a ser seguras. De esta analog&iacute;a viene el nombre de la t&eacute;cnica, siendo la conexi&oacute;n segura
+  (en este caso de ssh) el t&uacute;nel por el cual enviamos nuestros datos para que nadie m&aacute;s aparte de los
+  interlocutores que se sit&uacute;an a cada extremo del t&uacute;nel, pueda ver dichos datos. Ni que decir tiene, que
+  este tipo de t&eacute;cnica requiere de forma imprescindible que tengamos una cuenta de acceso seguro en la
+  m&aacute;quina con la que nos queremos comunicar.
+ </P>
+ <BR>
+ <H2>Un ejemplo: POP3</H2>
+ <P>
+  Para ilustrar el uso de esta t&eacute;cnica, vamos a poner un sencillo ejemplo de su utilizaci&oacute;n con servicios
+  de correo que utilizan POP3. Gracias al tunneling, podremos consultar el correo en un servidor, sin que nadie conectado
+  a la red que pueda interceptar la comunicaci&oacute;n, pueda obtener nuestra cuenta de usuario o leer los correos. Para
+  ello, comenzamos por abrir una conexi&oacute;n segura contra el servidor de correo, por ssh:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ ssh -L puerto:direcci&oacute;n_servidor:110 nuestro_usuario@direcci&oacute;n_servidor
+nuestro_usuario@nombre_del_servidor password: <B>nuestro_password</B></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Esto abrir&aacute; una conexi&oacute;n de ssh con el servidor de correo, cuyo nombre es <I>nombre_del_servidor</I> y
+  con direcci&oacute;n en Internet <I>direcci&oacute;n_servidor</I>. Por otra parte, <I>nuestro_usuario</I> es el nombre
+  de usuario o <I>login</I> que tenemos en esa m&aacute;quina para su utilizaci&oacute;n, y <I>puerto</I> es un puerto
+  local, al que podamos atarnos sin necesidad de estar identificados como superusuario (aquellos menores de 1000),
+  en el que establecemos una correspondencia con el servicio POP3 prestado por el servidor en su puerto remoto 110.
+ </P>
+ <P>
+  Una vez identificados y correctamente conectados al servidor remoto, abrimos nuestro cliente de correo favorito,
+  como puede ser <I>evolution</I>, <I>kmail</I>, o cualquiera que sea el que utilicemos. Editamos ahora las propiedades
+  de la cuenta que tenemos en el servidor en cuesti&oacute;n, y en el apartado que el programa disponga para que le
+  indiquemos la direcci&oacute;n del servidor POP o POP3 tecleamos <I>localhost:puerto</I>, sustituyendo a la
+  direcci&oacute;n del servidor, y donde <I>puerto</I> es el puerto que indicamos previamente al abrir la
+  conexi&oacute;n por ssh.
+ </P>
+ <P>
+  Hecho esto, cada vez que leamos el correo, lo haremos encriptando la comunicaci&oacute;n a trav&eacute;s del
+  t&uacute;nel creado mediante ssh, lo cual nos salvaguarda de miradas inoportunas. Es importante tener en cuenta
+  que la conexi&oacute;n por ssh que establecimos en un principio, debe estar abierta durante todo el tiempo que
+  mantengamos la comunicaci&oacute;n, y no sirve establecer dicha conexi&oacute;n e inmediatamente cerrarla.
+ </P>
+ <P>
+  Para facilitar a&uacute;n m&aacute;s las cosas, podemos crear un script que abra la conexi&oacute;n y arranque
+  nuestro programa de correo todo en uno, de forma que tecleando un simple comando podamos consultar el correo
+  mediante t&uacute;neles, o incluso asociarle un icono que arranque dicho script. A continuaci&oacute;n se muestra
+  un posible ejemplo, con <I>evolution</I> como cliente de correo, y <I>10110</I> como puerto habitual para el otro
+  extremo del t&uacute;nel:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>#!/bin/bash
+evolution &
+ssh -L 10110:direcci&oacute;n_servidor:110 nuestro_usuario@direcci&oacute;n_servidor</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <H2>Otro ejemplo: FTP</H2>
+ <P>
+  Como los m&aacute;s despiertos ya se habr&aacute;n percatado, esta t&eacute;cnica sirve para cualquier servicio
+  no seguro que queramos utilizar a trav&eacute;s del t&uacute;nel. FTP es otro ejemplo igualmente v&aacute;lido
+  de protocolo inseguro ampliamente utilizado, que podemos mejorar gracias a la t&eacute;cnica del tunneling.
+  Igual que antes, lo primero que haremos ser&aacute; abrir una conexi&oacute;n ssh con la m&aacute;quina que alberga
+  el servidor FTP:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ ssh -L puerto:direcci&oacute;n_servidor:21 nuestro_usuario@direcci&oacute;n_servidor
+nuestro_usuario@nombre_del_servidor password: <B>nuestro_password</B></PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Como se puede observar, el establecimiento de la conexi&oacute;n ssh es exactamente el mismo que el anterior,
+  salvo por una particularidad, que consiste en el puerto remoto indicado, en este caso el 21, puerto asociado por
+  convenio con el servicio FTP. En caso de que el servidor FTP remoto estuviese atado en cualquier otro puerto,
+  deberíamos indicar el puerto al que est&eacute; atado en lugar del 21. Una forma r&aacute;pida de ver los puertos
+  asociados com&uacute;nmente con ciertos servicios en Internet, es la consulta del fichero <I>/etc/services</I> de
+  todas las máquinas Unix:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ cat /etc/services | grep nombre_servicio</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Abierto el t&uacute;nel sobre el que realizar las transferencias, podemos arrancar nuestro programa de correo,
+  como puede ser <I>gftp</I>, o por supuesto utilizar el comando <I>ftp</I>. Si usamos un software como puede ser gftp,
+  nos aseguraremos de indicar como host al que conectar <I>localhost</I>, y como puerto, el puerto local al que hemos
+  mapeado el puerto 21 remoto. Si por contra usamos directamente el comando ftp:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor]$ ftp localhost puerto</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  En este caso indicamos como de costumbre <I>localhost</I> como direcci&oacute;n,  y <I>puerto</I> el puerto al que
+  hicimos el mapeo mediante ssh. En este caso particular del FTP, es necesario mencionar que es <B>imprescindible</B>
+  el uso del modo <B>pasivo</B>, usemos el cliente que usemos, ya que todas las transferencias las haremos por el
+  t&uacute;nel, que comprende un sólo puerto remoto, de modo que no podemos usar el modo <B>port</B> al necesitar éste
+  abrir conexiones en diversos puertos.
+ </P>
+ <P>
+  Del mismo modo que en el ejemplo con POP3 anterior, podemos realizar un script de shell que nos facilite la tarea de
+  conectar de forma remota a nuestro servidor de FTP, a trav&eacute;s de la conexi&oacute;n ssh, y que nos abra por
+  ejemplo gFTP:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>#!/bin/bash
+gftp &
+ssh -L 10021:direcci&oacute;n_servidor:21 nuestro_usuario@direcci&oacute;n_servidor</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <H2>Enlaces Interesantes</H2>
+ <P>
+  P&aacute;gina de manual de ssh: <a href="http://www.physik.uni-regensburg.de/edv/unix/ux_saccess/man/ssh.html" target="_blank">
+   http://www.physik.uni-regensburg.de/edv/unix/ux_saccess/man/ssh.html</a>
+  <BR>
+  P&aacute;gina de manual de ftp: <a href="http://www.nevis.columbia.edu/cgi-bin/man.sh?man=ftp" target="_blank">
+   http://www.nevis.columbia.edu/cgi-bin/man.sh?man=ftp</a>
+  <BR>
+  Ximian Evolution: <a href="http://www.ximian.com/products/evolution" target="_blank">http://www.ximian.com/products/evolution/</a>
+  <BR>
+  gFTP: <a href="http://gftp.seul.org/" target="_blank">http://gftp.seul.org/</a>
+ </P>
+ <BR>
+ <!-- seccion de licencia -->
+ <H2>Licencia</H2>
+ <P>
+  Este documento p&uacute;blico puede ser distribuido y/o traducido libremente, siempre y cuando 
+  en el documento resultante se incluyan los datos del autor indicados en la cabecera, esta 
+  secci&oacute;n de licencia, y la url del documento original:
+ </P>
+</BODY>
+</HTML>

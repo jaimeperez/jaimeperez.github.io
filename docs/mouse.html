@@ -1,0 +1,187 @@
+
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+ <TITLE>Rat&oacute;n con scroll HOWTO</TITLE>
+ 
+ <META http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+ <META name="Generator" content="Vi Improved">
+ <META name="Author" content="Jaime Perez">
+
+ <LINK rel="stylesheet" type="text/css" href="http://blackspiral.org/~jperez/css/doc.css">
+</HEAD>
+
+<BODY>
+ <!-- titulo y datos del autor -->
+ <CENTER>
+ <H1>Rat&oacute;n con scroll HOWTO</H1>
+ <BR>
+ Jaime P&eacute;rez Crespo (<A href="mailto:japecre at pantuflo.urjc.es">japecre <I>at</I> pantuflo.escet.urjc.es</A>)
+ <BR>
+ <BR>
+ &Uacute;ltima actualizaci&oacute;n: 11 de Julio de 2003
+ </CENTER>
+ <BR>
+ <BR>
+ <BR>
+ <!-- comienzo del texto -->
+ <H2>Motivaci&oacute;n</H2>
+ <P>Todo aquel que haya utilizado en alguna ocasi&oacute;n un rat&oacute;n con rueda de scrolling sabe lo &uacute;til que
+  puede llegar a ser esta funcionalidad. Somos hoy dia muchos los que tenemos en nuestros ordenadores
+  ratones de este tipo, pero son muchos tambi&eacute;n los que desconocen que se puede sacar el m&aacute;ximo partido
+  a la ruedecilla tambi&eacute;n bajo entornos <I>GNU/Linux</I>.
+ </P>
+ <P>
+  As&iacute; pues en este mini-howto explicaremos de que sencilla manera podemos a&ntilde;adir en nuestro <I>Linux</I> 
+  soporte para cualquier rat&oacute;n con ruedecilla y poder as&iacute; disfrutar de &eacute;l como en otros sistemas.
+ </P>
+ <BR>
+ <H2>El soporte de las X</H2>
+ <P>
+  Seguramente muchos de los que est&eacute;n leyendo este documento se preguntar&aacute;n que tendr&aacute;n que ver las X
+  con nuestro rat&oacute;n con scroll. La raz&oacute;n es simple. La ruedecilla de scroll del rat&oacute;n se utiliza con 
+  aplicaciones que usan el entorno gr&aacute;fico, esto es, las X windows, por lo tanto tenemos que buscar
+  la manera de que dichas aplicaciones reciban los eventos asociados con el movimiento de la ruedecilla.
+  Esto se hace a trav&eacute;s de las X windows. Nuestro entorno gr&aacute;fico provee de un modelo de eventos que 
+  indican una ocurrencia determinada con alguno de los dispositivos de interacci&oacute;n con el operador, esto 
+  es, la pulsaci&oacute;n de una tecla, el movimiento del rat&oacute;n, o en nuestro caso, el giro de la ruedecilla. Es
+  por esto por lo que para que nuestras aplicaciones se beneficien de la comodidad del scroll, tenemos que
+  indicarle al servidor gr&aacute;fico que capture y notifique a las aplicaciones los eventos relacionados con el
+  mismo.
+ </P>
+ <P>
+  Los que est&eacute;n acostumbrados a tratar con la configuraci&oacute;n de las X sabr&aacute;n ya que es lo que debemos hacer.
+  El m&eacute;todo es sencillo, y tan solo necesitamos editar el fichero de configuraci&oacute;n de las X. Lo primero ser&aacute;
+  asegurarnos de que fichero de configuraci&oacute;n estamos usando. Por lo general se encontrar&aacute; bajo 
+  <B>/etc/X11</B> y en la mayor&iacute;a de los casos, ser&aacute; concretamente <B>/etc/X11/XF86Config-4</B>, si bien 
+  no tiene por que ser asi siempre. En adelante asumiremos el uso de dicho fichero como fichero de configuraci&oacute;n, si bien el nombre del mismo es por supuesto lo de menos.
+ </P>
+ <P>
+  Dado que este fichero es un fichero importante del sistema, solamente puede modificarlo el administrador
+  de la m&aacute;quina o root. Abrimos un terminal, y cambiamos el modo de ejecuci&oacute;n para salir facilmente de las X
+  y trabajar as&iacute; en modo consola:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[icarus@mordor icarus]$ su
+Password:
+[root@mordor icarus]# telinit 3</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Esto cerrar&aacute; nuestra sesi&oacute;n de las X y matar&aacute; el servidor (aparte de parar o arrancar otros servicios), y
+  nos dejar&aacute; identificados como root en el terminal 1 (<I>tty1</I>, ctrl + alt + F1). Nos desplazamos hasta 
+  <B>/etc/X11</B> y editamos el fichero de configuraci&oacute;n de las X con nuestro editor de texto plano favorito, por ejemplo <I>vi</I>:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[root@mordor icarus]$ cd /etc/X11
+[root@mordor X11]# vi XF86Config-4</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Esto abre el editor <I>vi</I> y carga en &eacute;l el documento <B>XF86Config-4</B>. Para los que no sepan utilizar
+  este magn&iacute;fico editor, incluyo un vistazo r&aacute;pido que nos permita editar el archivo, y recomiendo encarecidamente
+  leer su p&aacute;gina de manual:
+ </P>
+ <UL>
+  <LI><B>ESC</B>: la tecla de escape se utiliza para salir de cualquier modo a un estado en el que vi
+   simplemente espera comandos.</LI>
+  <LI><B>i</B>: la tecla <B>i</B> pulsada en el modo de inserci&oacute;n de comandos nos pasa al modo de
+   inserci&oacute;n, en el que podremos escribir texto.</LI>
+  <LI><B>Supr</B>: la tecla <B>Supr</B> pulsada en el modo de inserci&oacute;n borra el caracter que actualmente
+   est&aacute; se&ntilde;alando el cursor. Esta tecla borrar&aacute; tambi&eacute;n los retornos de carro (o fin
+   de linea) solamente en caso de encontrarse <I>vi</I> en el modo de inserci&oacute;n.</LI>
+  <LI><B>ZZ</B>: la pulsaci&oacute;n en dos ocasiones de la tecla <B>z</B> con la tecla <B>shift</B> pulsada,
+   en el modo de espera de comandos, provoca la salida de <I>vi</I> y el guardado de todos los cambios efectuados
+   sobre el fichero.</LI>
+  <LI><B>:q!</B>: esta combinaci&oacute;n de teclas en el modo de inserci&oacute;n de comandos provoca la salida
+   de <I>vi</I> sin que se guarden los cambios.</LI>
+ </UL>
+ <P>
+  Una vez tenemos unas nociones b&aacute;sicas con las que poder empezar a usar <I>vi</I>, editamos el fichero de
+  configuraci&oacute;n de las X. Con los cursores nos desplazamos hasta localizar una secci&oacute;n <I>InputDevice</I>
+  en el fichero que haga referencia a nuestro rat&oacute;n. Debemos ser cuidadosos con la sintaxis del fichero. 
+  Modificamos la secci&oacute;n para a&ntilde;adir o modificar las opciones hasta que quede de forma similar a esto:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>Section "InputDevice"
+        Identifier  "Mouse0"
+        Driver      "mouse"
+        Option      "Device" "/dev/mouse"
+        Option      "Protocol" "imps/2"
+        Option      "Emulate3Buttons" "off"
+        Option      "ZAxisMapping" "4 5"
+        Option      "Buttons" "3"
+EndSection</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Las opciones m&aacute;s importantes son <B>"ZAxixMapping"</B> a la que daremos el valor <I>"4 5"</I>, y 
+  <B>"Protocol"</B>, cuyo valor modificaremos por <I>"imps/2"</I>. Si nuestro rat&oacute;n tiene un conector de tipo
+  <B>usb</B>, la opci&oacute;n <B>"Device"</B> deber&aacute; tener valor <I>"/dev/usbmouse"</I>. Tambi&eacute;n
+  podemos desactivar con <I>"off"</I> la opci&oacute;n <B>"Emulate3Buttons"</B> dado que nuestra ruedecilla hace
+  de bot&oacute;n central y no necesitamos emularlo como si tuvieramos un rat&oacute;n de dos botones. Se puede
+  incluir as&iacute; mismo una opci&oacute;n <B>"Buttons"</B> con el n&uacute;mero de botones que tenga nuestro 
+  dispositivo, teniendo en cuenta que las X windows a no ser en sus &uacute;ltimas versiones no soportan m&aacute;s
+  de cinco botones. Por &uacute;ltimo, podemos jugar con el valor de una opci&oacute;n <B>"Resolution"</B> buscando
+  valores que nos funcionen mejor, partiendo de, por ejemplo, <I>"100"</I>.
+ </P>
+ <P>
+  Una vez hayamos realizado los cambios pertinentes podemos salir guardando el fichero, tras lo cual procederemos
+  a rearrancar las X y comprobar que nuestra ruedecilla funciona a nuestro gusto. Para ello, volveremos al nivel de
+  ejecuci&oacute;n en el que est&aacute;bamos antes, que usualmente es <B>5</B>, o <B>2</B> en <I>Debian GNU/Linux</I>:
+ </P>
+ <BR>
+ <CENTER>
+  <TABLE class="tabla">
+   <TR>
+    <TD>
+     <PRE>[root@mordor X11]$ telinit 5</PRE>
+    </TD>
+   </TR>
+  </TABLE>
+ </CENTER>
+ <BR>
+ <P>
+  Tras esto s&oacute;lo queda probar el funcionamiento de nuestro redescubierto rat&oacute;n con scroll y ajustarlo
+  como m&aacute;s nos guste repitiendo el m&eacute;todo explicado aqu&iacute;. N&oacute;tese que no es imprescindible
+  matar las X ni cambiar de nivel de ejecuci&oacute;n para hacer todo esto, ya que el fichero se puede editar perfectamente
+  desde una consola abierta en el entorno gr&aacute;fico y rearrancar las X con la combinaci&oacute;n de teclas <B>ctrl + 
+  alt + backspace</B>, pero no obstante es recomendable hacer las cosas bien y para evitarnos posibles sorpresas, hacerlo 
+  como aqu&iacute; se ha explicado.
+ </P>
+ <BR>
+ <H2>Enlaces Interesantes</H2>
+ <P>
+  Proyecto XFree86: <A href="http://www.xfree86.org/" target="_blank">http://www.xfree86.org/</A>
+ </P>
+ <BR>
+ <!-- seccion de licencia -->
+ <H2>Licencia</H2>
+ <P>
+  Este documento p&uacute;blico puede ser distribuido y/o traducido libremente, siempre y cuando 
+  en el documento resultante se incluyan los datos del autor indicados en la cabecera, esta 
+  secci&oacute;n de licencia, y la url del documento original:
+ </P>
+</BODY>
+</HTML>

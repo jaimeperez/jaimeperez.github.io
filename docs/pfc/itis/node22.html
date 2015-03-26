@@ -1,0 +1,134 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node23.html">
+<LINK REL="previous" HREF="node21.html">
+<LINK REL="up" HREF="node16.html">
+<LINK REL="next" HREF="node23.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html475"
+  HREF="node23.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html471"
+  HREF="node16.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html465"
+  HREF="node21.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html473"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html476"
+  HREF="node23.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html472"
+  HREF="node16.html">Requisitos del servicio</A>
+<B> Anterior:</B> <A NAME="tex2html466"
+  HREF="node21.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html474"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exAutenticaci&#243;n integrada
+
+<P>
+Una de las facilidades que da a elegir Telef&#243;nica a sus clientes a la hora
+de prestar el servicio es seleccionar el tipo de autenticaci&#243;n que desea.
+Es posible autenticar a los usuarios de dos formas diferentes:
+
+<P>
+
+<UL>
+<LI><I>Autenticaci&#243;n delegada</I>: la universidad facilita a Telef&#243;nica
+la relaci&#243;n de usuarios que utilizar&#225;n el servicio, indicando sus datos de
+identificaci&#243;n, y ser&#225; &#233;sta la que autentique a los usuarios,
+proporcion&#225;ndoles o no acceso a la red privada. Este esquema tiene la
+ventaja de no requerir infraestructura de autenticaci&#243;n adicional por
+parte de la universidad, pero la desventaja de que los datos de autenticaci&#243;n
+dependan de terceros, y de no poder modificarlos c&#243;mo y cu&#225;ndo se
+necesite.
+</LI>
+<LI><I>Autenticaci&#243;n local</I>: en lugar de autenticar la propia Telef&#243;nica
+a los usuarios, escala las peticiones de autenticaci&#243;n a la universidad,
+siendo &#233;sta la responsable en &#250;ltima instancia de decidir si un usuario
+accede o no al servicio. Supone un gasto mayor en infraestructuras al
+permitir a Telef&#243;nica consultas de autenticaci&#243;n sobre nuestros servidores,
+pero por contra facilita sobremanera la gesti&#243;n de los usuarios.
+</LI>
+</UL>
+
+<P>
+Ni que decir tiene que para la universidad es mucho m&#225;s ventajoso el
+modelo de autenticaci&#243;n local. La base de datos de usuarios ya existe
+<A NAME="tex2html50"
+  HREF="footnode.html#foot723"><SUP>2.5</SUP></A>y tambi&#233;n un sistema de autenticaci&#243;n y autorizaci&#243;n de usuarios, mediante
+servidores Radius dedicados. En estas circunstancias, el coste de facilitar
+a Telef&#243;nica acceso a los servidores es mucho menor que el de mantener una
+relaci&#243;n de usuarios por cuenta ajena.
+
+<P>
+En este aspecto surgieron problemas a mitad de implementaci&#243;n. Telef&#243;nica
+no indic&#243; expl&#237;citamente la necesidad de acceso directo a los servidores
+Radius, y esta posibilidad entraba en conflicto con la pol&#237;tica de seguridad
+de la universidad. Posteriormente se decidi&#243; instalar un Radius que actuase
+como <I>proxy</I> o delegado para Telef&#243;nica, de forma que el acceso por
+parte de la misma a la autenticaci&#243;n fuese permanente y aislado,
+independientemente de los cambios que se puedan realizar en la infraestructura
+de autenticaci&#243;n global que se utiliza en la red interna. De este modo, se
+a&#241;ade un nivel de seguridad adicional en las consultas Radius, y se asegura
+la prestaci&#243;n de las mismas a Telef&#243;nica ante eventuales cambios, por ejemplo
+un cambio en las direcciones IP de los servidores Radius corporativos.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html475"
+  HREF="node23.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html471"
+  HREF="node16.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html465"
+  HREF="node21.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html473"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html476"
+  HREF="node23.html">memoria</A>
+<B> Subir:</B> <A NAME="tex2html472"
+  HREF="node16.html">Requisitos del servicio</A>
+<B> Anterior:</B> <A NAME="tex2html466"
+  HREF="node21.html">memoria</A>
+ &nbsp; <B>  <A NAME="tex2html474"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

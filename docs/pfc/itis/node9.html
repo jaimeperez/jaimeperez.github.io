@@ -1,0 +1,137 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node8.html">
+<LINK REL="up" HREF="node8.html">
+<LINK REL="next" HREF="node10.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html288"
+  HREF="node10.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html284"
+  HREF="node8.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html280"
+  HREF="node8.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html286"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html289"
+  HREF="node10.html">Autenticación y Autorización</A>
+<B> Subir:</B> <A NAME="tex2html285"
+  HREF="node8.html">El protocolo AH</A>
+<B> Anterior:</B> <A NAME="tex2html281"
+  HREF="node8.html">El protocolo AH</A>
+ &nbsp; <B>  <A NAME="tex2html287"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exEl protocolo ESP
+
+<P>
+El protocolo de Carga de Seguridad Encapsulada o <I>ESP</I><A NAME="tex2html25"
+  HREF="footnode.html#foot384"><SUP>1.17</SUP></A> proporciona, adem&#225;s de la integridad y autenticaci&#243;n de los datos
+transportados, la confidencialidad de los mismos. ESP se basa, al igual que AH, en
+el c&#225;lculo del c&#243;digo HMAC sobre el paquete, y adicionalmente en el cifrado del mismo.
+Dicho cifrado se realiza mediante algoritmos de clave sim&#233;trica, con la clave negociada
+para la asociaci&#243;n de seguridad vigente. El est&#225;ndar de IPSec obliga a la implementaci&#243;n
+de los algoritmos NULL<A NAME="tex2html26"
+  HREF="footnode.html#foot385"><SUP>1.18</SUP></A> y DES
+<A NAME="tex2html28"
+  HREF="footnode.html#foot386"><SUP>1.19</SUP></A>. En la actualidad, la mayor&#237;a de implementaciones
+de IPSec incluyen algoritmos mucho m&#225;s potentes y actuales, como 3DES<A NAME="tex2html30"
+  HREF="footnode.html#foot387"><SUP>1.20</SUP></A>, AES
+<A NAME="tex2html32"
+  HREF="footnode.html#foot388"><SUP>1.21</SUP></A> o Blowfish<A NAME="tex2html34"
+  HREF="footnode.html#foot389"><SUP>1.22</SUP></A>.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:esp"></A><A NAME="390"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.8:</STRONG>
+<FONT SIZE="-1">Cabeceras ESP. Los datos se rellenan hasta el
+tama&#241;o de bloque. Los mismos datos y la cola ESP (el relleno, su longitud y el campo de
+siguiente cabecera) se autentican. &#201;stos, adem&#225;s de la cabecera ESP (el SPI y el n&#250;mero de
+secuencia) proporcionan autenticaci&#243;n. El resumen calculado del paquete se concatena con el
+mismo.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="132" ALIGN="BOTTOM" BORDER="0"
+ SRC="esp.png"
+ ALT="Image esp">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+ESP encripta y calcula posteriormente el HMAC sobre el paquete IP original, exceptuando la
+cabecera IP. Esto hace que ESP no tenga los problemas antes mencionados de AH con NAT. Los
+datos se rellenan hasta completar una longitud m&#250;ltiplo del tama&#241;o de bloque utilizado.
+A continuaci&#243;n de ese relleno se incluyen dos campos, la longitud del mismo, y la siguiente
+cabecera dentro de la carga &#250;til. Esta parte del paquete resultante se encripta, de forma que
+es imposible averiguar nada sobre los datos en s&#237; mismos. El protocolo proporciona autenticaci&#243;n
+para esta parte del paquete y para el n&#250;mero de secuencia y el SPI en el resumen que se incluye
+al final del mismo.
+
+<P>
+Al igual que con AH, no entraremos a explicar detalladamente la funci&#243;n de las cabeceras
+que incluye ESP sobre un paquete IPSec, dejando al lector que ampl&#237;e la informaci&#243;n necesaria
+en [<A
+ HREF="node55.html#esp">10</A>].
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html288"
+  HREF="node10.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html284"
+  HREF="node8.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html280"
+  HREF="node8.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html286"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html289"
+  HREF="node10.html">Autenticación y Autorización</A>
+<B> Subir:</B> <A NAME="tex2html285"
+  HREF="node8.html">El protocolo AH</A>
+<B> Anterior:</B> <A NAME="tex2html281"
+  HREF="node8.html">El protocolo AH</A>
+ &nbsp; <B>  <A NAME="tex2html287"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

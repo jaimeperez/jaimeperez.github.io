@@ -1,0 +1,419 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>memoria</TITLE>
+<META NAME="description" CONTENT="memoria">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node36.html">
+<LINK REL="up" HREF="node36.html">
+<LINK REL="next" HREF="node38.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html678"
+  HREF="node38.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html674"
+  HREF="node36.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html670"
+  HREF="node36.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html676"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html679"
+  HREF="node38.html">Servicios requeridos</A>
+<B> Subir:</B> <A NAME="tex2html675"
+  HREF="node36.html">El núcleo y el</A>
+<B> Anterior:</B> <A NAME="tex2html671"
+  HREF="node36.html">El núcleo y el</A>
+ &nbsp; <B>  <A NAME="tex2html677"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+startsectionparagraph4@-3.25ex plus
+-1ex minus -.2ex1.5ex plus .2exConfiguraci&#243;n de red
+
+<P>
+El equipo terminador de t&#250;neles IPSec cuenta con una sola interfaz de red f&#237;sica
+conectada a la red privada de la universidad, y con una sola direcci&#243;n IP p&#250;blica
+con la que accede tanto al exterior como al interior de la red. La configuraci&#243;n
+concreta es la siguiente:
+
+<P>
+<PRE>
+minimum root # ifconfig eth0
+eth0      Link encap:Ethernet  HWaddr 00:00:24:C8:0A:98
+          inet addr:193.147.184.193  Bcast:193.147.184.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:14905358 errors:3 dropped:0 overruns:0 frame:0
+          TX packets:534587 errors:3999 dropped:0 overruns:0 carrier:3999
+          collisions:32135 txqueuelen:1000
+          RX bytes:1438569655 (1371.9 Mb)  TX bytes:48817647 (46.5 Mb)
+          Interrupt:5 Base address:0xe800
+minimum root # route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+193.147.184.0   0.0.0.0         255.255.255.0   U     0      0        0 eth0
+127.0.0.0       127.0.0.1       255.0.0.0       UG    0      0        0 lo
+0.0.0.0         193.147.184.1   0.0.0.0         UG    0      0        0 eth0
+</PRE>
+
+<P>
+Para que esta configuraci&#243;n se aplique autom&#225;ticamente al arrancar la m&#225;quina,
+modificamos el fichero de configuraci&#243;n <TT>/etc/conf.d/net</TT>:
+
+<P>
+<PRE>
+# configuración del interfaz de red
+iface_eth0="193.147.184.193 broadcast 193.147.184.255 netmask 255.255.255.0"
+# gateway por defecto de la red
+gateway="eth0/193.147.184.1"
+</PRE>
+
+<P>
+Gentoo proporciona scripts para activar o desactivar los interfaces de red de
+forma autom&#225;tica. Utiliz&#225;ndolos resulta trivial conseguir que esta configuraci&#243;n
+se aplique en el arranque del PC:
+
+<P>
+<PRE>
+minimum root # rc-update add net.eth0 default
+</PRE>
+
+<P>
+Una vez configurada la red, podemos proceder a configurar el cortafuegos que
+filtrar&#225; el tr&#225;fico del terminador de t&#250;neles. Para empezar, es fundamental
+activar la opci&#243;n del n&#250;cleo de redirecci&#243;n de IP (<I>IP Forwarding</I>) y
+desactivar la comprobaci&#243;n de la ruta de origen de los paquetes IP (sin hacer
+esto &#250;ltimo IPSec no funcionar&#225; correctamente). Podemos hacerlo interactivamente
+de forma sencilla:
+
+<P>
+<PRE>
+minimum root # echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+minimum root # for f in /proc/sys/net/ipv4/conf/*/rp_filter 
+&gt; do echo 1 &gt; $f
+&gt; done
+</PRE>
+
+<P>
+Nuevamente, deseamos que estos cambios se realicen de forma autom&#225;tica al
+arrancar el servidor, sin necesidad de la intervenci&#243;n de un operador, por lo
+que modificamos el fichero <TT>/etc/sysctl.conf</TT>:
+
+<P>
+<PRE>
+# Habilitamos la redireccion de paquetes
+net.ipv4.ip_forward = 1
+# Deshabilitamos ECN
+net.ipv4.tcp_ecn = 0
+# Habilitamos la verificacion de la ruta origen
+net.ipv4.conf.default.rp_filter = 0
+</PRE>
+
+<P>
+Nos aseguramos de que el m&#243;dulo <I>ipsec</I> (recordemos que hemos habilitado
+el soporte IPSec en el n&#250;cleo en forma de m&#243;dulo, no como parte del mismo. En caso
+contrario no ser&#237;a necesario este paso) se cargue al arrancar el sistema operativo:
+
+<P>
+<PRE>
+minimum root # echo ipsec &gt;&gt; /etc/modules.autoload.d/kernel-2.4
+</PRE>
+
+<P>
+Dado que como ya se ha dicho, la maqueta no cuenta con teclado ni monitor conectados,
+la &#250;nica forma de trabajar con ella se reduce a alguna forma de acceso remoto. En
+particular SSH<A NAME="tex2html70"
+  HREF="footnode.html#foot1131"><SUP>3.4</SUP></A> es fundamental para nuestros prop&#243;sitos, por lo que
+instalamos un servidor:
+
+<P>
+<PRE>
+minimum root # emerge openssh
+</PRE>
+
+<P>
+y modificamos su fichero de configuraci&#243;n <TT>/etc/ssh/sshd_config</TT> adecuadamente:
+
+<P>
+<PRE>
+Port 22
+Protocol 2
+ListenAddress 193.147.184.193
+
+# Logging
+#obsoletes QuietMode and FascistLogging
+SyslogFacility AUTH
+LogLevel INFO
+
+# Authentication:
+
+#LoginGraceTime 2m
+PermitRootLogin yes
+#StrictModes yes
+
+# Set this to 'yes' to enable PAM authentication (via challenge-response)
+# and session processing. Depending on your PAM configuration, this may
+# bypass the setting of 'PasswordAuthentication' and 'PermitEmptyPasswords'
+UsePAM yes
+
+# override default of no subsystems
+#Subsystem      sftp    /usr/lib/misc/sftp-server
+</PRE>
+
+<P>
+Lo arrancamos y le indicamos al sistema que lo arranque al iniciarse el sistema
+operativo:
+
+<P>
+<PRE>
+minimum root # /etc/init.d/sshd start
+ * Starting sshd...                                      [ ok ]
+minimum root # rc-update add sshd default
+</PRE>
+
+<P>
+En todo momento podemos comprobar el estado de los servicios del nivel por defecto
+de ejecuci&#243;n con el comando <TT>rc-status</TT>. Una vez llegados a este punto,
+configuraremos un cortafuegos mediante iptables para asegurar los accesos al PC
+terminador de t&#250;neles. Creamos un sencillo script que nos permita modificar
+r&#225;pidamente estas reglas, y lo probamos simplemente ejecut&#225;ndolo:
+
+<P>
+<PRE>
+#!/bin/bash
+IPTABLES='/sbin/iptables'
+# Interfaces
+EXTIF='eth0'
+IPSECIF='ipsec+'
+# IP's de interés
+PUBIP='193.147.184.193'
+# Terminadores túneles IPSec Telefónica
+TERM1='195.55.47.10'
+TERM2='195.55.47.11'
+# Radius de la universidad
+RADIUS1='193.147.184.3'
+RADIUS2='193.147.184.22'
+# DNS de la universidad
+DNS1='193.147.184.2'
+DNS2='193.147.71.64'
+# Pools de usuarios de la VPN
+POOLGSM='193.147.59.160/27'
+
+# Habilitamos IP forwarding en el núcleo
+/bin/echo 1 &gt; /proc/sys/net/ipv4/ip_forward
+
+# Eliminar reglas y cadenas
+$IPTABLES -F
+$IPTABLES -X
+
+##
+## ADMINISTRACIÓN DE SERVICIOS
+##
+# Acceso para el servicio ssh
+$IPTABLES -A INPUT -s 193.147.184.0/24 -d $PUBIP -i $EXTIF \
+ -p tcp --sport 1024:65535 --dport 22 -j ACCEPT
+$IPTABLES -A INPUT -s 193.147.72.0/24 -d $PUBIP -i $EXTIF \
+ -p tcp --sport 1024:65535 --dport 22 -j ACCEPT
+
+# Acceso a los interfaces telnet de administración de zebra y ripd
+$IPTABLES -A INPUT -s 193.147.184.0/24 -d $PUBIP -i $EXTIF \
+ -p tcp --sport 1024:65535 --dport 2601 -j ACCEPT
+$IPTABLES -A INPUT -s 193.147.72.0/24 -d $PUBIP -i $EXTIF \
+ -p tcp --sport 1024:65535 --dport 2601 -j ACCEPT
+$IPTABLES -A INPUT -s 193.147.184.0/24 -d $PUBIP -i $EXTIF \
+ -p tcp --sport 1024:65535 --dport 2602 -j ACCEPT
+$IPTABLES -A INPUT -s 193.147.72.0/24 -d $PUBIP -i $EXTIF \
+ -p tcp --sport 1024:65535 --dport 2602 -j ACCEPT
+
+# Bloqueamos el acceso desde la VPN a los servicios del gateway
+$IPTABLES -A INPUT -d $PUBIP -i $IPSECIF -p tcp \
+ --dport 22 -j DROP
+$IPTABLES -A INPUT -d $PUBIP -i $IPSECIF -p tcp \
+ --dport 2601 -j DROP
+$IPTABLES -A INPUT -d $PUBIP -i $IPSECIF -p tcp \
+ --dport 2602 -j DROP
+
+##
+## Servicios públicos
+##
+# Acceso UDP al demonio RIP
+$IPTABLES -A INPUT -d $PUBIP -i $EXTIF -p udp \
+ --dport 520 -j ACCEPT
+
+# Acceso consultas Radius
+$IPTABLES -A INPUT -s $TERM1 -d $PUBIP -p udp \
+ --dport 1812 -j ACCEPT
+$IPTABLES -A INPUT -s $TERM2 -d $PUBIP -p udp \
+ --dport 1812 -j ACCEPT
+$IPTABLES -A INPUT -s $RADIUS1 -d $PUBIP -p udp \
+ --dport 1812 -j ACCEPT
+$IPTABLES -A INPUT -s $RADIUS2 -d $PUBIP -p udp \
+ --dport 1812 -j ACCEPT
+
+# Permitimos protocolo ESP de IPSec
+$IPTABLES -A INPUT -s $TERM1 -d $PUBIP -p esp -j ACCEPT
+$IPTABLES -A INPUT -s $TERM2 -d $PUBIP -p esp -j ACCEPT
+
+# Permitimos las transacciones IKE
+$IPTABLES -A INPUT -s $TERM1 -d $PUBIP -p udp --sport 500 \
+ --dport 500 -j ACCEPT
+$IPTABLES -A INPUT -s $TERM2 -d $PUBIP -p udp --sport 500 \
+ --dport 500 -j ACCEPT
+
+# Permitimos el tráfico entre las VPN y la red de la universidad
+$IPTABLES -A INPUT -d $POOLGSM -i $EXTIF -j ACCEPT
+$IPTABLES -A INPUT -s $POOLGSM -i $IPSECIF -j ACCEPT
+
+# Permitimos consultas DNS con los servidores privados
+$IPTABLES -A INPUT -s $DNS1 -d $PUBIP -i $EXTIF -p udp \
+ --sport 53 -j ACCEPT
+$IPTABLES -A INPUT -s $DNS2 -d $PUBIP -i $EXTIF -p udp \
+ --sport 53 -j ACCEPT
+
+# Permitimos el tráfico originado desde el terminador
+# (conexiones TCP ya abiertas)
+$IPTABLES -A INPUT -d $PUBIP -i $EXTIF -p tcp \
+ ! --tcp-flags SYN,RST,ACK SYN -j ACCEPT
+
+# Bloqueamos todo el tráfico
+$IPTABLES -A INPUT -i $EXTIF -p tcp -j DROP
+$IPTABLES -A INPUT -i $EXTIF -p udp -j DROP
+</PRE>
+
+<P>
+Verificamos el correcto funcionamiento de la red una vez ejecutado este script,
+y comprobamos que las reglas se han aplicado correctamente:
+
+<P>
+<PRE>
+minimum root # iptables -L -n
+Chain INPUT (policy ACCEPT)
+target     prot opt source               destination
+ACCEPT     tcp  --  193.147.184.0/24     193.147.184.193
+     tcp spts:1024:65535 dpt:22
+ACCEPT     tcp  --  193.147.72.0/24      193.147.184.193
+     tcp spts:1024:65535 dpt:22
+ACCEPT     tcp  --  193.147.184.0/24     193.147.184.193
+     tcp spts:1024:65535 dpt:2601
+ACCEPT     tcp  --  193.147.72.0/24      193.147.184.193
+     tcp spts:1024:65535 dpt:2601
+ACCEPT     tcp  --  193.147.184.0/24     193.147.184.193
+     tcp spts:1024:65535 dpt:2602
+ACCEPT     tcp  --  193.147.72.0/24      193.147.184.193
+     tcp spts:1024:65535 dpt:2602
+DROP       tcp  --  0.0.0.0/0            193.147.184.193
+     tcp dpt:22
+DROP       tcp  --  0.0.0.0/0            193.147.184.193
+     tcp dpt:2601
+DROP       tcp  --  0.0.0.0/0            193.147.184.193
+     tcp dpt:2602
+ACCEPT     udp  --  0.0.0.0/0            193.147.184.193
+     udp dpt:520
+ACCEPT     udp  --  195.55.47.10         193.147.184.193
+     udp dpt:1812
+ACCEPT     udp  --  195.55.47.11         193.147.184.193
+     udp dpt:1812
+ACCEPT     udp  --  193.147.184.3        193.147.184.193
+     udp dpt:1812
+ACCEPT     udp  --  193.147.184.22       193.147.184.193
+     udp dpt:1812
+ACCEPT     esp  --  195.55.47.10         193.147.184.193
+ACCEPT     esp  --  195.55.47.11         193.147.184.193
+ACCEPT     udp  --  195.55.47.10         193.147.184.193
+     udp spt:500 dpt:500
+ACCEPT     udp  --  195.55.47.11         193.147.184.193
+     udp spt:500 dpt:500
+ACCEPT     all  --  0.0.0.0/0            193.147.59.160/27
+ACCEPT     all  --  193.147.59.160/27    0.0.0.0/0
+ACCEPT     udp  --  193.147.184.2        193.147.184.193
+     udp spt:53
+ACCEPT     udp  --  193.147.71.64        193.147.184.193
+     udp spt:53
+ACCEPT     tcp  --  0.0.0.0/0            193.147.184.193
+     tcp flags:!0x16/0x02
+DROP       tcp  --  0.0.0.0/0            0.0.0.0/0
+DROP       udp  --  0.0.0.0/0            0.0.0.0/0
+
+Chain FORWARD (policy ACCEPT)
+target     prot opt source               destination
+
+Chain OUTPUT (policy ACCEPT)
+target     prot opt source               destination
+</PRE>
+
+<P>
+Si todo est&#225; correcto, guardamos el estado de las reglas actuales, y configuramos
+iptables para que se ejecute al inicio:
+
+<P>
+<PRE>
+ minimum root # /etc/init.d/iptables save
+ minimum root # rc-update add iptables default
+</PRE>
+
+<P>
+El funcionamiento de este cortafuegos es muy b&#225;sico. Simplemente nos aseguramos
+de que s&#243;lo usuarios de subredes autorizadas de la universidad (la red de servidores
+y la de trabajadores de Servicios Centrales) tienen acceso a la administraci&#243;n
+de servicios que existir&#225;n en este PC. Esto incluye tanto SSH como los interfaces
+telnet de configuraci&#243;n de Zebra y RIP, que veremos m&#225;s adelante. Prohibimos el
+acceso a estos servicios tambi&#233;n a los usuarios de la VPN. Permitimos el acceso al
+demonio del protocolo RIP y al Radius delegado, desde las direcciones IP necesarias.
+Permitimos la entrada de datagramas IP conteniendo paquetes con el protocolo ESP,
+que se corresponder&#225;n con tr&#225;fico IPSec, desde las direcciones leg&#237;timas de los
+terminadores de t&#250;neles de Telef&#243;nica. Permitimos por &#250;ltimo el tr&#225;fico al
+puerto 500 UDP desde dichos terminadores, utilizado para las transacciones del
+protocolo IKE. Por &#250;ltimo, denegamos el resto del tr&#225;fico en su totalidad.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html678"
+  HREF="node38.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html674"
+  HREF="node36.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html670"
+  HREF="node36.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html676"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html679"
+  HREF="node38.html">Servicios requeridos</A>
+<B> Subir:</B> <A NAME="tex2html675"
+  HREF="node36.html">El núcleo y el</A>
+<B> Anterior:</B> <A NAME="tex2html671"
+  HREF="node36.html">El núcleo y el</A>
+ &nbsp; <B>  <A NAME="tex2html677"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,160 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Metodología</TITLE>
+<META NAME="description" CONTENT="Metodología">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="previous" HREF="node25.html">
+<LINK REL="up" HREF="node13.html">
+<LINK REL="next" HREF="node31.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html569"
+  HREF="node31.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html565"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html561"
+  HREF="node29.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html567"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html570"
+  HREF="node31.html">Descripción Informática</A>
+<B> Subir:</B> <A NAME="tex2html566"
+  HREF="node13.html">Objetivos</A>
+<B> Anterior:</B> <A NAME="tex2html562"
+  HREF="node29.html">Algoritmos</A>
+ &nbsp; <B>  <A NAME="tex2html568"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00430000000000000000">
+Metodolog&#237;a</A>
+</H1>
+
+<P>
+Antes de entrar en detalles sobre la metodolog&#237;a de trabajo seguida en
+este proyecto, es necesario hacer notar que no se trata de un proyecto
+al estilo m&#225;s tradicional. Este es un trabajo fundamentalmente de
+administraci&#243;n de sistemas y redes, y como tal, no ha involucrado
+directamente la creaci&#243;n de programas inform&#225;ticos, si bien para
+ciertas tareas se han planeado peque&#241;os scripts de automatizaci&#243;n.
+
+<P>
+Partiendo de esta base, no es posible aplicar una metodolog&#237;a convencional
+como el <I>desarrollo en espiral</I> o <I>eXtreme Programming</I> a
+nuestro proyecto, sino que es necesario establecer una propia y
+personalizada que permita trabajar exactamente de la forma que
+necesitamos.
+
+<P>
+En concreto, se ha seguido un proceso iterativo de documentaci&#243;n,
+configuraci&#243;n y pruebas para cada una de las tecnolog&#237;as que se ven
+involucradas en la ejecuci&#243;n de este proyecto. Cuando se quiere construir
+un sistema con tecnolog&#237;as de vanguardia es necesario estar muy al d&#237;a en
+lo que a novedades y alternativas se refiere. El mundo de las redes privadas
+virtuales e IPSec no es nuevo, pero si est&#225; en una continua renovaci&#243;n, lo
+que implica un estudio previo a cada implementaci&#243;n que se quiera realizar.
+Adicionalmente, como se ha visto, en este proyecto resulta fundamental la
+criptograf&#237;a y algoritmos asociados frecuentemente a la misma. Este campo,
+extraordinariamente basado en las matem&#225;ticas, sufre un vertiginoso y
+permanente cambio que provoca que algoritmos considerados seguros dejen
+de serlo en cuesti&#243;n de horas.
+
+<P>
+Por esto el estudio y documentaci&#243;n previos para cada tipo de tecnolog&#237;a
+involucrada en el proyecto ha supuesto una parte clave del mismo. En este
+proceso de documentaci&#243;n se han utilizado diversos libros, fundamentalmente
+en lo que se refiere a aquellos protocolos y conceptos que m&#225;s a&#241;os tienen
+a sus espaldas, como son las VPN, IPSec o Radius. [<A
+ HREF="node55.html#radius">13</A>] en particular
+ha sido de una gran ayuda, ya que por desgracia este es un protocolo muy
+gen&#233;rico que cuenta con una documentaci&#243;n muy pobre y sobre el que, por tanto,
+es extremadamente dif&#237;cill obtener informaci&#243;n precisa.
+
+<P>
+Resulta llamativo adem&#225;s c&#243;mo en la bibliograf&#237;a adjunta predominan
+sobremanera p&#225;ginas web y documentos que se pueden consultar por Internet
+sobre la documentaci&#243;n escrita. Esto es totalmente l&#243;gico si nos damos
+cuenta de que los libros dedicados a tecnolog&#237;as tan punteras quedan
+r&#225;pidamente obsoletos.
+
+<P>
+Una vez obtenida una visi&#243;n global de cada cosa, y la informaci&#243;n necesaria
+para la comprensi&#243;n de protocolos y servicios, se ha ido procediendo a
+configurar cada uno de ellos por separado. De este modo la tarea de
+montar un terminador de t&#250;neles IPSec se ha visto reducida a la soluci&#243;n
+de varios problemas de tama&#241;o mucho menor, como el montaje y configuraci&#243;n
+del soporte IPSec, de un servidor proxy del protocolo Radius, o de un
+demonio de enrutado que soporte RIP. Esto facilita enormemente las cosas
+al poder enfocar todo el esfuerzo en puntos concretos a lo largo del tiempo.
+
+<P>
+Una vez se tiene el servicio configurado y en l&#237;nea con todos los requisitos
+necesarios, se conciertan sesiones de pruebas con Telef&#243;nica para verificar
+el funcionamiento del terminador de t&#250;neles y del servicio en general.
+Terminado este periodo de exhaustivas pruebas, el servicio se situar&#225; en un
+estado de producci&#243;n, pudiendo ser utilizado por fin por todo aquel que lo
+desee.
+
+<P>
+Por &#250;ltimo, para el desarrollo de esta memoria y de la documentaci&#243;n que
+acompa&#241;ar&#225; al sistema definitivo (recordemos que este proyecto se ha
+realizado sobre una maqueta de pruebas) se utiliza el sistema de creaci&#243;n
+de documentos L<SUP><SMALL>A</SMALL></SUP>T<SMALL>E</SMALL>X<A NAME="tex2html60"
+  HREF="footnode.html#foot729"><SUP>2.12</SUP></A>.
+
+<P>
+
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html569"
+  HREF="node31.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html565"
+  HREF="node13.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html561"
+  HREF="node29.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html567"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html570"
+  HREF="node31.html">Descripción Informática</A>
+<B> Subir:</B> <A NAME="tex2html566"
+  HREF="node13.html">Objetivos</A>
+<B> Anterior:</B> <A NAME="tex2html562"
+  HREF="node29.html">Algoritmos</A>
+ &nbsp; <B>  <A NAME="tex2html568"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

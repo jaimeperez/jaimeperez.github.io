@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>IPSec</TITLE>
+<META NAME="description" CONTENT="IPSec">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node8.html">
+<LINK REL="previous" HREF="node6.html">
+<LINK REL="up" HREF="node6.html">
+<LINK REL="next" HREF="node8.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html267"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html263"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html257"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html265"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html268"
+  HREF="node8.html">El protocolo AH</A>
+<B> Subir:</B> <A NAME="tex2html264"
+  HREF="node6.html">Confidencialidad e integridad</A>
+<B> Anterior:</B> <A NAME="tex2html258"
+  HREF="node6.html">Confidencialidad e integridad</A>
+ &nbsp; <B>  <A NAME="tex2html266"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00312100000000000000">
+IPSec</A>
+</H3>
+
+<P>
+IPv4, el protocolo de red utilizado en Internet, carece por completo de cualquier tipo
+de seguridad en las comunicaciones. IPv6, la que est&#225; llamada a ser la siguiente
+versi&#243;n del protocolo, s&#237; proporciona en cambio un conjunto de medidas y protocolos
+para garantizar comunicaciones seguras en esta capa. Ese conjunto de medidas y
+protocolos es com&#250;nmente conocido por <I>IPSec</I>, y se pueden implementar sobre
+IPv4 realizando apenas algunas modificaciones en la pila de TCP/IP del sistema
+operativo anfitri&#243;n.
+
+<P>
+IPSec proporciona autenticaci&#243;n, confidencialidad e integridad mediante diversos
+mecanismos. Fundamentalmente sus bases son tres protocolos diferentes:
+
+<P>
+<DL>
+<DT><STRONG>AH:</STRONG></DT>
+<DD><I>Authentication Header</I> o <I>Cabecera de Autenticaci&#243;n</I>.
+Proporciona autenticaci&#243;n e integridad calculando un resumen sobre los paquetes
+a transmitir, pero no confidencialidad.
+</DD>
+<DT><STRONG>ESP:</STRONG></DT>
+<DD><I>Encapsulating Security Payload</I> o <I>Carga de Seguridad
+Encapsulada</I>. Proporciona autenticaci&#243;n, integridad y confidencialidad, utilizando
+mecanismos &#225;giles de cifrado cuya fiabilidad reside en el intercambio previo de
+claves.
+</DD>
+<DT><STRONG>IKE:</STRONG></DT>
+<DD><I>Internet Key Exchange</I> o <I>Intercambio de Claves en
+Internet</I>. Se trata de un protocolo para el intercambio de claves basado en el
+conjunto de reglas ISAKMP<A NAME="tex2html13"
+  HREF="footnode.html#foot373"><SUP>1.8</SUP></A>, y <I>Oakley</I>, una evoluci&#243;n del algoritmo <I>Diffie-Hellman</I>
+<A NAME="tex2html14"
+  HREF="footnode.html#foot374"><SUP>1.9</SUP></A>.
+</DD>
+</DL>
+
+<P>
+El funcionamiento de IPSec se basa en el intercambio de claves previo entre los
+extremos de una comunicaci&#243;n para el establecimiento de una <I>Asociaci&#243;n
+de Seguridad</I> o <I>SA</I><A NAME="tex2html16"
+  HREF="footnode.html#foot375"><SUP>1.10</SUP></A>. Esta necesidad
+de compartir informaci&#243;n relativa a los interlocutores establece dos de las
+caracter&#237;sticas claves de IPSec. Se trata de un protocolo unidireccional y orientado
+a conexi&#243;n. Cada asociaci&#243;n de seguridad garantiza la seguridad en una direcci&#243;n,
+por lo que si ambos interlocutores desean compartir informaci&#243;n han de establecer
+cada uno su asociaci&#243;n de seguridad. Dicha asociaci&#243;n de seguridad se verifica en
+el campo SPI<A NAME="tex2html17"
+  HREF="footnode.html#foot376"><SUP>1.11</SUP></A> que se incluye en las cabeceras IPSec, y que ser&#225;
+comparado en el destino con su SAD<A NAME="tex2html18"
+  HREF="footnode.html#foot377"><SUP>1.12</SUP></A>, en la que se almacenan las
+asociaciones de seguridad conocidas en cada instante.
+
+<P>
+Una vez establecida dicha asociaci&#243;n, es posible enviar datos al otro extremo de
+dos formas diferentes. Bien modificando los paquetes IP originales para introducir
+las cabeceras adicionales, lo que se conoce como <I>modo transporte</I>, bien
+encapsulando el paquete original completo m&#225;s las cabeceras AH o ESP dentro de uno
+nuevo, tambi&#233;n denominado <I>modo t&#250;nel</I>.
+
+<P>
+En modo transporte, las cabeceras AH o ESP se insertan entre la propia cabecera IP
+y la carga &#250;til del paquete (si se utiliza ESP, se incluyen cabeceras adicionales
+tras la carga &#250;til del paquete).
+
+<P>
+En modo t&#250;nel se a&#241;aden los campos que correspondan seg&#250;n se utilice AH o ESP al
+paquete IP original, y dicho paquete se convierte en la carga &#250;til de un nuevo paquete
+IP con direcciones de origen y destino no necesariamente iguales a las originales.
+Este modo suele utilizarse cuando se dispone de al menos una pasarela de seguridad en
+uno de los extremos. Los paquetes viajan por la red sin que ning&#250;n dispositivo
+intermedio pueda acceder a la cabecera IP o los contenidos originales. Estas
+caracter&#237;sticas hacen del modo t&#250;nel el ideal cuando se quiere crear una VPN sin que
+necesariamente ambos extremos de la comunicaci&#243;n tengan soporte espec&#237;fico para IPSec,
+ya que el t&#250;nel se puede crear en las mencionadas pasarelas de seguridad.
+
+<P>
+
+<DIV ALIGN="CENTER"><A NAME="fig:ipsec"></A><A NAME="378"></A>
+<TABLE>
+<CAPTION ALIGN="BOTTOM"><STRONG>Figura 1.6:</STRONG>
+<FONT SIZE="-1">Modos de IPSec. En el modo transporte (b) el
+paquete original (a) es modificado a&#241;adi&#233;ndole campos AH o ESP. En el modo t&#250;nel (c) el
+paquete original (a) se encapsula dentro de un nuevo paquete IP con los campos AH o ESP.</FONT></CAPTION>
+<TR><TD>
+<DIV ALIGN="CENTER">   <IMG
+  WIDTH="236" HEIGHT="100" ALIGN="BOTTOM" BORDER="0"
+ SRC="ipsec.png"
+ ALT="Image ipsec">
+   </DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html267"
+  HREF="node8.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html263"
+  HREF="node6.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html257"
+  HREF="node6.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html265"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html268"
+  HREF="node8.html">El protocolo AH</A>
+<B> Subir:</B> <A NAME="tex2html264"
+  HREF="node6.html">Confidencialidad e integridad</A>
+<B> Anterior:</B> <A NAME="tex2html258"
+  HREF="node6.html">Confidencialidad e integridad</A>
+ &nbsp; <B>  <A NAME="tex2html266"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>

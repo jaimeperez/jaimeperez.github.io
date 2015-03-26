@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+
+<!--Converted with LaTeX2HTML 2002-2 (1.70)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>El protocolo IKE</TITLE>
+<META NAME="description" CONTENT="El protocolo IKE">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=iso-8859-1">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="memoria.css">
+
+<LINK REL="next" HREF="node12.html">
+<LINK REL="previous" HREF="node10.html">
+<LINK REL="up" HREF="node10.html">
+<LINK REL="next" HREF="node12.html">
+</HEAD>
+
+<BODY >
+<!--Navigation Panel-->
+<A NAME="tex2html312"
+  HREF="node12.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html308"
+  HREF="node10.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html302"
+  HREF="node10.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html310"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html313"
+  HREF="node12.html">Radius</A>
+<B> Subir:</B> <A NAME="tex2html309"
+  HREF="node10.html">Autenticación y Autorización</A>
+<B> Anterior:</B> <A NAME="tex2html303"
+  HREF="node10.html">Autenticación y Autorización</A>
+ &nbsp; <B>  <A NAME="tex2html311"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<BR>
+<BR>
+<!--End of Navigation Panel-->
+
+<H3><A NAME="SECTION00313100000000000000">
+El protocolo IKE</A>
+</H3>
+
+<P>
+El protocolo para Intercambio de Claves en Internet es el encargado en la infraestructura
+IPSec de proporcionar un entorno previo seguro para la compartici&#243;n de una clave secreta
+y autenticaci&#243;n de los extremos. IKE utiliza el puerto 500 de UDP para establecer el
+intercambio de mensajes pertinente. Por lo general se implementa como una aplicaci&#243;n
+en espacio de usuario, al no formar parte del n&#250;cleo de muchos sistemas operativos.
+
+<P>
+Se compone de dos fases diferenciadas. La primera de ellas efect&#250;a el intercambio de mensajes
+preeliminares necesarios, estableciendo una asociaci&#243;n de seguridad ISAKMP (<I>ISAKMP SA</I>).
+Este intercambio inicial puede estar basado en claves precompartidas o <I>PSK</I>
+<A NAME="tex2html38"
+  HREF="footnode.html#foot391"><SUP>1.23</SUP></A>, claves RSA para criptograf&#237;a asim&#233;trica, o una
+infraestructura PKI de certificados digitales<A NAME="tex2html39"
+  HREF="footnode.html#foot392"><SUP>1.24</SUP></A>.
+
+<P>
+Esta primera fase puede realizarse de dos formas diferentes, el modo normal y el modo
+agresivo. Ambos realizan las mismas tareas, aunque el modo agresivo emplea la mitad de
+mensajes que el modo principal para obtener los mismos resultados. La contrapartida es
+que este modo no proporciona autenticaci&#243;n de la identidad cuando se emplea junto con
+claves precompartidas (PSK), por lo que es vulnerable a ataques del tipo
+<I>hombre en el medio</I><A NAME="tex2html41"
+  HREF="footnode.html#foot393"><SUP>1.25</SUP></A>. Es por ello que generalmente se
+recomienda el uso de infraestructuras de clave p&#250;blica si se va a utilizar el modo agresivo
+en una sesi&#243;n IPSec.
+
+<P>
+En la segunda fase se utiliza la asociaci&#243;n de seguridad ISAKMP para establecer la
+asociaci&#243;n de seguridad IPSec definitiva, que determinar&#225; las claves a utilizar durante
+la sesi&#243;n y otros par&#225;metros de la misma. Por lo general se aprovechar&#225; esta fase para
+negociar dos asociaciones de seguridad, ya que, recordemos, en IPSec cada asociaci&#243;n
+es unidireccional.
+
+<P>
+Resulta extremadamente recomendable la lectura de la RFC 2409 [<A
+ HREF="node55.html#ike">11</A>] para la
+comprensi&#243;n en detalle de las reglas ISAKMP, el algoritmo Oakley y en general el
+protocolo IKE, cuya implementaci&#243;n no es trivial.
+
+<P>
+<HR>
+<!--Navigation Panel-->
+<A NAME="tex2html312"
+  HREF="node12.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next" SRC="next.png"></A> 
+<A NAME="tex2html308"
+  HREF="node10.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up" SRC="up.png"></A> 
+<A NAME="tex2html302"
+  HREF="node10.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous" SRC="prev.png"></A> 
+<A NAME="tex2html310"
+  HREF="node1.html">
+<IMG WIDTH="65" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="contents" SRC="contents.png"></A>  
+<BR>
+<B> Siguiente:</B> <A NAME="tex2html313"
+  HREF="node12.html">Radius</A>
+<B> Subir:</B> <A NAME="tex2html309"
+  HREF="node10.html">Autenticación y Autorización</A>
+<B> Anterior:</B> <A NAME="tex2html303"
+  HREF="node10.html">Autenticación y Autorización</A>
+ &nbsp; <B>  <A NAME="tex2html311"
+  HREF="node1.html">&#205;ndice General</A></B> 
+<!--End of Navigation Panel-->
+<ADDRESS>
+Jaime Perez Crespo
+2005-02-09
+</ADDRESS>
+</BODY>
+</HTML>
